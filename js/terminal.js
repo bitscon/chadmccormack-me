@@ -1,11 +1,34 @@
 (function () {
+  var bootSequence = document.getElementById("boot-sequence");
+  var biosScreen = document.getElementById("bios-screen");
+  var kernelScreen = document.getElementById("kernel-screen");
+  var asciiScreen = document.getElementById("ascii-screen");
+  var kernelLog = document.getElementById("kernel-log");
+  var asciiBanner = document.getElementById("ascii-banner");
+
+  var desktop = document.getElementById("desktop");
+  var terminalWindow = document.getElementById("terminal-window");
   var terminal = document.getElementById("terminal");
   var output = document.getElementById("output");
   var form = document.getElementById("command-form");
   var input = document.getElementById("command-input");
   var promptLabel = document.querySelector(".prompt");
 
-  if (!terminal || !output || !form || !input || !promptLabel) {
+  if (
+    !bootSequence ||
+    !biosScreen ||
+    !kernelScreen ||
+    !asciiScreen ||
+    !kernelLog ||
+    !asciiBanner ||
+    !desktop ||
+    !terminalWindow ||
+    !terminal ||
+    !output ||
+    !form ||
+    !input ||
+    !promptLabel
+  ) {
     throw new Error("Missing required terminal elements.");
   }
 
@@ -14,17 +37,32 @@
   var HISTORY_LIMIT = 200;
   var THEMES = ["dark", "light", "matrix"];
   var BASE_PROMPT = "chad@workshop:~$";
-  var BOOT_LINES = [
-    "Booting workshop environment...",
-    "Loading system profile: Chad McCormack",
-    "Initializing modules...",
-    "✓ infrastructure",
-    "✓ automation",
-    "✓ systems architecture",
-    "",
-    "Workshop ready.",
-    "Type 'help' to explore."
+
+  var BIOS_DURATION_MS = 2000;
+  var KERNEL_LINE_DELAY_MS = 120;
+  var KERNEL_TYPE_DELAY_MS = 2;
+  var ASCII_HOLD_MS = 1150;
+  var BOOT_FADE_MS = 260;
+
+  var KERNEL_LINES = [
+    "[    0.0001 ] Booting Workshop OS",
+    "[    0.1042 ] Loading kernel modules",
+    "[    0.2031 ] Initializing infrastructure subsystem",
+    "[    0.3321 ] Initializing automation subsystem",
+    "[    0.4028 ] Initializing systems architecture layer",
+    "[    0.5520 ] Mounting filesystem /home/chad",
+    "[    0.7211 ] Starting user services",
+    "[    0.9000 ] Launching graphical environment"
   ];
+
+  var ASCII_ART = [
+    "██████╗██╗  ██╗ █████╗ ██████╗",
+    "██╔════╝██║  ██║██╔══██╗██╔══██╗",
+    "██║     ███████║███████║██║  ██║",
+    "██║     ██╔══██║██╔══██║██║  ██║",
+    "╚██████╗██║  ██║██║  ██║██████╔╝",
+    "╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝"
+  ].join("\n");
 
   var state = {
     history: [],
@@ -40,6 +78,12 @@
     setTheme: setTheme,
     getTheme: getTheme
   };
+
+  function sleep(ms) {
+    return new Promise(function (resolve) {
+      window.setTimeout(resolve, ms);
+    });
+  }
 
   function getPromptText() {
     if (!state.promptTimestampEnabled) {
@@ -132,6 +176,10 @@
 
   function scrollToBottom() {
     output.scrollTop = output.scrollHeight;
+  }
+
+  function scrollKernelToBottom() {
+    kernelLog.scrollTop = kernelLog.scrollHeight;
   }
 
   function appendLine(text, className) {
@@ -387,17 +435,59 @@
     }
   }
 
-  function printBootSequence() {
-    for (var i = 0; i < BOOT_LINES.length; i += 1) {
-      print(BOOT_LINES[i]);
+  function setActiveBootScreen(nextScreen) {
+    var screens = [biosScreen, kernelScreen, asciiScreen];
+
+    for (var i = 0; i < screens.length; i += 1) {
+      var active = screens[i] === nextScreen;
+      screens[i].classList.toggle("active", active);
+      screens[i].setAttribute("aria-hidden", active ? "false" : "true");
     }
   }
 
-  function init() {
+  async function typeKernelLine(lineText) {
+    var line = document.createElement("div");
+    line.className = "kernel-line";
+    kernelLog.appendChild(line);
+
+    for (var i = 0; i < lineText.length; i += 1) {
+      line.textContent += lineText.charAt(i);
+      scrollKernelToBottom();
+      await sleep(KERNEL_TYPE_DELAY_MS);
+    }
+
+    await sleep(KERNEL_LINE_DELAY_MS);
+  }
+
+  async function runKernelBootLogs() {
+    kernelLog.innerHTML = "";
+
+    for (var i = 0; i < KERNEL_LINES.length; i += 1) {
+      await typeKernelLine(KERNEL_LINES[i]);
+    }
+  }
+
+  function showAsciiBanner() {
+    asciiBanner.textContent = ASCII_ART;
+  }
+
+  function activateDesktop() {
+    desktop.classList.add("active");
+    desktop.setAttribute("aria-hidden", "false");
+
+    terminalWindow.classList.remove("launched");
+    window.requestAnimationFrame(function () {
+      terminalWindow.classList.add("launched");
+    });
+  }
+
+  function initializeTerminalSession() {
     restoreTheme();
     restoreHistory();
     renderPrompt();
-    printBootSequence();
+
+    print("Workshop ready.");
+    print("Type 'help' to explore.");
 
     form.addEventListener("submit", onSubmit);
     input.addEventListener("keydown", onKeyDown);
@@ -410,5 +500,24 @@
     scrollToBottom();
   }
 
-  init();
+  async function runBootExperience() {
+    setActiveBootScreen(biosScreen);
+    await sleep(BIOS_DURATION_MS);
+
+    setActiveBootScreen(kernelScreen);
+    await runKernelBootLogs();
+
+    setActiveBootScreen(asciiScreen);
+    showAsciiBanner();
+    await sleep(ASCII_HOLD_MS);
+
+    activateDesktop();
+    initializeTerminalSession();
+
+    bootSequence.classList.add("hidden");
+    await sleep(BOOT_FADE_MS);
+    bootSequence.setAttribute("aria-hidden", "true");
+  }
+
+  runBootExperience();
 })();

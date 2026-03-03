@@ -3,27 +3,63 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Interactive terminal portfolio for Chad McCormack.">
-  <title>Chad McCormack | Terminal Portfolio</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <meta name="description" content="Bootable terminal portfolio for Chad McCormack.">
+  <title>Chad McCormack | Workshop OS</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-theme="dark">
-  <main id="terminal" aria-label="Terminal portfolio interface">
-    <div id="output" role="log" aria-live="polite" aria-atomic="false"></div>
+  <section id="boot-sequence" aria-live="polite">
+    <div id="bios-screen" class="boot-screen active">
+      <pre class="boot-copy">Workshop BIOS v1.0
+Initializing hardware...
 
-    <form id="command-form" autocomplete="off">
-      <label class="sr-only" for="command-input">Terminal command input</label>
-      <div class="prompt-row">
-        <span class="prompt" aria-hidden="true">chad@workshop:~$</span>
-        <div class="input-wrap">
-          <input id="command-input" type="text" inputmode="text" autocapitalize="off" autocomplete="off" spellcheck="false">
-          <span class="cursor" aria-hidden="true"></span>
+Memory test.............OK
+CPU detected............OK
+Storage mounted.........OK
+
+Boot device found: /dev/workshop
+
+Press DEL to enter setup</pre>
+    </div>
+
+    <div id="kernel-screen" class="boot-screen" aria-hidden="true">
+      <div id="kernel-log" role="log" aria-live="polite" aria-atomic="false"></div>
+    </div>
+
+    <div id="ascii-screen" class="boot-screen" aria-hidden="true">
+      <pre id="ascii-banner"></pre>
+      <p class="ascii-title">CHAD MCCORMACK OS</p>
+      <p class="ascii-subtitle">Systems Architect | Automation Builder | Infrastructure Explorer</p>
+      <p class="ascii-ready">System ready.</p>
+    </div>
+  </section>
+
+  <main id="desktop" aria-hidden="true">
+    <section id="terminal-window" aria-label="Terminal window">
+      <header id="window-titlebar">
+        <div class="window-controls" aria-hidden="true">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
         </div>
+        <p class="window-title">Terminal — chad@workshop</p>
+      </header>
+
+      <div id="terminal" aria-label="Terminal portfolio interface">
+        <div id="output" role="log" aria-live="polite" aria-atomic="false"></div>
+
+        <form id="command-form" autocomplete="off">
+          <label class="sr-only" for="command-input">Terminal command input</label>
+          <div class="prompt-row">
+            <span class="prompt" aria-hidden="true">chad@workshop:~$</span>
+            <div class="input-wrap">
+              <input id="command-input" type="text" inputmode="text" autocapitalize="off" autocomplete="off" spellcheck="false">
+              <span class="cursor" aria-hidden="true"></span>
+            </div>
+          </div>
+        </form>
       </div>
-    </form>
+    </section>
   </main>
 
   <script src="js/commands.js"></script>

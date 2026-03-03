@@ -1,49 +1,68 @@
 :root {
-  --bg: #000000;
-  --panel-bg: #000000;
-  --fg: #00ff9c;
-  --prompt: #00ff9c;
-  --muted: #64dca9;
-  --border: rgba(0, 255, 156, 0.35);
-  --focus: #c0ffd8;
-  --glow: 0 0 20px rgba(0, 255, 156, 0.35);
-  --link: #8dfed1;
+  --desktop-grad-1: #2a0a47;
+  --desktop-grad-2: #151c52;
+  --desktop-grad-3: #090b1f;
+
+  --terminal-bg: #030308;
+  --terminal-fg: #00ff9c;
+  --terminal-muted: #64dca9;
+  --terminal-prompt: #00ff9c;
+  --terminal-border: rgba(0, 255, 156, 0.25);
+  --terminal-focus: #c0ffd8;
+  --terminal-link: #8dfed1;
+  --terminal-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
+  --terminal-glow: 0 0 22px rgba(0, 255, 156, 0.2);
+
+  --kernel-fg: #00ff9c;
+  --boot-fg: #d8ffe9;
 }
 
 body[data-theme="dark"] {
-  --bg: #000000;
-  --panel-bg: #000000;
-  --fg: #00ff9c;
-  --prompt: #00ff9c;
-  --muted: #64dca9;
-  --border: rgba(0, 255, 156, 0.35);
-  --focus: #c0ffd8;
-  --glow: 0 0 20px rgba(0, 255, 156, 0.35);
-  --link: #8dfed1;
+  --desktop-grad-1: #2a0a47;
+  --desktop-grad-2: #151c52;
+  --desktop-grad-3: #090b1f;
+
+  --terminal-bg: #030308;
+  --terminal-fg: #00ff9c;
+  --terminal-muted: #64dca9;
+  --terminal-prompt: #00ff9c;
+  --terminal-border: rgba(0, 255, 156, 0.25);
+  --terminal-focus: #c0ffd8;
+  --terminal-link: #8dfed1;
+  --terminal-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
+  --terminal-glow: 0 0 22px rgba(0, 255, 156, 0.2);
 }
 
 body[data-theme="light"] {
-  --bg: #f4fff8;
-  --panel-bg: #fafffd;
-  --fg: #0e3b2a;
-  --prompt: #145a3f;
-  --muted: #2f6f57;
-  --border: rgba(20, 90, 63, 0.25);
-  --focus: #145a3f;
-  --glow: 0 0 16px rgba(20, 90, 63, 0.18);
-  --link: #145a3f;
+  --desktop-grad-1: #6a4a8b;
+  --desktop-grad-2: #354f8f;
+  --desktop-grad-3: #223048;
+
+  --terminal-bg: #f8fdfb;
+  --terminal-fg: #1a4433;
+  --terminal-muted: #3c6a57;
+  --terminal-prompt: #225842;
+  --terminal-border: rgba(34, 88, 66, 0.28);
+  --terminal-focus: #225842;
+  --terminal-link: #225842;
+  --terminal-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
+  --terminal-glow: 0 0 16px rgba(34, 88, 66, 0.16);
 }
 
 body[data-theme="matrix"] {
-  --bg: #010f01;
-  --panel-bg: #011601;
-  --fg: #39ff14;
-  --prompt: #7dff60;
-  --muted: #84d175;
-  --border: rgba(57, 255, 20, 0.35);
-  --focus: #a9ff95;
-  --glow: 0 0 24px rgba(57, 255, 20, 0.45);
-  --link: #adff9b;
+  --desktop-grad-1: #061605;
+  --desktop-grad-2: #071f0a;
+  --desktop-grad-3: #020805;
+
+  --terminal-bg: #010c01;
+  --terminal-fg: #39ff14;
+  --terminal-muted: #9ce68a;
+  --terminal-prompt: #7dff60;
+  --terminal-border: rgba(57, 255, 20, 0.28);
+  --terminal-focus: #a9ff95;
+  --terminal-link: #adff9b;
+  --terminal-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+  --terminal-glow: 0 0 24px rgba(57, 255, 20, 0.28);
 }
 
 * {
@@ -57,37 +76,252 @@ body {
 }
 
 body {
-  background: var(--bg);
-  color: var(--fg);
-  font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  overflow: hidden;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
   font-size: 16px;
   line-height: 1.45;
+  color: var(--terminal-fg);
+  background: #000;
+}
+
+#boot-sequence {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: #000;
+  opacity: 1;
+  transition: opacity 260ms ease;
+}
+
+#boot-sequence.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.boot-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 180ms ease;
+}
+
+.boot-screen.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.boot-copy {
+  margin: 0;
+  color: var(--boot-fg);
+  font-size: clamp(0.84rem, 1.8vw, 1.05rem);
+  white-space: pre-wrap;
+  text-align: center;
+  text-shadow: 0 0 8px rgba(120, 255, 182, 0.18);
+}
+
+#kernel-screen {
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+#kernel-log {
+  width: min(980px, 100%);
+  max-height: 100%;
+  overflow-y: auto;
+  padding: 1.5rem;
+  color: var(--kernel-fg);
+  font-size: clamp(0.82rem, 1.8vw, 0.98rem);
+  text-shadow: 0 0 7px rgba(57, 255, 20, 0.2);
+}
+
+.kernel-line {
+  margin: 0 0 0.33rem;
+  white-space: pre-wrap;
+}
+
+#ascii-screen {
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+#ascii-banner {
+  margin: 0;
+  color: var(--kernel-fg);
+  font-size: clamp(0.45rem, 1.45vw, 1rem);
+  line-height: 1.2;
+  text-align: center;
+  white-space: pre;
+  text-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+}
+
+.ascii-title,
+.ascii-subtitle,
+.ascii-ready {
+  margin: 0;
+  text-align: center;
+}
+
+.ascii-title {
+  font-size: clamp(0.9rem, 2.2vw, 1.2rem);
+  font-weight: 700;
+  color: #f5fff9;
+}
+
+.ascii-subtitle {
+  font-size: clamp(0.78rem, 1.9vw, 0.95rem);
+  color: #adff9b;
+}
+
+.ascii-ready {
+  margin-top: 0.25rem;
+  color: #f5fff9;
+}
+
+#desktop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  opacity: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 15% 12%, rgba(255, 76, 184, 0.2), transparent 40%),
+    linear-gradient(135deg, var(--desktop-grad-1) 0%, var(--desktop-grad-2) 45%, var(--desktop-grad-3) 100%);
+  transition: opacity 340ms ease;
+}
+
+#desktop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#desktop::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, 0.46) 100%);
+}
+
+#desktop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.08;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.7) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.5) 0 1px, transparent 1px 4px);
+}
+
+#terminal-window {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(980px, 100%);
+  height: min(78vh, 720px);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(6, 6, 10, 0.84);
+  box-shadow: var(--terminal-shadow), 0 0 60px rgba(195, 0, 255, 0.16);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transform: scale(0.92);
+}
+
+#terminal-window::after {
+  content: "";
+  position: absolute;
+  inset: 14% 10% auto;
+  height: 40%;
+  z-index: -1;
+  pointer-events: none;
+  filter: blur(38px);
+  background: radial-gradient(circle at center, rgba(125, 255, 96, 0.18), transparent 70%);
+}
+
+#terminal-window.launched {
+  animation: terminal-launch 350ms cubic-bezier(0.2, 0.86, 0.25, 1) forwards;
+}
+
+#window-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.window-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 58px;
+}
+
+.dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+.dot.red {
+  background: #ff5f56;
+}
+
+.dot.yellow {
+  background: #ffbd2e;
+}
+
+.dot.green {
+  background: #27c93f;
+}
+
+.window-title {
+  margin: 0;
+  color: rgba(247, 247, 255, 0.92);
+  font-size: 0.89rem;
 }
 
 #terminal {
   position: relative;
   isolation: isolate;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  min-height: 100vh;
-  padding: 1.25rem;
-  background: radial-gradient(circle at top right, rgba(0, 255, 156, 0.09), transparent 45%), var(--panel-bg);
-  box-shadow: inset 0 0 0 1px var(--border), var(--glow);
+  gap: 0.9rem;
+  flex: 1;
+  min-height: 0;
+  padding: 1.1rem;
+  background: var(--terminal-bg);
+  border: 1px solid var(--terminal-border);
+  border-radius: 0 0 14px 14px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03), var(--terminal-glow);
 }
 
 body[data-theme="matrix"] #terminal::before {
   content: "";
   position: absolute;
-  inset: -140%;
+  inset: -120%;
   z-index: -1;
   pointer-events: none;
   background:
     repeating-linear-gradient(
       180deg,
-      rgba(57, 255, 20, 0.08) 0,
-      rgba(57, 255, 20, 0.08) 2px,
+      rgba(57, 255, 20, 0.07) 0,
+      rgba(57, 255, 20, 0.07) 2px,
       rgba(0, 0, 0, 0) 2px,
       rgba(0, 0, 0, 0) 8px
     );
@@ -95,15 +329,16 @@ body[data-theme="matrix"] #terminal::before {
 }
 
 #terminal:focus-within {
-  box-shadow: inset 0 0 0 1px var(--focus), 0 0 24px rgba(0, 255, 156, 0.26);
+  box-shadow: inset 0 0 0 1px var(--terminal-focus), 0 0 24px rgba(0, 255, 156, 0.24);
 }
 
 #output {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding-right: 0.25rem;
   scrollbar-width: thin;
-  scrollbar-color: var(--muted) var(--panel-bg);
+  scrollbar-color: var(--terminal-muted) transparent;
 }
 
 #output::-webkit-scrollbar {
@@ -111,26 +346,26 @@ body[data-theme="matrix"] #terminal::before {
 }
 
 #output::-webkit-scrollbar-track {
-  background: var(--panel-bg);
+  background: transparent;
 }
 
 #output::-webkit-scrollbar-thumb {
-  background: var(--muted);
+  background: var(--terminal-muted);
 }
 
 .output-line {
-  margin: 0 0 0.55rem;
+  margin: 0 0 0.54rem;
   white-space: pre-wrap;
   text-shadow: 0 0 6px rgba(0, 255, 156, 0.2);
   animation: line-in 120ms ease-out both;
 }
 
 .output-line.command-echo {
-  color: var(--muted);
+  color: var(--terminal-muted);
 }
 
 .output-line a {
-  color: var(--link);
+  color: var(--terminal-link);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -151,7 +386,7 @@ body[data-theme="matrix"] #terminal::before {
 }
 
 .prompt {
-  color: var(--prompt);
+  color: var(--terminal-prompt);
   flex: 0 0 auto;
   text-shadow: 0 0 8px rgba(0, 255, 156, 0.35);
 }
@@ -170,9 +405,9 @@ body[data-theme="matrix"] #terminal::before {
   margin: 0;
   padding: 0;
   background: transparent;
-  color: var(--fg);
+  color: var(--terminal-fg);
   font: inherit;
-  caret-color: var(--fg);
+  caret-color: var(--terminal-fg);
 }
 
 #command-input:focus {
@@ -180,7 +415,7 @@ body[data-theme="matrix"] #terminal::before {
 }
 
 #command-input:focus-visible {
-  outline: 2px solid var(--focus);
+  outline: 2px solid var(--terminal-focus);
   outline-offset: 2px;
 }
 
@@ -188,8 +423,8 @@ body[data-theme="matrix"] #terminal::before {
   width: 0.7ch;
   height: 1.1em;
   margin-left: 0.15rem;
-  background: var(--fg);
-  box-shadow: 0 0 8px var(--fg);
+  background: var(--terminal-fg);
+  box-shadow: 0 0 8px var(--terminal-fg);
   animation: blink 1s steps(2, start) infinite;
   flex: 0 0 auto;
 }
@@ -203,6 +438,18 @@ body[data-theme="matrix"] #terminal::before {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+@keyframes terminal-launch {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes blink {
@@ -239,13 +486,31 @@ body[data-theme="matrix"] #terminal::before {
   }
 }
 
+@media (max-width: 880px) {
+  #desktop {
+    padding: 1rem;
+  }
+
+  #terminal-window {
+    height: min(86vh, 760px);
+  }
+}
+
 @media (max-width: 640px) {
   body {
     font-size: 15px;
   }
 
+  #window-titlebar {
+    padding: 0.62rem 0.78rem;
+  }
+
+  .window-title {
+    font-size: 0.8rem;
+  }
+
   #terminal {
-    padding: 0.9rem;
+    padding: 0.86rem;
   }
 
   .prompt-row {
