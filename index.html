@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive terminal portfolio for Chad McCormack.">
+  <title>Chad McCormack | Terminal Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-theme="dark">
+  <main id="terminal" aria-label="Terminal portfolio interface">
+    <div id="output" role="log" aria-live="polite" aria-atomic="false"></div>
+
+    <form id="command-form" autocomplete="off">
+      <label class="sr-only" for="command-input">Terminal command input</label>
+      <div class="prompt-row">
+        <span class="prompt" aria-hidden="true">chad@workshop:~$</span>
+        <div class="input-wrap">
+          <input id="command-input" type="text" inputmode="text" autocapitalize="off" autocomplete="off" spellcheck="false">
+          <span class="cursor" aria-hidden="true"></span>
+        </div>
+      </div>
+    </form>
+  </main>
+
+  <script src="js/commands.js"></script>
+  <script src="js/terminal.js"></script>
+</body>
+</html>
