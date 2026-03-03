@@ -38,21 +38,27 @@
   var THEMES = ["dark", "light", "matrix"];
   var BASE_PROMPT = "chad@workshop:~$";
 
-  var BIOS_DURATION_MS = 2000;
-  var KERNEL_LINE_DELAY_MS = 120;
-  var KERNEL_TYPE_DELAY_MS = 2;
-  var ASCII_HOLD_MS = 1150;
-  var BOOT_FADE_MS = 260;
+  var BIOS_DURATION_MS = 3500;
+  var KERNEL_LINE_DELAY_MS = 180;
+  var KERNEL_POST_DELAY_MS = 1200;
+  var ASCII_HOLD_MS = 1500;
+  var DESKTOP_TRANSITION_MS = 500;
 
   var KERNEL_LINES = [
-    "[    0.0001 ] Booting Workshop OS",
-    "[    0.1042 ] Loading kernel modules",
-    "[    0.2031 ] Initializing infrastructure subsystem",
-    "[    0.3321 ] Initializing automation subsystem",
-    "[    0.4028 ] Initializing systems architecture layer",
-    "[    0.5520 ] Mounting filesystem /home/chad",
-    "[    0.7211 ] Starting user services",
-    "[    0.9000 ] Launching graphical environment"
+    "[ 0.0001 ] Booting Workshop OS",
+    "[ 0.1021 ] Initializing CPU scheduler",
+    "[ 0.2201 ] Loading kernel modules",
+    "[ 0.3310 ] Detecting system devices",
+    "[ 0.4411 ] Starting networking services",
+    "[ 0.5520 ] Starting container runtime",
+    "[ 0.6621 ] Starting automation subsystem",
+    "[ 0.7812 ] Starting infrastructure subsystem",
+    "[ 0.8923 ] Mounting /home filesystem",
+    "[ 1.0034 ] Launching graphical environment",
+    "[ OK ] Started Network Manager",
+    "[ OK ] Started Container Services",
+    "[ OK ] Started Automation Runtime",
+    "[ OK ] Started Workshop Services"
   ];
 
   var ASCII_ART = [
@@ -445,16 +451,12 @@
     }
   }
 
-  async function typeKernelLine(lineText) {
+  async function printKernelLine(lineText) {
     var line = document.createElement("div");
     line.className = "kernel-line";
+    line.textContent = lineText;
     kernelLog.appendChild(line);
-
-    for (var i = 0; i < lineText.length; i += 1) {
-      line.textContent += lineText.charAt(i);
-      scrollKernelToBottom();
-      await sleep(KERNEL_TYPE_DELAY_MS);
-    }
+    scrollKernelToBottom();
 
     await sleep(KERNEL_LINE_DELAY_MS);
   }
@@ -463,7 +465,7 @@
     kernelLog.innerHTML = "";
 
     for (var i = 0; i < KERNEL_LINES.length; i += 1) {
-      await typeKernelLine(KERNEL_LINES[i]);
+      await printKernelLine(KERNEL_LINES[i]);
     }
   }
 
@@ -506,6 +508,7 @@
 
     setActiveBootScreen(kernelScreen);
     await runKernelBootLogs();
+    await sleep(KERNEL_POST_DELAY_MS);
 
     setActiveBootScreen(asciiScreen);
     showAsciiBanner();
@@ -514,8 +517,9 @@
     activateDesktop();
     initializeTerminalSession();
 
+    bootSequence.style.transitionDuration = DESKTOP_TRANSITION_MS + "ms";
     bootSequence.classList.add("hidden");
-    await sleep(BOOT_FADE_MS);
+    await sleep(DESKTOP_TRANSITION_MS);
     bootSequence.setAttribute("aria-hidden", "true");
   }
 
