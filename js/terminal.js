@@ -8,8 +8,8 @@
   var asciiBanner = document.getElementById("ascii-banner");
 
   var desktop = document.getElementById("desktop");
+  var desktopWindows = document.getElementById("desktop-windows");
   var terminalLauncher = document.getElementById("terminal-launcher");
-  var terminalCloseButton = document.getElementById("terminal-close");
   var desktopPopup = document.getElementById("desktop-popup");
   var systemMonitorStats = document.getElementById("system-monitor-stats");
   var launcherButtons = document.querySelectorAll("#desktop-launcher .launcher-button");
@@ -29,8 +29,8 @@
     !kernelLog ||
     !asciiBanner ||
     !desktop ||
+    !desktopWindows ||
     !terminalLauncher ||
-    !terminalCloseButton ||
     !desktopPopup ||
     !systemMonitorStats ||
     !launcherButtons.length ||
@@ -95,14 +95,16 @@
     historyIndex: 0,
     theme: "dark",
     promptTimestampEnabled: false,
-    terminalInitialized: false
+    terminalInitialized: false,
+    windowZ: 40
   };
   var biosAnimationState = {
     lines: []
   };
   var systemMonitorInterval = null;
-  var terminalCloseTimer = null;
+  var windowCloseTimers = {};
   var desktopPopupTimer = null;
+  var activeDrag = null;
 
   var ctx = {
     print: print,
@@ -572,19 +574,149 @@
     desktop.setAttribute("aria-hidden", "false");
   }
 
-  function openTerminalWindow() {
-    if (terminalCloseTimer) {
-      window.clearTimeout(terminalCloseTimer);
-      terminalCloseTimer = null;
+  function getWindowId(windowElement) {
+    if (windowElement.id) {
+      return windowElement.id;
     }
 
-    terminalWindow.classList.remove("closing");
-    terminalWindow.classList.add("open");
-    terminalWindow.setAttribute("aria-hidden", "false");
-    terminalWindow.classList.remove("launched");
-    // Trigger a reflow so the launch animation can replay reliably.
-    void terminalWindow.offsetWidth;
-    terminalWindow.classList.add("launched");
+    if (windowElement.getAttribute("data-app")) {
+      return windowElement.getAttribute("data-app");
+    }
+
+    return "window";
+  }
+
+  function clearWindowCloseTimer(windowElement) {
+    var windowId = getWindowId(windowElement);
+
+    if (windowCloseTimers[windowId]) {
+      window.clearTimeout(windowCloseTimers[windowId]);
+      delete windowCloseTimers[windowId];
+    }
+  }
+
+  function setWindowFocused(windowElement) {
+    var windows = desktopWindows.querySelectorAll(".chados-window");
+
+    for (var i = 0; i < windows.length; i += 1) {
+      windows[i].classList.toggle(
+        "focused",
+        windows[i] === windowElement && windows[i].classList.contains("open")
+      );
+    }
+  }
+
+  function bringWindowToFront(windowElement) {
+    if (!windowElement) {
+      return;
+    }
+
+    state.windowZ += 1;
+    windowElement.style.zIndex = String(state.windowZ);
+    setWindowFocused(windowElement);
+  }
+
+  function getWindowSize(windowElement) {
+    var rect = windowElement.getBoundingClientRect();
+    var computed = window.getComputedStyle(windowElement);
+    var width = rect.width || parseFloat(computed.width) || 0;
+    var height = rect.height || parseFloat(computed.height) || 0;
+
+    return {
+      width: width,
+      height: height
+    };
+  }
+
+  function clampWindowPosition(windowElement, proposedLeft, proposedTop) {
+    var desktopRect = desktop.getBoundingClientRect();
+    var windowSize = getWindowSize(windowElement);
+    var minLeft = 8;
+    var minTop = 8;
+    var maxLeft = Math.max(minLeft, desktopRect.width - windowSize.width - 8);
+    var maxTop = Math.max(minTop, desktopRect.height - 54);
+
+    return {
+      left: Math.min(maxLeft, Math.max(minLeft, proposedLeft)),
+      top: Math.min(maxTop, Math.max(minTop, proposedTop))
+    };
+  }
+
+  function centerWindow(windowElement, force) {
+    if (!force && windowElement.dataset.positioned === "true") {
+      return;
+    }
+
+    var desktopRect = desktop.getBoundingClientRect();
+    var windowSize = getWindowSize(windowElement);
+    var centeredLeft = Math.round((desktopRect.width - windowSize.width) / 2);
+    var centeredTop = Math.round((desktopRect.height - windowSize.height) / 2);
+    var clamped = clampWindowPosition(windowElement, centeredLeft, centeredTop);
+
+    windowElement.style.left = clamped.left + "px";
+    windowElement.style.top = clamped.top + "px";
+    windowElement.dataset.positioned = "true";
+  }
+
+  function constrainWindowToDesktop(windowElement) {
+    if (!windowElement.classList.contains("open")) {
+      return;
+    }
+
+    var currentLeft = parseFloat(windowElement.style.left);
+    var currentTop = parseFloat(windowElement.style.top);
+
+    if (Number.isNaN(currentLeft) || Number.isNaN(currentTop)) {
+      centerWindow(windowElement, true);
+      return;
+    }
+
+    var clamped = clampWindowPosition(windowElement, currentLeft, currentTop);
+    windowElement.style.left = clamped.left + "px";
+    windowElement.style.top = clamped.top + "px";
+  }
+
+  function openChadWindow(windowElement) {
+    if (windowElement.classList.contains("open") && !windowElement.classList.contains("closing")) {
+      bringWindowToFront(windowElement);
+      return false;
+    }
+
+    clearWindowCloseTimer(windowElement);
+    centerWindow(windowElement, false);
+    windowElement.classList.remove("closing");
+    windowElement.classList.add("open");
+    windowElement.setAttribute("aria-hidden", "false");
+    bringWindowToFront(windowElement);
+    windowElement.classList.remove("launched");
+    // Trigger a reflow so the open animation can replay reliably.
+    void windowElement.offsetWidth;
+    windowElement.classList.add("launched");
+
+    return true;
+  }
+
+  function closeChadWindow(windowElement) {
+    if (!windowElement.classList.contains("open") || windowElement.classList.contains("closing")) {
+      return;
+    }
+
+    clearWindowCloseTimer(windowElement);
+    windowElement.classList.remove("launched");
+    windowElement.classList.remove("open");
+    windowElement.classList.remove("focused");
+    windowElement.classList.add("closing");
+
+    var windowId = getWindowId(windowElement);
+    windowCloseTimers[windowId] = window.setTimeout(function () {
+      windowElement.classList.remove("closing");
+      windowElement.setAttribute("aria-hidden", "true");
+      delete windowCloseTimers[windowId];
+    }, TERMINAL_CLOSE_MS);
+  }
+
+  function openTerminalWindow() {
+    openChadWindow(terminalWindow);
 
     if (!state.terminalInitialized) {
       initializeTerminalSession();
@@ -597,27 +729,96 @@
   }
 
   function closeTerminalWindow() {
-    if (!terminalWindow.classList.contains("open") || terminalWindow.classList.contains("closing")) {
+    closeChadWindow(terminalWindow);
+    terminalLauncher.focus();
+  }
+
+  function startWindowDrag(event) {
+    if (event.button !== 0 || event.target.closest(".window-controls")) {
       return;
     }
 
-    terminalWindow.classList.remove("launched");
-    terminalWindow.classList.remove("open");
-    terminalWindow.classList.add("closing");
+    var windowElement = event.currentTarget.closest(".chados-window");
 
-    terminalCloseTimer = window.setTimeout(function () {
-      terminalWindow.classList.remove("closing");
-      terminalWindow.setAttribute("aria-hidden", "true");
-      terminalCloseTimer = null;
-    }, TERMINAL_CLOSE_MS);
+    if (!windowElement || !windowElement.classList.contains("open")) {
+      return;
+    }
 
-    terminalLauncher.focus();
+    bringWindowToFront(windowElement);
+
+    var rect = windowElement.getBoundingClientRect();
+    var desktopRect = desktop.getBoundingClientRect();
+    activeDrag = {
+      pointerId: event.pointerId,
+      handle: event.currentTarget,
+      windowElement: windowElement,
+      startX: event.clientX,
+      startY: event.clientY,
+      originLeft: rect.left - desktopRect.left,
+      originTop: rect.top - desktopRect.top
+    };
+
+    windowElement.classList.add("dragging");
+
+    if (typeof event.currentTarget.setPointerCapture === "function") {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+
+    event.preventDefault();
+  }
+
+  function moveWindowDrag(event) {
+    if (!activeDrag || activeDrag.pointerId !== event.pointerId) {
+      return;
+    }
+
+    var deltaX = event.clientX - activeDrag.startX;
+    var deltaY = event.clientY - activeDrag.startY;
+    var nextLeft = activeDrag.originLeft + deltaX;
+    var nextTop = activeDrag.originTop + deltaY;
+    var clamped = clampWindowPosition(activeDrag.windowElement, nextLeft, nextTop);
+
+    activeDrag.windowElement.style.left = clamped.left + "px";
+    activeDrag.windowElement.style.top = clamped.top + "px";
+    activeDrag.windowElement.dataset.positioned = "true";
+  }
+
+  function endWindowDrag(event) {
+    if (!activeDrag || activeDrag.pointerId !== event.pointerId) {
+      return;
+    }
+
+    activeDrag.windowElement.classList.remove("dragging");
+
+    if (
+      activeDrag.handle &&
+      typeof activeDrag.handle.hasPointerCapture === "function" &&
+      activeDrag.handle.hasPointerCapture(event.pointerId)
+    ) {
+      activeDrag.handle.releasePointerCapture(event.pointerId);
+    }
+
+    activeDrag = null;
   }
 
   function setSelectedLauncherButton(nextButton) {
     for (var i = 0; i < launcherButtons.length; i += 1) {
       launcherButtons[i].classList.toggle("selected", launcherButtons[i] === nextButton);
     }
+  }
+
+  function handleWindowControl(action, windowElement) {
+    if (action === "close") {
+      if (windowElement === terminalWindow) {
+        closeTerminalWindow();
+        return;
+      }
+
+      closeChadWindow(windowElement);
+      return;
+    }
+
+    showDesktopPopup("Coming soon.");
   }
 
   function showDesktopPopup(message) {
@@ -636,6 +837,51 @@
     }, 1400);
   }
 
+  function bindWindowSystem() {
+    var titlebars = desktopWindows.querySelectorAll(".chados-window .window-titlebar");
+
+    for (var i = 0; i < titlebars.length; i += 1) {
+      titlebars[i].addEventListener("pointerdown", startWindowDrag);
+      titlebars[i].addEventListener("pointermove", moveWindowDrag);
+      titlebars[i].addEventListener("pointerup", endWindowDrag);
+      titlebars[i].addEventListener("pointercancel", endWindowDrag);
+    }
+
+    desktopWindows.addEventListener("pointerdown", function (event) {
+      var focusedWindow = event.target.closest(".chados-window");
+
+      if (focusedWindow && focusedWindow.classList.contains("open")) {
+        bringWindowToFront(focusedWindow);
+      }
+    });
+
+    desktopWindows.addEventListener("click", function (event) {
+      var controlButton = event.target.closest("[data-window-action]");
+
+      if (!controlButton) {
+        return;
+      }
+
+      var windowElement = controlButton.closest(".chados-window");
+
+      if (!windowElement) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      handleWindowControl(controlButton.getAttribute("data-window-action"), windowElement);
+    });
+
+    window.addEventListener("resize", function () {
+      var windows = desktopWindows.querySelectorAll(".chados-window.open");
+
+      for (var j = 0; j < windows.length; j += 1) {
+        constrainWindowToDesktop(windows[j]);
+      }
+    });
+  }
+
   function bindDesktopInteractions() {
     for (var i = 0; i < launcherButtons.length; i += 1) {
       (function (button) {
@@ -652,13 +898,13 @@
       })(launcherButtons[i]);
     }
 
-    terminalCloseButton.addEventListener("click", closeTerminalWindow);
-
     desktop.addEventListener("click", function (event) {
       if (event.target === desktop) {
         setSelectedLauncherButton(null);
       }
     });
+
+    bindWindowSystem();
   }
 
   function renderSystemMonitor() {
@@ -695,6 +941,7 @@
     input.addEventListener("keydown", onKeyDown);
 
     terminal.addEventListener("click", function () {
+      bringWindowToFront(terminalWindow);
       input.focus();
     });
 
