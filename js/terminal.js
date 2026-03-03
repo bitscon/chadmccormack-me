@@ -3,14 +3,17 @@
   var output = document.getElementById("output");
   var form = document.getElementById("command-form");
   var input = document.getElementById("command-input");
+  var promptLabel = document.querySelector(".prompt");
 
-  if (!terminal || !output || !form || !input) {
+  if (!terminal || !output || !form || !input || !promptLabel) {
     throw new Error("Missing required terminal elements.");
   }
 
   var THEME_KEY = "terminal-theme";
+  var HISTORY_KEY = "terminal-history";
+  var HISTORY_LIMIT = 200;
   var THEMES = ["dark", "light", "matrix"];
-  var PROMPT = "chad@workshop:~$";
+  var BASE_PROMPT = "chad@workshop:~$";
   var BOOT_LINES = [
     "Booting workshop environment...",
     "Loading system profile: Chad McCormack",
@@ -26,7 +29,8 @@
   var state = {
     history: [],
     historyIndex: 0,
-    theme: "dark"
+    theme: "dark",
+    promptTimestampEnabled: false
   };
 
   var ctx = {
@@ -36,6 +40,26 @@
     setTheme: setTheme,
     getTheme: getTheme
   };
+
+  function getPromptText() {
+    if (!state.promptTimestampEnabled) {
+      return BASE_PROMPT;
+    }
+
+    var now = new Date();
+    var stamp = now.toLocaleTimeString([], {
+      hour12: false,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    });
+
+    return "[" + stamp + "] " + BASE_PROMPT;
+  }
+
+  function renderPrompt() {
+    promptLabel.textContent = getPromptText();
+  }
 
   function getTheme() {
     return state.theme;
@@ -60,6 +84,50 @@
     }
 
     setTheme("dark");
+  }
+
+  function restoreHistory() {
+    var rawHistory = window.localStorage.getItem(HISTORY_KEY);
+
+    if (!rawHistory) {
+      return;
+    }
+
+    try {
+      var parsed = JSON.parse(rawHistory);
+
+      if (!Array.isArray(parsed)) {
+        return;
+      }
+
+      var restored = [];
+      for (var i = 0; i < parsed.length; i += 1) {
+        if (typeof parsed[i] === "string" && parsed[i].trim()) {
+          restored.push(parsed[i]);
+        }
+      }
+
+      if (restored.length > HISTORY_LIMIT) {
+        restored = restored.slice(restored.length - HISTORY_LIMIT);
+      }
+
+      state.history.splice(0, state.history.length);
+      for (var j = 0; j < restored.length; j += 1) {
+        state.history.push(restored[j]);
+      }
+
+      state.historyIndex = state.history.length;
+    } catch (_error) {
+      state.historyIndex = 0;
+    }
+  }
+
+  function persistHistory() {
+    try {
+      window.localStorage.setItem(HISTORY_KEY, JSON.stringify(state.history));
+    } catch (_error) {
+      // Ignore storage quota or blocked access errors.
+    }
   }
 
   function scrollToBottom() {
@@ -88,10 +156,11 @@
 
   function clearOutput() {
     output.innerHTML = "";
+    scrollToBottom();
   }
 
   function echoCommand(rawInput) {
-    appendLine(PROMPT + " " + rawInput, "command-echo");
+    appendLine(getPromptText() + " " + rawInput, "command-echo");
   }
 
   function tokenize(inputText) {
@@ -148,6 +217,14 @@
     }
   }
 
+  function resolveCommandAlias(commandName) {
+    if (commandName === "cls") {
+      return "clear";
+    }
+
+    return commandName;
+  }
+
   function runCommand(rawInput) {
     var parsed = parseInput(rawInput);
     var commands = window.TerminalCommands || {};
@@ -156,9 +233,7 @@
       return;
     }
 
-    if (parsed.command === "cls") {
-      parsed.command = "clear";
-    }
+    parsed.command = resolveCommandAlias(parsed.command);
 
     var command = commands[parsed.command];
 
@@ -176,6 +251,52 @@
     }
   }
 
+  function getCommandNames() {
+    var commands = window.TerminalCommands || {};
+    var names = Object.keys(commands);
+
+    if (names.indexOf("clear") !== -1 && names.indexOf("cls") === -1) {
+      names.push("cls");
+    }
+
+    names.sort();
+    return names;
+  }
+
+  function autoCompleteCommand() {
+    var value = input.value;
+
+    if (!value.trim()) {
+      return;
+    }
+
+    if (/\s/.test(value.trim())) {
+      return;
+    }
+
+    var token = value.trim().toLowerCase();
+    var names = getCommandNames();
+    var matches = [];
+
+    for (var i = 0; i < names.length; i += 1) {
+      if (names[i].indexOf(token) === 0) {
+        matches.push(names[i]);
+      }
+    }
+
+    if (!matches.length) {
+      return;
+    }
+
+    if (matches.length === 1) {
+      input.value = matches[0] + " ";
+      input.setSelectionRange(input.value.length, input.value.length);
+      return;
+    }
+
+    print("Suggestions: " + matches.join("  "));
+  }
+
   function applyHistoryInput() {
     if (state.historyIndex < 0) {
       state.historyIndex = 0;
@@ -190,6 +311,21 @@
     input.setSelectionRange(input.value.length, input.value.length);
   }
 
+  function pushHistory(command) {
+    if (!command || !command.trim()) {
+      return;
+    }
+
+    state.history.push(command);
+
+    if (state.history.length > HISTORY_LIMIT) {
+      state.history.splice(0, state.history.length - HISTORY_LIMIT);
+    }
+
+    state.historyIndex = state.history.length;
+    persistHistory();
+  }
+
   function onSubmit(event) {
     event.preventDefault();
 
@@ -202,17 +338,29 @@
     }
 
     echoCommand(rawInput);
-
-    state.history.push(rawInput);
-    state.historyIndex = state.history.length;
-
+    pushHistory(rawInput);
     runCommand(rawInput);
 
     input.value = "";
     input.focus();
+    scrollToBottom();
   }
 
   function onKeyDown(event) {
+    if (event.key === "Tab") {
+      event.preventDefault();
+      autoCompleteCommand();
+      input.focus();
+      return;
+    }
+
+    if (event.ctrlKey && !event.shiftKey && !event.altKey && event.key.toLowerCase() === "l") {
+      event.preventDefault();
+      clearOutput();
+      input.focus();
+      return;
+    }
+
     if (!state.history.length) {
       return;
     }
@@ -247,6 +395,8 @@
 
   function init() {
     restoreTheme();
+    restoreHistory();
+    renderPrompt();
     printBootSequence();
 
     form.addEventListener("submit", onSubmit);
@@ -257,6 +407,7 @@
     });
 
     input.focus();
+    scrollToBottom();
   }
 
   init();
