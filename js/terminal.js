@@ -9,11 +9,10 @@
 
   var desktop = document.getElementById("desktop");
   var terminalLauncher = document.getElementById("terminal-launcher");
-  var desktopTerminalLauncher = document.getElementById("desktop-terminal");
   var terminalCloseButton = document.getElementById("terminal-close");
   var desktopPopup = document.getElementById("desktop-popup");
   var systemMonitorStats = document.getElementById("system-monitor-stats");
-  var desktopItems = document.querySelectorAll("#desktop-icons .desktop-item");
+  var launcherButtons = document.querySelectorAll("#desktop-launcher .launcher-button");
   var terminalWindow = document.getElementById("terminal-window");
   var terminal = document.getElementById("terminal");
   var output = document.getElementById("output");
@@ -31,11 +30,10 @@
     !asciiBanner ||
     !desktop ||
     !terminalLauncher ||
-    !desktopTerminalLauncher ||
     !terminalCloseButton ||
     !desktopPopup ||
     !systemMonitorStats ||
-    !desktopItems.length ||
+    !launcherButtons.length ||
     !terminalWindow ||
     !terminal ||
     !output ||
@@ -613,12 +611,12 @@
       terminalCloseTimer = null;
     }, TERMINAL_CLOSE_MS);
 
-    desktopTerminalLauncher.focus();
+    terminalLauncher.focus();
   }
 
-  function setSelectedDesktopItem(nextItem) {
-    for (var i = 0; i < desktopItems.length; i += 1) {
-      desktopItems[i].classList.toggle("selected", desktopItems[i] === nextItem);
+  function setSelectedLauncherButton(nextButton) {
+    for (var i = 0; i < launcherButtons.length; i += 1) {
+      launcherButtons[i].classList.toggle("selected", launcherButtons[i] === nextButton);
     }
   }
 
@@ -639,31 +637,26 @@
   }
 
   function bindDesktopInteractions() {
-    terminalLauncher.addEventListener("click", openTerminalWindow);
-    terminalCloseButton.addEventListener("click", closeTerminalWindow);
+    for (var i = 0; i < launcherButtons.length; i += 1) {
+      (function (button) {
+        button.addEventListener("click", function () {
+          setSelectedLauncherButton(button);
 
-    for (var i = 0; i < desktopItems.length; i += 1) {
-      (function (item) {
-        item.addEventListener("click", function () {
-          setSelectedDesktopItem(item);
-        });
-
-        item.addEventListener("dblclick", function () {
-          setSelectedDesktopItem(item);
-
-          if (item.id === "desktop-terminal") {
+          if (button.id === "terminal-launcher") {
             openTerminalWindow();
             return;
           }
 
           showDesktopPopup("Open with terminal?");
         });
-      })(desktopItems[i]);
+      })(launcherButtons[i]);
     }
+
+    terminalCloseButton.addEventListener("click", closeTerminalWindow);
 
     desktop.addEventListener("click", function (event) {
       if (event.target === desktop) {
-        setSelectedDesktopItem(null);
+        setSelectedLauncherButton(null);
       }
     });
   }

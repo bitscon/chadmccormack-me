@@ -37,45 +37,42 @@ Press DEL to enter setup</pre>
   <main id="desktop" aria-hidden="true">
     <p id="os-brand" aria-hidden="true">ChadOS 24.04 LTS</p>
 
-    <nav id="dock" aria-label="Applications dock">
-      <button id="terminal-launcher" class="dock-item" type="button" aria-label="Open Terminal" title="Terminal">
-        <span class="dock-icon" aria-hidden="true">&gt;_</span>
-      </button>
+    <nav id="desktop-launcher" aria-label="Desktop launcher panel">
+      <div class="launcher-entry">
+        <button id="terminal-launcher" class="launcher-button" type="button" aria-label="Open Terminal" title="Terminal">
+          <span class="launcher-icon" aria-hidden="true">&gt;_</span>
+        </button>
+        <span class="launcher-label">Terminal</span>
+      </div>
+
+      <div class="launcher-entry">
+        <button id="hire-chad-launcher" class="launcher-button" type="button" aria-label="Open Hire Chad" title="Hire Chad">
+          <span class="launcher-icon" aria-hidden="true">$</span>
+        </button>
+        <span class="launcher-label">Hire Chad</span>
+      </div>
+
+      <div class="launcher-entry">
+        <button id="systems-map-launcher" class="launcher-button" type="button" aria-label="Open Systems Map" title="Systems Map">
+          <span class="launcher-icon" aria-hidden="true">[ ]</span>
+        </button>
+        <span class="launcher-label">Systems Map</span>
+      </div>
+
+      <div class="launcher-entry">
+        <button id="automation-lab-launcher" class="launcher-button" type="button" aria-label="Open Automation Lab" title="Automation Lab">
+          <span class="launcher-icon" aria-hidden="true">&#9881;</span>
+        </button>
+        <span class="launcher-label">Automation Lab</span>
+      </div>
+
+      <div class="launcher-entry">
+        <button id="career-log-launcher" class="launcher-button" type="button" aria-label="Open Career Log" title="Career Log">
+          <span class="launcher-icon" aria-hidden="true">log</span>
+        </button>
+        <span class="launcher-label">Career Log</span>
+      </div>
     </nav>
-
-    <section id="desktop-icons" aria-label="Desktop files">
-      <button
-        id="desktop-terminal"
-        class="desktop-item is-launcher"
-        type="button"
-        aria-label="Open Terminal application"
-        data-item="terminal"
-        title="Launch terminal application"
-      >
-        <span class="desktop-glyph" aria-hidden="true">[_]</span>
-        <span class="desktop-filename">terminal.desktop</span>
-      </button>
-
-      <button class="desktop-item" type="button" data-item="hire-chad" title="Executable script">
-        <span class="desktop-glyph" aria-hidden="true">[sh]</span>
-        <span class="desktop-filename">hire-chad.sh</span>
-      </button>
-
-      <button class="desktop-item" type="button" data-item="career-log" title="Engineering career log">
-        <span class="desktop-glyph" aria-hidden="true">[log]</span>
-        <span class="desktop-filename">career.log</span>
-      </button>
-
-      <button class="desktop-item" type="button" data-item="systems-map" title="Systems architecture map">
-        <span class="desktop-glyph" aria-hidden="true">[txt]</span>
-        <span class="desktop-filename">systems-map.txt</span>
-      </button>
-
-      <button class="desktop-item is-folder" type="button" data-item="automation-lab" title="Infrastructure automation projects">
-        <span class="desktop-glyph" aria-hidden="true">[dir]</span>
-        <span class="desktop-filename">automation-lab/</span>
-      </button>
-    </section>
 
     <div id="desktop-popup" role="status" aria-live="polite" aria-hidden="true">Open with terminal?</div>
 
