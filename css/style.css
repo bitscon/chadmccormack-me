@@ -294,6 +294,114 @@ body {
   font-weight: 700;
 }
 
+#desktop-icons {
+  position: absolute;
+  top: 3rem;
+  left: 5.3rem;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(92px, 1fr));
+  gap: 1.1rem 1rem;
+  max-width: 240px;
+}
+
+.desktop-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.32rem;
+  min-height: 78px;
+  padding: 0.36rem 0.28rem;
+  border-radius: 10px;
+  color: rgba(236, 248, 255, 0.92);
+  text-align: center;
+  user-select: none;
+}
+
+.desktop-item.is-launcher {
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.desktop-item.is-launcher:hover {
+  background: rgba(235, 245, 255, 0.1);
+  border-color: rgba(240, 249, 255, 0.32);
+}
+
+.desktop-item.is-launcher:focus {
+  outline: none;
+}
+
+.desktop-item.is-launcher:focus-visible {
+  border-color: rgba(239, 251, 255, 0.88);
+  box-shadow: 0 0 0 2px rgba(5, 10, 35, 0.6);
+}
+
+.desktop-glyph {
+  width: 2.35rem;
+  height: 2.1rem;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(239, 247, 255, 0.4);
+  background: linear-gradient(180deg, rgba(109, 141, 255, 0.3), rgba(41, 53, 123, 0.25));
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.45);
+}
+
+.desktop-filename {
+  font-size: 0.71rem;
+  line-height: 1.15;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.55);
+}
+
+#pip-video {
+  position: absolute;
+  top: 0.95rem;
+  right: 1rem;
+  z-index: 3;
+  width: min(318px, 36vw);
+  padding: 0.44rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.17);
+  background: rgba(10, 12, 18, 0.52);
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.45);
+}
+
+@supports ((-webkit-backdrop-filter: blur(10px)) or (backdrop-filter: blur(10px))) {
+  #pip-video {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+}
+
+.pip-frame {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background:
+    radial-gradient(circle at 16% 20%, rgba(255, 195, 131, 0.24), transparent 36%),
+    linear-gradient(155deg, rgba(63, 97, 205, 0.45), rgba(38, 22, 82, 0.55));
+}
+
+.pip-title {
+  margin: 0.44rem 0 0.1rem;
+  color: rgba(247, 251, 255, 0.92);
+  font-size: 0.72rem;
+}
+
+.pip-subtitle {
+  margin: 0;
+  color: rgba(233, 240, 255, 0.74);
+  font-size: 0.68rem;
+}
+
 #terminal-window {
   position: relative;
   z-index: 1;
@@ -309,7 +417,7 @@ body {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: scale(0.92);
+  transform: scale(0.95);
 }
 
 #terminal-window::after {
@@ -324,7 +432,7 @@ body {
 }
 
 #terminal-window.launched {
-  animation: terminal-launch 350ms cubic-bezier(0.2, 0.86, 0.25, 1) forwards;
+  animation: terminal-launch 300ms cubic-bezier(0.2, 0.86, 0.25, 1) forwards;
 }
 
 #terminal-window.open {
@@ -351,6 +459,10 @@ body {
 }
 
 .dot {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  display: block;
   width: 11px;
   height: 11px;
   border-radius: 999px;
@@ -359,6 +471,19 @@ body {
 
 .dot.red {
   background: #ff5f56;
+  cursor: pointer;
+}
+
+.dot.red:hover {
+  filter: brightness(1.08);
+}
+
+.dot.red:focus {
+  outline: none;
+}
+
+.dot.red:focus-visible {
+  box-shadow: 0 0 0 2px rgba(239, 248, 255, 0.82), inset 0 0 0 1px rgba(0, 0, 0, 0.26);
 }
 
 .dot.yellow {
@@ -522,7 +647,7 @@ body[data-theme="matrix"] #terminal::before {
 @keyframes terminal-launch {
   from {
     opacity: 0;
-    transform: scale(0.92);
+    transform: scale(0.95);
   }
 
   to {
@@ -570,11 +695,19 @@ body[data-theme="matrix"] #terminal::before {
     padding: 1rem;
   }
 
-  #dock {
-    left: 0.55rem;
+  #desktop-icons {
+    left: 4.65rem;
+    top: 2.9rem;
+    max-width: 220px;
+    gap: 0.9rem 0.8rem;
+  }
+
+  #pip-video {
+    width: min(286px, 42vw);
   }
 
   #terminal-window {
+    width: min(94vw, 980px);
     height: min(86vh, 760px);
   }
 }
@@ -591,7 +724,12 @@ body[data-theme="matrix"] #terminal::before {
   }
 
   #dock {
-    left: 0.55rem;
+    left: 50%;
+    right: auto;
+    top: auto;
+    bottom: 0.68rem;
+    transform: translateX(-50%);
+    flex-direction: row;
     padding: 0.5rem 0.4rem;
   }
 
@@ -600,12 +738,56 @@ body[data-theme="matrix"] #terminal::before {
     height: 2.3rem;
   }
 
+  #desktop-icons {
+    left: 0.85rem;
+    top: 2.7rem;
+    grid-template-columns: repeat(2, minmax(88px, 1fr));
+    gap: 0.72rem 0.68rem;
+    max-width: 210px;
+  }
+
+  .desktop-item {
+    min-height: 72px;
+    padding: 0.28rem 0.2rem;
+  }
+
+  .desktop-glyph {
+    width: 2.05rem;
+    height: 1.85rem;
+    font-size: 0.64rem;
+  }
+
+  .desktop-filename {
+    font-size: 0.64rem;
+  }
+
+  #pip-video {
+    top: 0.65rem;
+    right: 0.62rem;
+    width: min(192px, 46vw);
+    padding: 0.34rem;
+  }
+
+  .pip-title {
+    font-size: 0.61rem;
+  }
+
+  .pip-subtitle {
+    font-size: 0.58rem;
+  }
+
   #window-titlebar {
     padding: 0.62rem 0.78rem;
   }
 
   .window-title {
     font-size: 0.8rem;
+  }
+
+  #terminal-window {
+    width: 96vw;
+    height: 82vh;
+    margin-bottom: 3rem;
   }
 
   #terminal {

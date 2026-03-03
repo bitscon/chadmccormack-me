@@ -9,6 +9,8 @@
 
   var desktop = document.getElementById("desktop");
   var terminalLauncher = document.getElementById("terminal-launcher");
+  var desktopTerminalLauncher = document.getElementById("desktop-terminal");
+  var terminalCloseButton = document.getElementById("terminal-close");
   var terminalWindow = document.getElementById("terminal-window");
   var terminal = document.getElementById("terminal");
   var output = document.getElementById("output");
@@ -26,6 +28,8 @@
     !asciiBanner ||
     !desktop ||
     !terminalLauncher ||
+    !desktopTerminalLauncher ||
+    !terminalCloseButton ||
     !terminalWindow ||
     !terminal ||
     !output ||
@@ -576,10 +580,25 @@
     scrollToBottom();
   }
 
+  function closeTerminalWindow() {
+    if (!terminalWindow.classList.contains("open")) {
+      return;
+    }
+
+    terminalWindow.classList.remove("open");
+    terminalWindow.classList.remove("launched");
+    terminalWindow.setAttribute("aria-hidden", "true");
+    terminalLauncher.focus();
+  }
+
   function bindDesktopInteractions() {
-    terminalLauncher.addEventListener("click", function () {
+    function launchTerminal() {
       openTerminalWindow();
-    });
+    }
+
+    terminalLauncher.addEventListener("click", launchTerminal);
+    desktopTerminalLauncher.addEventListener("click", launchTerminal);
+    terminalCloseButton.addEventListener("click", closeTerminalWindow);
   }
 
   function initializeTerminalSession() {
