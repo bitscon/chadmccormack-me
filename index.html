@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Bootable terminal portfolio for Chad McCormack.">
-  <title>Chad McCormack | Workshop OS</title>
+  <title>Chad McCormack | ChadOS</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-theme="dark">
@@ -35,7 +35,15 @@ Press DEL to enter setup</pre>
   </section>
 
   <main id="desktop" aria-hidden="true">
-    <section id="terminal-window" aria-label="Terminal window">
+    <p id="os-brand" aria-hidden="true">ChadOS 24.04 LTS</p>
+
+    <nav id="dock" aria-label="Applications dock">
+      <button id="terminal-launcher" class="dock-item" type="button" aria-label="Open Terminal" title="Terminal">
+        <span class="dock-icon" aria-hidden="true">&gt;_</span>
+      </button>
+    </nav>
+
+    <section id="terminal-window" aria-label="Terminal window" aria-hidden="true">
       <header id="window-titlebar">
         <div class="window-controls" aria-hidden="true">
           <span class="dot red"></span>

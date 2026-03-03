@@ -186,9 +186,8 @@ body {
   position: fixed;
   inset: 0;
   z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   padding: 2rem;
   opacity: 0;
   pointer-events: none;
@@ -216,10 +215,83 @@ body {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.08;
+  opacity: 0.12;
   background-image:
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.7) 0 1px, transparent 1px 3px),
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.5) 0 1px, transparent 1px 4px);
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 84px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.06) 0 1px, transparent 1px 84px),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.18) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.14) 0 1px, transparent 1px 4px);
+}
+
+#os-brand {
+  position: absolute;
+  top: 0.85rem;
+  left: 1rem;
+  z-index: 2;
+  margin: 0;
+  font-size: 0.74rem;
+  color: rgba(241, 247, 255, 0.66);
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.45);
+}
+
+#dock {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.65rem 0.5rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(10, 12, 20, 0.38);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.38);
+}
+
+@supports ((-webkit-backdrop-filter: blur(12px)) or (backdrop-filter: blur(12px))) {
+  #dock {
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+}
+
+.dock-item {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 12px;
+  width: 2.55rem;
+  height: 2.55rem;
+  display: grid;
+  place-items: center;
+  color: #f5fffe;
+  background: linear-gradient(180deg, rgba(78, 118, 255, 0.42), rgba(31, 48, 112, 0.45));
+  cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+}
+
+.dock-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 22px rgba(89, 188, 255, 0.36);
+  border-color: rgba(189, 239, 255, 0.75);
+}
+
+.dock-item:focus {
+  outline: none;
+}
+
+.dock-item:focus-visible {
+  outline: 2px solid rgba(228, 248, 255, 0.95);
+  outline-offset: 2px;
+}
+
+.dock-icon {
+  font-size: 1rem;
+  line-height: 1;
+  font-weight: 700;
 }
 
 #terminal-window {
@@ -235,6 +307,8 @@ body {
   box-shadow: var(--terminal-shadow), 0 0 60px rgba(195, 0, 255, 0.16);
   backdrop-filter: blur(6px);
   opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
   transform: scale(0.92);
 }
 
@@ -251,6 +325,11 @@ body {
 
 #terminal-window.launched {
   animation: terminal-launch 350ms cubic-bezier(0.2, 0.86, 0.25, 1) forwards;
+}
+
+#terminal-window.open {
+  visibility: visible;
+  pointer-events: auto;
 }
 
 #window-titlebar {
@@ -491,6 +570,10 @@ body[data-theme="matrix"] #terminal::before {
     padding: 1rem;
   }
 
+  #dock {
+    left: 0.55rem;
+  }
+
   #terminal-window {
     height: min(86vh, 760px);
   }
@@ -499,6 +582,22 @@ body[data-theme="matrix"] #terminal::before {
 @media (max-width: 640px) {
   body {
     font-size: 15px;
+  }
+
+  #os-brand {
+    left: 0.8rem;
+    top: 0.7rem;
+    font-size: 0.67rem;
+  }
+
+  #dock {
+    left: 0.55rem;
+    padding: 0.5rem 0.4rem;
+  }
+
+  .dock-item {
+    width: 2.3rem;
+    height: 2.3rem;
   }
 
   #window-titlebar {

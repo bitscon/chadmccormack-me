@@ -8,6 +8,7 @@
   var asciiBanner = document.getElementById("ascii-banner");
 
   var desktop = document.getElementById("desktop");
+  var terminalLauncher = document.getElementById("terminal-launcher");
   var terminalWindow = document.getElementById("terminal-window");
   var terminal = document.getElementById("terminal");
   var output = document.getElementById("output");
@@ -24,6 +25,7 @@
     !kernelLog ||
     !asciiBanner ||
     !desktop ||
+    !terminalLauncher ||
     !terminalWindow ||
     !terminal ||
     !output ||
@@ -83,7 +85,8 @@
     history: [],
     historyIndex: 0,
     theme: "dark",
-    promptTimestampEnabled: false
+    promptTimestampEnabled: false,
+    terminalInitialized: false
   };
   var biosAnimationState = {
     lines: []
@@ -551,15 +554,35 @@
   function activateDesktop() {
     desktop.classList.add("active");
     desktop.setAttribute("aria-hidden", "false");
+  }
 
-    terminalWindow.classList.remove("launched");
-    window.requestAnimationFrame(function () {
+  function openTerminalWindow() {
+    if (!terminalWindow.classList.contains("open")) {
+      terminalWindow.classList.add("open");
+      terminalWindow.setAttribute("aria-hidden", "false");
+      terminalWindow.classList.remove("launched");
+      // Trigger a reflow so the launch animation can replay reliably.
+      void terminalWindow.offsetWidth;
       terminalWindow.classList.add("launched");
+    }
+
+    if (!state.terminalInitialized) {
+      initializeTerminalSession();
+      state.terminalInitialized = true;
+      return;
+    }
+
+    input.focus();
+    scrollToBottom();
+  }
+
+  function bindDesktopInteractions() {
+    terminalLauncher.addEventListener("click", function () {
+      openTerminalWindow();
     });
   }
 
   function initializeTerminalSession() {
-    restoreTheme();
     restoreHistory();
     renderPrompt();
 
@@ -578,6 +601,8 @@
   }
 
   async function runBootExperience() {
+    restoreTheme();
+
     setActiveBootScreen(biosScreen);
     await runBiosChecks();
 
@@ -590,12 +615,14 @@
     await sleep(ASCII_HOLD_MS);
 
     activateDesktop();
-    initializeTerminalSession();
+    bindDesktopInteractions();
 
     bootSequence.style.transitionDuration = DESKTOP_TRANSITION_MS + "ms";
     bootSequence.classList.add("hidden");
     await sleep(DESKTOP_TRANSITION_MS);
     bootSequence.setAttribute("aria-hidden", "true");
+
+    terminalLauncher.focus();
   }
 
   runBootExperience();
