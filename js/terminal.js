@@ -11,7 +11,9 @@
   var terminalLauncher = document.getElementById("terminal-launcher");
   var desktopTerminalLauncher = document.getElementById("desktop-terminal");
   var terminalCloseButton = document.getElementById("terminal-close");
+  var desktopPopup = document.getElementById("desktop-popup");
   var systemMonitorStats = document.getElementById("system-monitor-stats");
+  var desktopItems = document.querySelectorAll("#desktop-icons .desktop-item");
   var terminalWindow = document.getElementById("terminal-window");
   var terminal = document.getElementById("terminal");
   var output = document.getElementById("output");
@@ -31,7 +33,9 @@
     !terminalLauncher ||
     !desktopTerminalLauncher ||
     !terminalCloseButton ||
+    !desktopPopup ||
     !systemMonitorStats ||
+    !desktopItems.length ||
     !terminalWindow ||
     !terminal ||
     !output ||
@@ -54,6 +58,7 @@
   var KERNEL_POST_DELAY_MS = 1200;
   var ASCII_HOLD_MS = 1500;
   var DESKTOP_TRANSITION_MS = 500;
+  var TERMINAL_CLOSE_MS = 200;
 
   var BIOS_CHECKS = [
     { label: "Memory test", dots: 13 },
@@ -98,6 +103,8 @@
     lines: []
   };
   var systemMonitorInterval = null;
+  var terminalCloseTimer = null;
+  var desktopPopupTimer = null;
 
   var ctx = {
     print: print,
@@ -568,14 +575,18 @@
   }
 
   function openTerminalWindow() {
-    if (!terminalWindow.classList.contains("open")) {
-      terminalWindow.classList.add("open");
-      terminalWindow.setAttribute("aria-hidden", "false");
-      terminalWindow.classList.remove("launched");
-      // Trigger a reflow so the launch animation can replay reliably.
-      void terminalWindow.offsetWidth;
-      terminalWindow.classList.add("launched");
+    if (terminalCloseTimer) {
+      window.clearTimeout(terminalCloseTimer);
+      terminalCloseTimer = null;
     }
+
+    terminalWindow.classList.remove("closing");
+    terminalWindow.classList.add("open");
+    terminalWindow.setAttribute("aria-hidden", "false");
+    terminalWindow.classList.remove("launched");
+    // Trigger a reflow so the launch animation can replay reliably.
+    void terminalWindow.offsetWidth;
+    terminalWindow.classList.add("launched");
 
     if (!state.terminalInitialized) {
       initializeTerminalSession();
@@ -588,24 +599,73 @@
   }
 
   function closeTerminalWindow() {
-    if (!terminalWindow.classList.contains("open")) {
+    if (!terminalWindow.classList.contains("open") || terminalWindow.classList.contains("closing")) {
       return;
     }
 
-    terminalWindow.classList.remove("open");
     terminalWindow.classList.remove("launched");
-    terminalWindow.setAttribute("aria-hidden", "true");
-    terminalLauncher.focus();
+    terminalWindow.classList.remove("open");
+    terminalWindow.classList.add("closing");
+
+    terminalCloseTimer = window.setTimeout(function () {
+      terminalWindow.classList.remove("closing");
+      terminalWindow.setAttribute("aria-hidden", "true");
+      terminalCloseTimer = null;
+    }, TERMINAL_CLOSE_MS);
+
+    desktopTerminalLauncher.focus();
+  }
+
+  function setSelectedDesktopItem(nextItem) {
+    for (var i = 0; i < desktopItems.length; i += 1) {
+      desktopItems[i].classList.toggle("selected", desktopItems[i] === nextItem);
+    }
+  }
+
+  function showDesktopPopup(message) {
+    desktopPopup.textContent = message;
+    desktopPopup.classList.add("visible");
+    desktopPopup.setAttribute("aria-hidden", "false");
+
+    if (desktopPopupTimer) {
+      window.clearTimeout(desktopPopupTimer);
+    }
+
+    desktopPopupTimer = window.setTimeout(function () {
+      desktopPopup.classList.remove("visible");
+      desktopPopup.setAttribute("aria-hidden", "true");
+      desktopPopupTimer = null;
+    }, 1400);
   }
 
   function bindDesktopInteractions() {
-    function launchTerminal() {
-      openTerminalWindow();
+    terminalLauncher.addEventListener("click", openTerminalWindow);
+    terminalCloseButton.addEventListener("click", closeTerminalWindow);
+
+    for (var i = 0; i < desktopItems.length; i += 1) {
+      (function (item) {
+        item.addEventListener("click", function () {
+          setSelectedDesktopItem(item);
+        });
+
+        item.addEventListener("dblclick", function () {
+          setSelectedDesktopItem(item);
+
+          if (item.id === "desktop-terminal") {
+            openTerminalWindow();
+            return;
+          }
+
+          showDesktopPopup("Open with terminal?");
+        });
+      })(desktopItems[i]);
     }
 
-    terminalLauncher.addEventListener("click", launchTerminal);
-    desktopTerminalLauncher.addEventListener("click", launchTerminal);
-    terminalCloseButton.addEventListener("click", closeTerminalWindow);
+    desktop.addEventListener("click", function (event) {
+      if (event.target === desktop) {
+        setSelectedDesktopItem(null);
+      }
+    });
   }
 
   function renderSystemMonitor() {
