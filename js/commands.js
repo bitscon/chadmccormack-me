@@ -6,7 +6,11 @@
     "thinking.txt": "Current operating principles:\n- Design for graceful failure before scale\n- Prefer boring infrastructure with sharp automation\n- Keep systems observable, explainable, and operable under stress",
     "contact.txt": "email: chad@example.com\nlinkedin: https://linkedin.com/in/chad-placeholder\ngithub: https://github.com/chad-placeholder",
     "motto.txt": "\"I do what I cannot, to learn what I cannot do!\"",
-    "resume.pdf": "Binary file detected.\nUse 'open resume' instead."
+    "resume.pdf": "Binary file detected.\nUse 'open resume' instead.",
+    "projects/billy-ai-runtime": "billy-ai-runtime:\nDistributed runtime that orchestrates AI-driven infra workflows with guardrails, observability, and recovery paths.",
+    "projects/automation-lab": "automation-lab:\nHands-on infrastructure automation experiments across provisioning, orchestration, and self-healing operations.",
+    "projects/infrastructure-architectures": "infrastructure-architectures:\nReference blueprints for scalable platform foundations, environment parity, and resilient system boundaries.",
+    "projects/ai-assisted-workflows": "ai-assisted-workflows:\nPractical AI copilots and agents embedded in engineering delivery pipelines to reduce toil and increase velocity."
   };
 
   var FILE_ORDER = [
@@ -16,6 +20,7 @@
     "thinking.txt",
     "contact.txt",
     "motto.txt",
+    "automation-lab/",
     "resume.pdf"
   ];
 
@@ -89,7 +94,11 @@
             "date\n" +
             "banner\n" +
             "open\n" +
-            "resume"
+            "resume\n" +
+            "projects\n" +
+            "hire-chad\n" +
+            "lab\n" +
+            "map"
         );
       }
     },
@@ -200,11 +209,90 @@
 
     resume: {
       run: function () {
-        return html(
-          "Downloading resume...<br>" +
-            "<a href=\"/assets/chad-mccormack-resume.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">" +
-            "/assets/chad-mccormack-resume.pdf" +
-            "</a>"
+        return text(
+          "Chad McCormack\n" +
+            "Systems Architect | Infrastructure Automation Engineer\n\n" +
+            "Specializes in:\n\n" +
+            "• Infrastructure architecture\n" +
+            "• Automation systems\n" +
+            "• DevOps tooling\n" +
+            "• AI-assisted engineering workflows\n" +
+            "• Systems thinking\n\n" +
+            "Type:\n\n" +
+            "projects\n" +
+            "lab\n" +
+            "map\n\n" +
+            "to explore."
+        );
+      }
+    },
+
+    projects: {
+      run: function () {
+        return text(
+          "projects/\n\n" +
+            "billy-ai-runtime\n" +
+            "automation-lab\n" +
+            "infrastructure-architectures\n" +
+            "ai-assisted-workflows\n\n" +
+            "Type:\n\n" +
+            "cat projects/<name>"
+        );
+      }
+    },
+
+    "hire-chad": {
+      run: function () {
+        return text(
+          "---\n\n" +
+            "sudo hire-chad\n\n" +
+            "Initializing candidate analysis...\n\n" +
+            "✓ Infrastructure architecture\n" +
+            "✓ Automation engineering\n" +
+            "✓ Systems thinking\n" +
+            "✓ Creative problem solving\n\n" +
+            "Result:\n\n" +
+            "This engineer builds systems that other engineers enjoy working on.\n\n" +
+            "Recommendation:\n\n" +
+            "## Hire Chad McCormack.\n\n" +
+            "---"
+        );
+      }
+    },
+
+    lab: {
+      run: function () {
+        return text(
+          "automation-lab/\n\n" +
+            "terraform-bootstrap\n" +
+            "container-orchestration\n" +
+            "self-healing-jobs\n" +
+            "agent-orchestrator\n\n" +
+            "Type:\n\n" +
+            "cat projects/automation-lab"
+        );
+      }
+    },
+
+    map: {
+      run: function () {
+        return text(
+          "      Users\n" +
+            "        │\n" +
+            " ┌──────┴──────┐\n" +
+            " │  Interfaces │\n" +
+            " └──────┬──────┘\n" +
+            "        │\n" +
+            " ┌──────┴──────┐\n" +
+            " │ Automation  │\n" +
+            " └──────┬──────┘\n" +
+            "        │\n" +
+            " ┌──────┴──────┐\n" +
+            " │Infrastructure│\n" +
+            " └──────┬──────┘\n" +
+            "        │\n" +
+            "      Systems\n\n" +
+            "\"Every system should make the next engineer's job easier.\""
         );
       }
     }

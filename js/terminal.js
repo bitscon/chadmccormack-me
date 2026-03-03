@@ -11,6 +11,7 @@
   var terminalLauncher = document.getElementById("terminal-launcher");
   var desktopTerminalLauncher = document.getElementById("desktop-terminal");
   var terminalCloseButton = document.getElementById("terminal-close");
+  var systemMonitorStats = document.getElementById("system-monitor-stats");
   var terminalWindow = document.getElementById("terminal-window");
   var terminal = document.getElementById("terminal");
   var output = document.getElementById("output");
@@ -30,6 +31,7 @@
     !terminalLauncher ||
     !desktopTerminalLauncher ||
     !terminalCloseButton ||
+    !systemMonitorStats ||
     !terminalWindow ||
     !terminal ||
     !output ||
@@ -95,6 +97,7 @@
   var biosAnimationState = {
     lines: []
   };
+  var systemMonitorInterval = null;
 
   var ctx = {
     print: print,
@@ -108,6 +111,10 @@
     return new Promise(function (resolve) {
       window.setTimeout(resolve, ms);
     });
+  }
+
+  function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
   function getPromptText() {
@@ -601,6 +608,29 @@
     terminalCloseButton.addEventListener("click", closeTerminalWindow);
   }
 
+  function renderSystemMonitor() {
+    var jobStates = ["active", "running", "queued", "active"];
+    var clusterStates = ["nominal", "stable", "nominal", "healthy"];
+    var containers = randomInt(6, 11);
+    var agents = randomInt(2, 5);
+
+    systemMonitorStats.textContent =
+      "Containers: " + containers + " running\n" +
+      "Automation jobs: " + jobStates[randomInt(0, jobStates.length - 1)] + "\n" +
+      "Cluster health: " + clusterStates[randomInt(0, clusterStates.length - 1)] + "\n" +
+      "AI agents: " + agents + " online";
+  }
+
+  function startSystemMonitor() {
+    renderSystemMonitor();
+
+    if (systemMonitorInterval) {
+      window.clearInterval(systemMonitorInterval);
+    }
+
+    systemMonitorInterval = window.setInterval(renderSystemMonitor, 6000);
+  }
+
   function initializeTerminalSession() {
     restoreHistory();
     renderPrompt();
@@ -635,6 +665,7 @@
 
     activateDesktop();
     bindDesktopInteractions();
+    startSystemMonitor();
 
     bootSequence.style.transitionDuration = DESKTOP_TRANSITION_MS + "ms";
     bootSequence.classList.add("hidden");
