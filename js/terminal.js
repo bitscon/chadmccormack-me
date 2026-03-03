@@ -1,6 +1,7 @@
 (function () {
   var bootSequence = document.getElementById("boot-sequence");
   var biosScreen = document.getElementById("bios-screen");
+  var biosCopy = biosScreen.querySelector(".boot-copy");
   var kernelScreen = document.getElementById("kernel-screen");
   var asciiScreen = document.getElementById("ascii-screen");
   var kernelLog = document.getElementById("kernel-log");
@@ -17,6 +18,7 @@
   if (
     !bootSequence ||
     !biosScreen ||
+    !biosCopy ||
     !kernelScreen ||
     !asciiScreen ||
     !kernelLog ||
@@ -39,10 +41,17 @@
   var BASE_PROMPT = "chad@workshop:~$";
 
   var BIOS_DURATION_MS = 3500;
+  var BIOS_DOT_DELAY_MS = 70;
   var KERNEL_LINE_DELAY_MS = 180;
   var KERNEL_POST_DELAY_MS = 1200;
   var ASCII_HOLD_MS = 1500;
   var DESKTOP_TRANSITION_MS = 500;
+
+  var BIOS_CHECKS = [
+    { label: "Memory test", dots: 13 },
+    { label: "CPU detected", dots: 12 },
+    { label: "Storage mounted", dots: 9 }
+  ];
 
   var KERNEL_LINES = [
     "[ 0.0001 ] Booting Workshop OS",
@@ -75,6 +84,9 @@
     historyIndex: 0,
     theme: "dark",
     promptTimestampEnabled: false
+  };
+  var biosAnimationState = {
+    lines: []
   };
 
   var ctx = {
@@ -451,6 +463,69 @@
     }
   }
 
+  function renderBiosLines(lines) {
+    biosCopy.textContent = lines.join("\n");
+  }
+
+  function getBiosDotCount(label) {
+    for (var i = 0; i < BIOS_CHECKS.length; i += 1) {
+      if (BIOS_CHECKS[i].label === label) {
+        return BIOS_CHECKS[i].dots;
+      }
+    }
+
+    return 13;
+  }
+
+  async function animateOkLine(label) {
+    var lines = biosAnimationState.lines;
+    var lineIndex = lines.length;
+    var resolvedDotCount = getBiosDotCount(label);
+    var dots = "";
+
+    lines.push(label);
+    lines[lineIndex] = label;
+    renderBiosLines(lines);
+
+    for (var i = 0; i < resolvedDotCount; i += 1) {
+      dots += ".";
+      lines[lineIndex] = label + dots;
+      renderBiosLines(lines);
+      await sleep(BIOS_DOT_DELAY_MS);
+    }
+
+    lines[lineIndex] = label + dots + "OK";
+    renderBiosLines(lines);
+  }
+
+  async function runBiosChecks() {
+    var biosStart = Date.now();
+    biosAnimationState.lines = [
+      "Workshop BIOS v1.0",
+      "Initializing hardware...",
+      ""
+    ];
+    var lines = biosAnimationState.lines;
+
+    renderBiosLines(lines);
+    await sleep(180);
+
+    for (var i = 0; i < BIOS_CHECKS.length; i += 1) {
+      await animateOkLine(BIOS_CHECKS[i].label);
+    }
+
+    lines.push("");
+    lines.push("Boot device found: /dev/workshop");
+    lines.push("");
+    lines.push("Press DEL to enter setup");
+    renderBiosLines(lines);
+
+    var elapsed = Date.now() - biosStart;
+    if (elapsed < BIOS_DURATION_MS) {
+      await sleep(BIOS_DURATION_MS - elapsed);
+    }
+  }
+
   async function printKernelLine(lineText) {
     var line = document.createElement("div");
     line.className = "kernel-line";
@@ -504,7 +579,7 @@
 
   async function runBootExperience() {
     setActiveBootScreen(biosScreen);
-    await sleep(BIOS_DURATION_MS);
+    await runBiosChecks();
 
     setActiveBootScreen(kernelScreen);
     await runKernelBootLogs();
