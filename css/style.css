@@ -842,6 +842,11 @@ body[data-theme="matrix"] #terminal::before {
   height: min(78vh, 700px);
 }
 
+#skills-window {
+  width: min(860px, calc(100% - 7rem));
+  height: min(74vh, 640px);
+}
+
 .app-window-body {
   display: flex;
   flex-direction: column;
@@ -1265,6 +1270,56 @@ body[data-theme="matrix"] #terminal::before {
   color: rgba(193, 230, 250, 0.86);
   font-size: 0.69rem;
   line-height: 1.36;
+}
+
+.skills-window-body {
+  gap: 0.66rem;
+}
+
+.skills-notes {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid var(--terminal-border);
+  border-radius: 10px;
+  background: rgba(1, 7, 9, 0.58);
+  padding: 0.72rem 0.78rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--terminal-muted) transparent;
+}
+
+.skills-notes::-webkit-scrollbar {
+  width: 10px;
+}
+
+.skills-notes::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.skills-notes::-webkit-scrollbar-thumb {
+  background: var(--terminal-muted);
+}
+
+.skills-section + .skills-section {
+  margin-top: 0.56rem;
+  padding-top: 0.56rem;
+  border-top: 1px solid rgba(148, 196, 220, 0.24);
+}
+
+.skills-section h3 {
+  margin: 0;
+  color: rgba(226, 246, 255, 0.95);
+  font-size: 0.76rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.skills-section ul {
+  margin: 0.28rem 0 0;
+  padding-left: 1rem;
+  color: var(--terminal-muted);
+  font-size: 0.72rem;
+  line-height: 1.38;
 }
 
 .systems-map-toolbar {
@@ -2204,6 +2259,11 @@ body[data-theme="matrix"] #terminal::before {
     height: 76vh;
   }
 
+  #skills-window {
+    width: 96vw;
+    height: 74vh;
+  }
+
   .mind-map-container {
     grid-template-columns: 1fr;
     gap: 0.6rem;
@@ -2391,6 +2451,14 @@ body[data-theme="matrix"] #terminal::before {
     font-size: 0.69rem;
   }
 
+  .skills-section h3 {
+    font-size: 0.64rem;
+  }
+
+  .skills-section ul {
+    font-size: 0.64rem;
+  }
+
   #terminal {
     padding: 0.86rem;
   }
@@ -2493,6 +2561,11 @@ body[data-theme="matrix"] #terminal::before {
   #resume-window {
     width: 96vw;
     height: 67vh;
+  }
+
+  #skills-window {
+    width: 96vw;
+    height: 66vh;
   }
 
   .mind-map-nodes {
@@ -2670,6 +2743,16 @@ body[data-theme="matrix"] #terminal::before {
 
   .resume-entry-company {
     font-size: 0.62rem;
+  }
+
+  .skills-notes {
+    padding: 0.5rem 0.54rem;
+  }
+
+  .skills-section h3,
+  .skills-section ul {
+    font-size: 0.56rem;
+    line-height: 1.32;
   }
 
   #pip-video {

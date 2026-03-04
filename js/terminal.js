@@ -16,6 +16,7 @@
   var careerLogLauncher = document.getElementById("career-log-launcher");
   var proofOfWorkLauncher = document.getElementById("proof-of-work-launcher");
   var resumeLauncher = document.getElementById("resume-launcher");
+  var skillsLauncher = document.getElementById("skills-launcher");
   var desktopPopup = document.getElementById("desktop-popup");
   var onboardingOverlay = document.getElementById("onboarding-overlay");
   var onboardingStartButton = document.getElementById("onboarding-start");
@@ -30,6 +31,7 @@
   var careerLogWindow = document.getElementById("career-log-window");
   var proofOfWorkWindow = document.getElementById("proof-of-work-window");
   var resumeWindow = document.getElementById("resume-window");
+  var skillsWindow = document.getElementById("skills-window");
   var hireChadOutput = document.getElementById("hire-chad-output");
   var systemsMapContent = document.getElementById("systems-map-content");
   var systemsMapLayerButtons = document.querySelectorAll("#systems-map-window .systems-map-layer");
@@ -61,6 +63,7 @@
     !careerLogLauncher ||
     !proofOfWorkLauncher ||
     !resumeLauncher ||
+    !skillsLauncher ||
     !desktopPopup ||
     !onboardingOverlay ||
     !onboardingStartButton ||
@@ -75,6 +78,7 @@
     !careerLogWindow ||
     !proofOfWorkWindow ||
     !resumeWindow ||
+    !skillsWindow ||
     !hireChadOutput ||
     !systemsMapContent ||
     !systemsMapLayerButtons.length ||
@@ -744,6 +748,11 @@
       return true;
     }
 
+    if (commandName === "skills") {
+      openSkillsWindow();
+      return true;
+    }
+
     return false;
   }
 
@@ -1219,6 +1228,10 @@
       return resumeLauncher;
     }
 
+    if (windowElement === skillsWindow) {
+      return skillsLauncher;
+    }
+
     return null;
   }
 
@@ -1382,6 +1395,15 @@
   function closeResumeWindow() {
     closeChadWindow(resumeWindow);
     focusLauncherForWindow(resumeWindow);
+  }
+
+  function openSkillsWindow() {
+    openChadWindow(skillsWindow);
+  }
+
+  function closeSkillsWindow() {
+    closeChadWindow(skillsWindow);
+    focusLauncherForWindow(skillsWindow);
   }
 
   function bindResumeViewerInteractions() {
@@ -1731,6 +1753,11 @@
         return;
       }
 
+      if (windowElement === skillsWindow) {
+        closeSkillsWindow();
+        return;
+      }
+
       closeChadWindow(windowElement);
       focusLauncherForWindow(windowElement);
       return;
@@ -1899,6 +1926,10 @@
       return "resume";
     }
 
+    if (windowElement === skillsWindow) {
+      return "skills";
+    }
+
     return "general";
   }
 
@@ -1916,6 +1947,7 @@
       hireChadWindow,
       proofOfWorkWindow,
       resumeWindow,
+      skillsWindow,
       terminalWindow
     ];
 
@@ -2136,6 +2168,11 @@
         return;
       }
 
+      if (activeWindow === skillsWindow) {
+        closeSkillsWindow();
+        return;
+      }
+
       closeChadWindow(activeWindow);
       focusLauncherForWindow(activeWindow);
     });
@@ -2179,6 +2216,11 @@
 
           if (button.id === "resume-launcher") {
             openResumeWindow();
+            return;
+          }
+
+          if (button.id === "skills-launcher") {
+            openSkillsWindow();
             return;
           }
 
