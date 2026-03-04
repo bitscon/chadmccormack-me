@@ -102,7 +102,7 @@
   var THEMES = ["dark", "light", "matrix"];
   var BASE_PROMPT = "chad@workshop:~$";
 
-  var BOOT_LINE_DELAY_MS = 120;
+  var BOOT_LINE_DELAY_MS = 400;
   var BOOT_DESKTOP_REVEAL_DELAY_MS = 400;
   var BOOT_FADE_DURATION_MS = 400;
   var TERMINAL_CLOSE_MS = 200;
@@ -117,16 +117,15 @@
   var ACTIVITY_HINT_MAX_DELAY_MS = 90000;
 
   var BOOT_LINES = [
-    "ChadOS 24.04 LTS (workstation)",
+    "Initializing Chad McCormack Engineering Workspace",
     "",
-    "[  OK  ] Initializing kernel modules",
-    "[  OK  ] Starting system services",
-    "[  OK  ] Loading CMDB architecture",
+    "[  OK  ] Loading infrastructure visibility model",
+    "[  OK  ] CMDB architecture modules ready",
     "[  OK  ] Discovery engines online",
-    "[  OK  ] CSDM service model loaded",
+    "[  OK  ] Service mapping relationships loaded",
     "[  OK  ] Terminal interface ready",
     "",
-    "chad@workshop:~$"
+    "chad@workshop:~$ <span class='boot-cursor'></span>"
   ];
 
   var INITIAL_NOTIFICATIONS = [
@@ -1347,7 +1346,12 @@
       return;
     }
 
-    bootConsole.textContent += BOOT_LINES[index] + "\n";
+    bootConsole.innerHTML += BOOT_LINES[index] + "\n";
+
+    if (index >= BOOT_LINES.length - 1) {
+      revealDesktop();
+      return;
+    }
 
     window.setTimeout(function () {
       printBootLine(index + 1);

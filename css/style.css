@@ -146,6 +146,30 @@ body {
   overflow: hidden;
 }
 
+.boot-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 16px;
+  background: #7cffc3;
+  margin-left: 6px;
+  vertical-align: text-bottom;
+  animation: bootCursorBlink 1s steps(1) infinite;
+}
+
+@keyframes bootCursorBlink {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
 #desktop {
   position: fixed;
   inset: 0;
