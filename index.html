@@ -137,6 +137,24 @@ workstation mode</p>
           <pre id="systems-map-content" aria-live="polite"></pre>
         </div>
       </section>
+
+      <section id="career-log-window" class="chados-window" data-app="career-log" aria-label="Career log window" aria-hidden="true">
+        <header class="window-titlebar">
+          <p class="window-title">career.log — tail -f</p>
+          <div class="window-controls">
+            <button class="window-control window-close" type="button" data-window-action="close" aria-label="Close career log window" title="Close">✕</button>
+          </div>
+        </header>
+
+        <div class="app-window-body career-log-body">
+          <div class="career-log-toolbar">
+            <label class="sr-only" for="career-log-filter">Career log filter</label>
+            <input id="career-log-filter" type="text" inputmode="text" spellcheck="false" placeholder="filter logs (platform, automation, sre, cloud…)">
+            <button id="career-log-clear" type="button">Clear</button>
+          </div>
+          <div id="career-log-content" role="log" aria-live="polite" aria-atomic="false"></div>
+        </div>
+      </section>
     </div>
   </main>
 

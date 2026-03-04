@@ -11,13 +11,18 @@
   var desktopWindows = document.getElementById("desktop-windows");
   var terminalLauncher = document.getElementById("terminal-launcher");
   var systemsMapLauncher = document.getElementById("systems-map-launcher");
+  var careerLogLauncher = document.getElementById("career-log-launcher");
   var desktopPopup = document.getElementById("desktop-popup");
   var systemMonitorStats = document.getElementById("system-monitor-stats");
   var launcherButtons = document.querySelectorAll("#desktop-launcher .launcher-button");
   var terminalWindow = document.getElementById("terminal-window");
   var systemsMapWindow = document.getElementById("systems-map-window");
+  var careerLogWindow = document.getElementById("career-log-window");
   var systemsMapContent = document.getElementById("systems-map-content");
   var systemsMapLayerButtons = document.querySelectorAll("#systems-map-window .systems-map-layer");
+  var careerLogFilterInput = document.getElementById("career-log-filter");
+  var careerLogClearButton = document.getElementById("career-log-clear");
+  var careerLogContent = document.getElementById("career-log-content");
   var terminal = document.getElementById("terminal");
   var output = document.getElementById("output");
   var form = document.getElementById("command-form");
@@ -36,13 +41,18 @@
     !desktopWindows ||
     !terminalLauncher ||
     !systemsMapLauncher ||
+    !careerLogLauncher ||
     !desktopPopup ||
     !systemMonitorStats ||
     !launcherButtons.length ||
     !terminalWindow ||
     !systemsMapWindow ||
+    !careerLogWindow ||
     !systemsMapContent ||
     !systemsMapLayerButtons.length ||
+    !careerLogFilterInput ||
+    !careerLogClearButton ||
+    !careerLogContent ||
     !terminal ||
     !output ||
     !form ||
@@ -65,6 +75,8 @@
   var ASCII_HOLD_MS = 1500;
   var DESKTOP_TRANSITION_MS = 500;
   var TERMINAL_CLOSE_MS = 200;
+  var CAREER_LOG_LIVE_MS = 6000;
+  var CAREER_LOG_MAX_LINES = 120;
 
   var BIOS_CHECKS = [
     { label: "Memory test", dots: 13 },
@@ -146,6 +158,49 @@
     }
   };
 
+  var CAREER_LOG_SEED = [
+    { stamp: "2023-11-03 08:14:09", level: "INFO", tag: "platform", message: "Mapped delivery pain points and documented recurring deployment friction patterns." },
+    { stamp: "2023-11-18 10:42:17", level: "OK", tag: "automation", message: "Converted manual release checklist into repeatable CI pipeline stages." },
+    { stamp: "2023-12-01 15:06:44", level: "INFO", tag: "sre", message: "Defined baseline service level indicators for critical internal workloads." },
+    { stamp: "2023-12-12 19:22:30", level: "WARN", tag: "ops", message: "Detected noisy alert routing causing missed follow-up actions overnight." },
+    { stamp: "2023-12-13 09:37:05", level: "OK", tag: "reliability", message: "Introduced alert grouping and ownership labels to cut response ambiguity." },
+    { stamp: "2024-01-08 11:03:52", level: "INFO", tag: "cloud", message: "Standardized environment templates for faster and safer service onboarding." },
+    { stamp: "2024-01-21 16:48:11", level: "OK", tag: "delivery", message: "Reduced deploy variance by enforcing shared pipeline conventions." },
+    { stamp: "2024-02-07 07:55:24", level: "INFO", tag: "platform", message: "Published internal platform contracts to keep service boundaries explicit." },
+    { stamp: "2024-02-19 13:42:29", level: "WARN", tag: "cloud", message: "Migration rehearsal exposed hidden dependency on legacy network pathing." },
+    { stamp: "2024-02-20 18:10:18", level: "OK", tag: "cloud", message: "Reworked network segmentation plan with rollback checkpoints and drills." },
+    { stamp: "2024-03-04 09:23:50", level: "INFO", tag: "automation", message: "Created event-driven handlers for repeatable operational maintenance tasks." },
+    { stamp: "2024-03-15 12:47:33", level: "OK", tag: "ops", message: "Self-healing routines removed recurring ticket queue for low-risk incidents." },
+    { stamp: "2024-04-02 08:19:07", level: "INFO", tag: "leadership", message: "Facilitated architecture review sessions focused on operational clarity." },
+    { stamp: "2024-04-11 14:38:56", level: "OK", tag: "delivery", message: "Cut lead time by shipping reusable release templates to multiple teams." },
+    { stamp: "2024-04-26 21:31:08", level: "WARN", tag: "sre", message: "Unexpected latency spike traced to unbounded background processing jobs." },
+    { stamp: "2024-04-26 22:16:40", level: "OK", tag: "reliability", message: "Added workload guards and queue visibility to stabilize peak traffic windows." },
+    { stamp: "2024-05-13 10:11:28", level: "INFO", tag: "platform", message: "Versioned platform modules to reduce drift between service environments." },
+    { stamp: "2024-05-29 17:54:12", level: "OK", tag: "automation", message: "Automated runbook generation from pipeline metadata and change records." },
+    { stamp: "2024-06-09 09:44:36", level: "INFO", tag: "ops", message: "Implemented post-incident timeline templates to improve learning quality." },
+    { stamp: "2024-06-23 12:05:09", level: "OK", tag: "leadership", message: "Aligned engineering rituals around reliability goals and ownership handoffs." },
+    { stamp: "2024-07-08 15:18:55", level: "INFO", tag: "cloud", message: "Shifted provisioning defaults toward immutable replacement patterns." },
+    { stamp: "2024-07-16 20:41:03", level: "WARN", tag: "delivery", message: "Release freeze triggered after dependency mismatch in shared runtime layer." },
+    { stamp: "2024-07-16 21:26:47", level: "OK", tag: "platform", message: "Introduced compatibility checks earlier in pipeline to prevent recurrence." },
+    { stamp: "2024-08-05 08:33:14", level: "INFO", tag: "reliability", message: "Expanded synthetic checks to detect user-facing degradation before reports." },
+    { stamp: "2024-08-19 13:09:28", level: "OK", tag: "sre", message: "Improved incident handoff quality with concise state snapshots and context." },
+    { stamp: "2024-09-03 11:58:46", level: "INFO", tag: "automation", message: "Built reusable automation kit for routine operational workflows." },
+    { stamp: "2024-09-14 16:40:57", level: "OK", tag: "delivery", message: "Deployment cadence increased while keeping rollback confidence high." },
+    { stamp: "2024-10-01 07:36:51", level: "INFO", tag: "leadership", message: "Coached teams on designing guardrails that accelerate safe change." },
+    { stamp: "2024-10-12 09:14:03", level: "OK", tag: "platform", message: "Standardized CI templates to reduce deployment variance across teams." },
+    { stamp: "2024-10-28 18:22:49", level: "WARN", tag: "ops", message: "Detected delayed backup verification in one environment during audit prep." },
+    { stamp: "2024-10-29 08:57:12", level: "OK", tag: "governance", message: "Added automated verification checkpoints and ownership escalation paths." },
+    { stamp: "2024-11-11 10:05:44", level: "INFO", tag: "cloud", message: "Refined cost visibility dashboards for infrastructure decision reviews." },
+    { stamp: "2024-12-03 14:31:18", level: "OK", tag: "reliability", message: "Reduced mean-time-to-recovery through clearer diagnostics and runbook cues." },
+    { stamp: "2025-01-22 09:16:27", level: "INFO", tag: "automation", message: "Connected change events to automated evidence capture for audits." },
+    { stamp: "2025-03-02 17:45:39", level: "OK", tag: "sre", message: "Production readiness checks now block risk without slowing normal delivery." },
+    { stamp: "2025-05-14 08:24:50", level: "INFO", tag: "platform", message: "Expanded paved-road platform modules for new service launches." },
+    { stamp: "2025-07-09 12:38:08", level: "OK", tag: "leadership", message: "Operational review process now links reliability outcomes to roadmap choices." },
+    { stamp: "2025-10-17 11:11:42", level: "INFO", tag: "delivery", message: "Reduced repetitive release toil with policy-aware deployment automation." },
+    { stamp: "2026-01-06 09:07:21", level: "OK", tag: "reliability", message: "Current platform posture: stable, observable, and resilient under change." },
+    { stamp: "2026-02-18 16:19:55", level: "OK", tag: "leadership", message: "Ready to lead modern platform, automation, and reliability programs today." }
+  ];
+
   var state = {
     history: [],
     historyIndex: 0,
@@ -153,12 +208,15 @@
     promptTimestampEnabled: false,
     terminalInitialized: false,
     systemsMapLayer: "core",
+    careerLogFilter: "",
+    careerLogLines: CAREER_LOG_SEED.slice(),
     windowZ: 2000
   };
   var biosAnimationState = {
     lines: []
   };
   var systemMonitorInterval = null;
+  var careerLogInterval = null;
   var windowCloseTimers = {};
   var desktopPopupTimer = null;
   var activeDrag = null;
@@ -808,6 +866,123 @@
     terminalLauncher.focus();
   }
 
+  function pad2(value) {
+    return String(value).padStart(2, "0");
+  }
+
+  function getCurrentLogTimestamp() {
+    var now = new Date();
+
+    return (
+      now.getFullYear() +
+      "-" + pad2(now.getMonth() + 1) +
+      "-" + pad2(now.getDate()) +
+      " " + pad2(now.getHours()) +
+      ":" + pad2(now.getMinutes()) +
+      ":" + pad2(now.getSeconds())
+    );
+  }
+
+  function formatCareerLogEntry(entry) {
+    return (
+      entry.stamp +
+      " [" + entry.level + "]" +
+      " [" + entry.tag + "] " +
+      entry.message
+    );
+  }
+
+  function renderCareerLog() {
+    var query = state.careerLogFilter.trim().toLowerCase();
+    var fragment = document.createDocumentFragment();
+    var hasVisibleLines = false;
+
+    careerLogContent.innerHTML = "";
+
+    for (var i = 0; i < state.careerLogLines.length; i += 1) {
+      var lineEntry = state.careerLogLines[i];
+      var searchableText = (lineEntry.tag + " " + lineEntry.message).toLowerCase();
+
+      if (query && searchableText.indexOf(query) === -1) {
+        continue;
+      }
+
+      var line = document.createElement("div");
+      line.className = "career-log-line level-" + lineEntry.level.toLowerCase();
+      line.textContent = formatCareerLogEntry(lineEntry);
+      fragment.appendChild(line);
+      hasVisibleLines = true;
+    }
+
+    if (!hasVisibleLines) {
+      var emptyLine = document.createElement("div");
+      emptyLine.className = "career-log-line level-info";
+      emptyLine.textContent = "No log lines match current filter.";
+      fragment.appendChild(emptyLine);
+    }
+
+    careerLogContent.appendChild(fragment);
+    careerLogContent.scrollTop = careerLogContent.scrollHeight;
+  }
+
+  function appendCareerLogLine(lineEntry) {
+    state.careerLogLines.push(lineEntry);
+
+    if (state.careerLogLines.length > CAREER_LOG_MAX_LINES) {
+      state.careerLogLines.splice(0, state.careerLogLines.length - CAREER_LOG_MAX_LINES);
+    }
+
+    if (careerLogWindow.classList.contains("open")) {
+      renderCareerLog();
+    }
+  }
+
+  function appendCareerLogHeartbeat() {
+    appendCareerLogLine({
+      stamp: getCurrentLogTimestamp(),
+      level: "INFO",
+      tag: "workstation",
+      message: "Recruiter is reading logs..."
+    });
+  }
+
+  function openCareerLogWindow() {
+    careerLogFilterInput.value = state.careerLogFilter;
+    renderCareerLog();
+    openChadWindow(careerLogWindow);
+    careerLogFilterInput.focus();
+  }
+
+  function bindCareerLogInteractions() {
+    careerLogFilterInput.addEventListener("input", function (event) {
+      state.careerLogFilter = event.target.value || "";
+      renderCareerLog();
+    });
+
+    careerLogClearButton.addEventListener("click", function () {
+      state.careerLogFilter = "";
+      careerLogFilterInput.value = "";
+      renderCareerLog();
+      careerLogFilterInput.focus();
+    });
+
+    careerLogWindow.addEventListener("mousedown", function () {
+      if (careerLogWindow.classList.contains("open")) {
+        bringWindowToFront(careerLogWindow);
+      }
+    });
+
+    renderCareerLog();
+  }
+
+  function startCareerLogStream() {
+    if (careerLogInterval) {
+      window.clearInterval(careerLogInterval);
+    }
+
+    careerLogInterval = window.setInterval(appendCareerLogHeartbeat, CAREER_LOG_LIVE_MS);
+  }
+
   function renderSystemsMapLayer(layerName) {
     var nextLayer = SYSTEMS_MAP_LAYERS[layerName] ? layerName : "core";
     var layerData = SYSTEMS_MAP_LAYERS[nextLayer];
@@ -993,12 +1168,25 @@
         return;
       }
 
-      if (
-        terminalWindow.classList.contains("open") &&
-        terminalWindow.classList.contains("is-active")
-      ) {
-        event.preventDefault();
+      var activeWindow = desktopWindows.querySelector(".chados-window.open.is-active");
+
+      if (!activeWindow) {
+        return;
+      }
+
+      event.preventDefault();
+
+      if (activeWindow === terminalWindow) {
         closeTerminalWindow();
+        return;
+      }
+
+      closeChadWindow(activeWindow);
+
+      if (activeWindow === careerLogWindow) {
+        careerLogLauncher.focus();
+      } else if (activeWindow === systemsMapWindow) {
+        systemsMapLauncher.focus();
       }
     });
   }
@@ -1019,6 +1207,11 @@
             return;
           }
 
+          if (button.id === "career-log-launcher") {
+            openCareerLogWindow();
+            return;
+          }
+
           showDesktopPopup("Open with terminal?");
         });
       })(launcherButtons[i]);
@@ -1033,6 +1226,7 @@
 
     bindWindowSystem();
     bindSystemsMapInteractions();
+    bindCareerLogInteractions();
   }
 
   function renderSystemMonitor() {
@@ -1094,6 +1288,7 @@
     activateDesktop();
     bindDesktopInteractions();
     startSystemMonitor();
+    startCareerLogStream();
 
     bootSequence.style.transitionDuration = DESKTOP_TRANSITION_MS + "ms";
     bootSequence.classList.add("hidden");
