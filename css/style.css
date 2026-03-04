@@ -359,6 +359,121 @@ body {
   transform: translateX(-50%) translateY(0);
 }
 
+#onboarding-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.2rem;
+  background: rgba(3, 8, 17, 0.68);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+
+#onboarding-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.onboarding-card {
+  width: min(620px, calc(100% - 1rem));
+  border: 1px solid rgba(201, 232, 255, 0.3);
+  border-radius: 14px;
+  padding: 0.92rem 1rem;
+  background: rgba(8, 16, 30, 0.86);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.42);
+  color: rgba(230, 245, 255, 0.95);
+}
+
+@supports ((-webkit-backdrop-filter: blur(8px)) or (backdrop-filter: blur(8px))) {
+  .onboarding-card {
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+}
+
+.onboarding-kicker {
+  margin: 0;
+  color: rgba(180, 226, 248, 0.86);
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+#onboarding-title {
+  margin: 0.3rem 0 0;
+  color: rgba(246, 251, 255, 0.98);
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+#onboarding-description {
+  margin: 0.54rem 0 0;
+  color: rgba(215, 235, 251, 0.9);
+  font-size: 0.76rem;
+  line-height: 1.44;
+}
+
+.onboarding-commands {
+  margin-top: 0.58rem;
+  border: 1px solid rgba(166, 206, 228, 0.25);
+  border-radius: 10px;
+  background: rgba(1, 10, 15, 0.58);
+  padding: 0.52rem 0.62rem;
+}
+
+.onboarding-commands p {
+  margin: 0;
+  color: rgba(221, 241, 255, 0.9);
+  font-size: 0.73rem;
+  line-height: 1.38;
+}
+
+.onboarding-commands p + p {
+  margin-top: 0.24rem;
+}
+
+.onboarding-note {
+  margin: 0.58rem 0 0;
+  color: rgba(205, 225, 242, 0.82);
+  font-size: 0.71rem;
+  line-height: 1.35;
+}
+
+#onboarding-start {
+  appearance: none;
+  margin-top: 0.64rem;
+  border: 1px solid rgba(226, 244, 255, 0.42);
+  border-radius: 9px;
+  padding: 0.42rem 0.68rem;
+  background: linear-gradient(180deg, rgba(102, 152, 255, 0.44), rgba(42, 70, 160, 0.46));
+  color: rgba(243, 250, 255, 0.96);
+  font: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: box-shadow 140ms ease, border-color 140ms ease, transform 140ms ease;
+}
+
+#onboarding-start:hover {
+  border-color: rgba(231, 246, 255, 0.8);
+  box-shadow: 0 0 20px rgba(121, 194, 255, 0.26);
+  transform: translateY(-1px);
+}
+
+#onboarding-start:focus {
+  outline: none;
+}
+
+#onboarding-start:focus-visible {
+  outline: 2px solid rgba(233, 248, 255, 0.95);
+  outline-offset: 2px;
+}
+
 #pip-video {
   position: absolute;
   top: 0.95rem;
@@ -1818,6 +1933,34 @@ body[data-theme="matrix"] #terminal::before {
     font-size: 0.52rem;
   }
 
+  #onboarding-overlay {
+    padding: 0.8rem;
+  }
+
+  .onboarding-card {
+    width: min(560px, calc(100% - 0.6rem));
+    padding: 0.76rem 0.82rem;
+  }
+
+  .onboarding-kicker {
+    font-size: 0.58rem;
+  }
+
+  #onboarding-title {
+    font-size: 0.86rem;
+  }
+
+  #onboarding-description,
+  .onboarding-commands p,
+  .onboarding-note {
+    font-size: 0.64rem;
+  }
+
+  #onboarding-start {
+    font-size: 0.64rem;
+    padding: 0.34rem 0.54rem;
+  }
+
   .pip-title {
     font-size: 0.61rem;
   }
@@ -2341,6 +2484,33 @@ body[data-theme="matrix"] #terminal::before {
 
   .notification-time {
     font-size: 0.48rem;
+  }
+
+  #onboarding-overlay {
+    padding: 0.56rem;
+  }
+
+  .onboarding-card {
+    width: min(500px, calc(100% - 0.4rem));
+    border-radius: 12px;
+    padding: 0.62rem 0.64rem;
+  }
+
+  #onboarding-title {
+    font-size: 0.72rem;
+  }
+
+  #onboarding-description,
+  .onboarding-commands p,
+  .onboarding-note {
+    font-size: 0.56rem;
+    line-height: 1.32;
+  }
+
+  #onboarding-start {
+    margin-top: 0.52rem;
+    font-size: 0.58rem;
+    padding: 0.3rem 0.48rem;
   }
 
   #system-monitor {

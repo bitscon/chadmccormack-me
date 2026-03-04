@@ -16,6 +16,8 @@
   var careerLogLauncher = document.getElementById("career-log-launcher");
   var proofOfWorkLauncher = document.getElementById("proof-of-work-launcher");
   var desktopPopup = document.getElementById("desktop-popup");
+  var onboardingOverlay = document.getElementById("onboarding-overlay");
+  var onboardingStartButton = document.getElementById("onboarding-start");
   var pipVideo = document.getElementById("pip-video");
   var notifications = document.getElementById("notifications");
   var systemMonitorStats = document.getElementById("system-monitor-stats");
@@ -55,6 +57,8 @@
     !careerLogLauncher ||
     !proofOfWorkLauncher ||
     !desktopPopup ||
+    !onboardingOverlay ||
+    !onboardingStartButton ||
     !pipVideo ||
     !notifications ||
     !systemMonitorStats ||
@@ -82,6 +86,7 @@
 
   var THEME_KEY = "terminal-theme";
   var HISTORY_KEY = "terminal-history";
+  var ONBOARDING_KEY = "chados-onboarding-seen";
   var HISTORY_LIMIT = 200;
   var THEMES = ["dark", "light", "matrix"];
   var BASE_PROMPT = "chad@workshop:~$";
@@ -455,6 +460,7 @@
     notificationsScheduled: false,
     recruiterActivityStarted: false,
     lastRecruiterActivityKey: "",
+    onboardingVisible: false,
     windowZ: 2000
   };
   var biosAnimationState = {
@@ -573,6 +579,56 @@
     } catch (_error) {
       // Ignore storage quota or blocked access errors.
     }
+  }
+
+  function hasSeenOnboarding() {
+    try {
+      return window.localStorage.getItem(ONBOARDING_KEY) === "1";
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  function markOnboardingSeen() {
+    try {
+      window.localStorage.setItem(ONBOARDING_KEY, "1");
+    } catch (_error) {
+      // Ignore blocked storage access.
+    }
+  }
+
+  function closeOnboardingOverlay(markSeen) {
+    if (!state.onboardingVisible) {
+      return;
+    }
+
+    state.onboardingVisible = false;
+    onboardingOverlay.classList.remove("visible");
+    onboardingOverlay.setAttribute("aria-hidden", "true");
+
+    if (markSeen) {
+      markOnboardingSeen();
+    }
+
+    terminalLauncher.focus();
+  }
+
+  function maybeShowOnboardingOverlay() {
+    if (hasSeenOnboarding()) {
+      return false;
+    }
+
+    state.onboardingVisible = true;
+    onboardingOverlay.classList.add("visible");
+    onboardingOverlay.setAttribute("aria-hidden", "false");
+    onboardingStartButton.focus();
+    return true;
+  }
+
+  function bindOnboardingOverlay() {
+    onboardingStartButton.addEventListener("click", function () {
+      closeOnboardingOverlay(true);
+    });
   }
 
   function scrollToBottom() {
@@ -1933,6 +1989,12 @@
         return;
       }
 
+      if (state.onboardingVisible) {
+        event.preventDefault();
+        closeOnboardingOverlay(true);
+        return;
+      }
+
       var activeWindow = desktopWindows.querySelector(".chados-window.open.is-active");
 
       if (!activeWindow) {
@@ -2015,6 +2077,7 @@
     });
 
     bindWindowSystem();
+    bindOnboardingOverlay();
     bindSystemsMapInteractions();
     bindCareerLogInteractions();
     positionNotifications();
@@ -2088,7 +2151,9 @@
 
     scheduleDesktopNotifications();
     startRecruiterActivityNotifications();
-    terminalLauncher.focus();
+    if (!maybeShowOnboardingOverlay()) {
+      terminalLauncher.focus();
+    }
   }
 
   runBootExperience();

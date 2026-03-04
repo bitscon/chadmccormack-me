@@ -83,6 +83,24 @@ Press DEL to enter setup</pre>
 
     <div id="desktop-popup" role="status" aria-live="polite" aria-hidden="true">Open with terminal?</div>
 
+    <div id="onboarding-overlay" aria-hidden="true">
+      <section class="onboarding-card" role="dialog" aria-modal="true" aria-labelledby="onboarding-title" aria-describedby="onboarding-description">
+        <p class="onboarding-kicker">Quick Start</p>
+        <h2 id="onboarding-title">Welcome to ChadOS</h2>
+        <p id="onboarding-description">This interactive desktop is a resume designed to show how I think about infrastructure, ServiceNow CMDB, and enterprise discovery systems.</p>
+
+        <div class="onboarding-commands" aria-label="Quick start commands">
+          <p><strong>career</strong> - view career timeline</p>
+          <p><strong>mindmap</strong> - see CMDB architecture thinking</p>
+          <p><strong>proof</strong> - enterprise proof of work</p>
+          <p><strong>automation</strong> - automation and operational patterns</p>
+        </div>
+
+        <p class="onboarding-note">You can also click the desktop icons or use the terminal.</p>
+        <button id="onboarding-start" type="button">Start Exploring</button>
+      </section>
+    </div>
+
     <aside id="pip-video" aria-label="Podcast video placeholder">
       <div class="pip-frame" aria-hidden="true"></div>
       <p class="pip-title">Chad McCormack — Systems Architect</p>
