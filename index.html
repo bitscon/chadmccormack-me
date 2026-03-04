@@ -79,6 +79,13 @@ Press DEL to enter setup</pre>
         </button>
         <span class="launcher-label">Proof of Work</span>
       </div>
+
+      <div class="launcher-entry">
+        <button id="resume-launcher" class="launcher-button" type="button" aria-label="Open Resume.pdf" title="Resume.pdf">
+          <span class="launcher-icon" aria-hidden="true">pdf</span>
+        </button>
+        <span class="launcher-label">Resume</span>
+      </div>
     </nav>
 
     <div id="desktop-popup" role="status" aria-live="polite" aria-hidden="true">Open with terminal?</div>
@@ -290,6 +297,56 @@ workstation mode</p>
               <p class="proof-work-meta"><strong>Technologies:</strong> LLMs, automation systems, developer tooling</p>
             </article>
           </div>
+        </div>
+      </section>
+
+      <section id="resume-window" class="chados-window" data-app="resume" aria-label="Resume viewer window" aria-hidden="true">
+        <header class="window-titlebar">
+          <p class="window-title">resume.pdf — viewer</p>
+          <div class="window-controls">
+            <button class="window-control window-close" type="button" data-window-action="close" aria-label="Close resume viewer window" title="Close">✕</button>
+          </div>
+        </header>
+
+        <div class="app-window-body resume-viewer-body">
+          <div class="resume-viewer-toolbar">
+            <button id="resume-download" type="button">Download PDF</button>
+          </div>
+
+          <article id="resume-viewer-content" class="resume-document" aria-label="Printable resume content">
+            <header class="resume-header">
+              <h2>Chad McCormack</h2>
+              <p>ServiceNow CMDB / Discovery SME</p>
+            </header>
+
+            <section class="resume-section">
+              <h3>Summary</h3>
+              <p>ServiceNow CMDB / Discovery SME focused on enterprise infrastructure visibility, discovery reliability, and configuration data governance.</p>
+            </section>
+
+            <section class="resume-section">
+              <h3>Skills</h3>
+              <ul class="resume-skills">
+                <li>ServiceNow CMDB</li>
+                <li>ServiceNow Discovery</li>
+                <li>CMDB Governance</li>
+                <li>Infrastructure Visibility</li>
+                <li>Service Mapping</li>
+                <li>Enterprise Architecture</li>
+              </ul>
+            </section>
+
+            <section class="resume-section">
+              <h3>Experience</h3>
+              <div id="resume-experience-list"></div>
+            </section>
+
+            <section class="resume-section">
+              <h3>Contact</h3>
+              <p>Email: chad@example.com</p>
+              <p>LinkedIn: https://linkedin.com/in/chad-placeholder</p>
+            </section>
+          </article>
         </div>
       </section>
     </div>

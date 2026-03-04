@@ -15,6 +15,7 @@
   var automationLabLauncher = document.getElementById("automation-lab-launcher");
   var careerLogLauncher = document.getElementById("career-log-launcher");
   var proofOfWorkLauncher = document.getElementById("proof-of-work-launcher");
+  var resumeLauncher = document.getElementById("resume-launcher");
   var desktopPopup = document.getElementById("desktop-popup");
   var onboardingOverlay = document.getElementById("onboarding-overlay");
   var onboardingStartButton = document.getElementById("onboarding-start");
@@ -28,12 +29,15 @@
   var automationLabWindow = document.getElementById("automation-lab-window");
   var careerLogWindow = document.getElementById("career-log-window");
   var proofOfWorkWindow = document.getElementById("proof-of-work-window");
+  var resumeWindow = document.getElementById("resume-window");
   var hireChadOutput = document.getElementById("hire-chad-output");
   var systemsMapContent = document.getElementById("systems-map-content");
   var systemsMapLayerButtons = document.querySelectorAll("#systems-map-window .systems-map-layer");
   var careerLogFilterInput = document.getElementById("career-log-filter");
   var careerLogClearButton = document.getElementById("career-log-clear");
   var careerLogContent = document.getElementById("career-log-content");
+  var resumeDownloadButton = document.getElementById("resume-download");
+  var resumeExperienceList = document.getElementById("resume-experience-list");
   var terminal = document.getElementById("terminal");
   var output = document.getElementById("output");
   var form = document.getElementById("command-form");
@@ -56,6 +60,7 @@
     !automationLabLauncher ||
     !careerLogLauncher ||
     !proofOfWorkLauncher ||
+    !resumeLauncher ||
     !desktopPopup ||
     !onboardingOverlay ||
     !onboardingStartButton ||
@@ -69,12 +74,15 @@
     !automationLabWindow ||
     !careerLogWindow ||
     !proofOfWorkWindow ||
+    !resumeWindow ||
     !hireChadOutput ||
     !systemsMapContent ||
     !systemsMapLayerButtons.length ||
     !careerLogFilterInput ||
     !careerLogClearButton ||
     !careerLogContent ||
+    !resumeDownloadButton ||
+    !resumeExperienceList ||
     !terminal ||
     !output ||
     !form ||
@@ -730,6 +738,15 @@
     return commandName;
   }
 
+  function runSystemNavigationCommand(commandName) {
+    if (commandName === "resume" || commandName === "cv") {
+      openResumeWindow();
+      return true;
+    }
+
+    return false;
+  }
+
   function runCommand(rawInput) {
     var parsed = parseInput(rawInput);
     var commands = window.TerminalCommands || {};
@@ -739,6 +756,10 @@
     }
 
     parsed.command = resolveCommandAlias(parsed.command);
+
+    if (runSystemNavigationCommand(parsed.command)) {
+      return;
+    }
 
     var command = commands[parsed.command];
 
@@ -1194,6 +1215,10 @@
       return proofOfWorkLauncher;
     }
 
+    if (windowElement === resumeWindow) {
+      return resumeLauncher;
+    }
+
     return null;
   }
 
@@ -1298,6 +1323,79 @@
   function closeProofOfWorkWindow() {
     closeChadWindow(proofOfWorkWindow);
     focusLauncherForWindow(proofOfWorkWindow);
+  }
+
+  function createResumeExperienceEntry(entry) {
+    var article = document.createElement("article");
+    var header = document.createElement("div");
+    var period = document.createElement("span");
+    var company = document.createElement("span");
+    var role = document.createElement("p");
+    var impactList = document.createElement("ul");
+    var focus = document.createElement("p");
+
+    article.className = "resume-entry";
+    header.className = "resume-entry-header";
+    period.className = "resume-entry-period";
+    company.className = "resume-entry-company";
+    role.className = "resume-entry-role";
+    impactList.className = "resume-entry-impact";
+    focus.className = "resume-entry-focus";
+
+    period.textContent = entry.period;
+    company.textContent = entry.company;
+    role.textContent = entry.role;
+
+    header.appendChild(period);
+    header.appendChild(company);
+
+    for (var i = 0; i < entry.responsibilities.length; i += 1) {
+      var point = document.createElement("li");
+      point.textContent = entry.responsibilities[i];
+      impactList.appendChild(point);
+    }
+
+    focus.textContent = "Platform Focus: " + entry.focus.join(" | ");
+
+    article.appendChild(header);
+    article.appendChild(role);
+    article.appendChild(impactList);
+    article.appendChild(focus);
+    return article;
+  }
+
+  function renderResumeViewer() {
+    resumeExperienceList.innerHTML = "";
+
+    for (var i = 0; i < CAREER_TIMELINE_ENTRIES.length; i += 1) {
+      resumeExperienceList.appendChild(
+        createResumeExperienceEntry(CAREER_TIMELINE_ENTRIES[i])
+      );
+    }
+  }
+
+  function openResumeWindow() {
+    renderResumeViewer();
+    openChadWindow(resumeWindow);
+  }
+
+  function closeResumeWindow() {
+    closeChadWindow(resumeWindow);
+    focusLauncherForWindow(resumeWindow);
+  }
+
+  function bindResumeViewerInteractions() {
+    resumeDownloadButton.addEventListener("click", function () {
+      window.print();
+    });
+
+    resumeWindow.addEventListener("mousedown", function () {
+      if (resumeWindow.classList.contains("open")) {
+        bringWindowToFront(resumeWindow);
+      }
+    });
+
+    renderResumeViewer();
   }
 
   function createCareerListSection(label, values, className) {
@@ -1628,6 +1726,11 @@
         return;
       }
 
+      if (windowElement === resumeWindow) {
+        closeResumeWindow();
+        return;
+      }
+
       closeChadWindow(windowElement);
       focusLauncherForWindow(windowElement);
       return;
@@ -1792,6 +1895,10 @@
       return "proof-of-work";
     }
 
+    if (windowElement === resumeWindow) {
+      return "resume";
+    }
+
     return "general";
   }
 
@@ -1808,6 +1915,7 @@
       careerLogWindow,
       hireChadWindow,
       proofOfWorkWindow,
+      resumeWindow,
       terminalWindow
     ];
 
@@ -2023,6 +2131,11 @@
         return;
       }
 
+      if (activeWindow === resumeWindow) {
+        closeResumeWindow();
+        return;
+      }
+
       closeChadWindow(activeWindow);
       focusLauncherForWindow(activeWindow);
     });
@@ -2064,6 +2177,11 @@
             return;
           }
 
+          if (button.id === "resume-launcher") {
+            openResumeWindow();
+            return;
+          }
+
           showDesktopPopup("Open with terminal?");
         });
       })(launcherButtons[i]);
@@ -2080,6 +2198,7 @@
     bindOnboardingOverlay();
     bindSystemsMapInteractions();
     bindCareerLogInteractions();
+    bindResumeViewerInteractions();
     positionNotifications();
     window.addEventListener("resize", positionNotifications);
   }
