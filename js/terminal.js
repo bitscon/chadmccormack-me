@@ -93,8 +93,6 @@
   var ASCII_HOLD_MS = 1500;
   var DESKTOP_TRANSITION_MS = 500;
   var TERMINAL_CLOSE_MS = 200;
-  var CAREER_LOG_LIVE_MS = 6000;
-  var CAREER_LOG_MAX_LINES = 120;
   var NOTIFICATION_LIFE_MS = 6000;
   var NOTIFICATION_EXIT_MS = 220;
   var RECRUITER_ACTIVITY_MIN_DELAY_MS = 20000;
@@ -321,47 +319,114 @@
     }
   };
 
-  var CAREER_LOG_SEED = [
-    { stamp: "2023-11-03 08:14:09", level: "INFO", tag: "platform", message: "Mapped delivery pain points and documented recurring deployment friction patterns." },
-    { stamp: "2023-11-18 10:42:17", level: "OK", tag: "automation", message: "Converted manual release checklist into repeatable CI pipeline stages." },
-    { stamp: "2023-12-01 15:06:44", level: "INFO", tag: "sre", message: "Defined baseline service level indicators for critical internal workloads." },
-    { stamp: "2023-12-12 19:22:30", level: "WARN", tag: "ops", message: "Detected noisy alert routing causing missed follow-up actions overnight." },
-    { stamp: "2023-12-13 09:37:05", level: "OK", tag: "reliability", message: "Introduced alert grouping and ownership labels to cut response ambiguity." },
-    { stamp: "2024-01-08 11:03:52", level: "INFO", tag: "cloud", message: "Standardized environment templates for faster and safer service onboarding." },
-    { stamp: "2024-01-21 16:48:11", level: "OK", tag: "delivery", message: "Reduced deploy variance by enforcing shared pipeline conventions." },
-    { stamp: "2024-02-07 07:55:24", level: "INFO", tag: "platform", message: "Published internal platform contracts to keep service boundaries explicit." },
-    { stamp: "2024-02-19 13:42:29", level: "WARN", tag: "cloud", message: "Migration rehearsal exposed hidden dependency on legacy network pathing." },
-    { stamp: "2024-02-20 18:10:18", level: "OK", tag: "cloud", message: "Reworked network segmentation plan with rollback checkpoints and drills." },
-    { stamp: "2024-03-04 09:23:50", level: "INFO", tag: "automation", message: "Created event-driven handlers for repeatable operational maintenance tasks." },
-    { stamp: "2024-03-15 12:47:33", level: "OK", tag: "ops", message: "Self-healing routines removed recurring ticket queue for low-risk incidents." },
-    { stamp: "2024-04-02 08:19:07", level: "INFO", tag: "leadership", message: "Facilitated architecture review sessions focused on operational clarity." },
-    { stamp: "2024-04-11 14:38:56", level: "OK", tag: "delivery", message: "Cut lead time by shipping reusable release templates to multiple teams." },
-    { stamp: "2024-04-26 21:31:08", level: "WARN", tag: "sre", message: "Unexpected latency spike traced to unbounded background processing jobs." },
-    { stamp: "2024-04-26 22:16:40", level: "OK", tag: "reliability", message: "Added workload guards and queue visibility to stabilize peak traffic windows." },
-    { stamp: "2024-05-13 10:11:28", level: "INFO", tag: "platform", message: "Versioned platform modules to reduce drift between service environments." },
-    { stamp: "2024-05-29 17:54:12", level: "OK", tag: "automation", message: "Automated runbook generation from pipeline metadata and change records." },
-    { stamp: "2024-06-09 09:44:36", level: "INFO", tag: "ops", message: "Implemented post-incident timeline templates to improve learning quality." },
-    { stamp: "2024-06-23 12:05:09", level: "OK", tag: "leadership", message: "Aligned engineering rituals around reliability goals and ownership handoffs." },
-    { stamp: "2024-07-08 15:18:55", level: "INFO", tag: "cloud", message: "Shifted provisioning defaults toward immutable replacement patterns." },
-    { stamp: "2024-07-16 20:41:03", level: "WARN", tag: "delivery", message: "Release freeze triggered after dependency mismatch in shared runtime layer." },
-    { stamp: "2024-07-16 21:26:47", level: "OK", tag: "platform", message: "Introduced compatibility checks earlier in pipeline to prevent recurrence." },
-    { stamp: "2024-08-05 08:33:14", level: "INFO", tag: "reliability", message: "Expanded synthetic checks to detect user-facing degradation before reports." },
-    { stamp: "2024-08-19 13:09:28", level: "OK", tag: "sre", message: "Improved incident handoff quality with concise state snapshots and context." },
-    { stamp: "2024-09-03 11:58:46", level: "INFO", tag: "automation", message: "Built reusable automation kit for routine operational workflows." },
-    { stamp: "2024-09-14 16:40:57", level: "OK", tag: "delivery", message: "Deployment cadence increased while keeping rollback confidence high." },
-    { stamp: "2024-10-01 07:36:51", level: "INFO", tag: "leadership", message: "Coached teams on designing guardrails that accelerate safe change." },
-    { stamp: "2024-10-12 09:14:03", level: "OK", tag: "platform", message: "Standardized CI templates to reduce deployment variance across teams." },
-    { stamp: "2024-10-28 18:22:49", level: "WARN", tag: "ops", message: "Detected delayed backup verification in one environment during audit prep." },
-    { stamp: "2024-10-29 08:57:12", level: "OK", tag: "governance", message: "Added automated verification checkpoints and ownership escalation paths." },
-    { stamp: "2024-11-11 10:05:44", level: "INFO", tag: "cloud", message: "Refined cost visibility dashboards for infrastructure decision reviews." },
-    { stamp: "2024-12-03 14:31:18", level: "OK", tag: "reliability", message: "Reduced mean-time-to-recovery through clearer diagnostics and runbook cues." },
-    { stamp: "2025-01-22 09:16:27", level: "INFO", tag: "automation", message: "Connected change events to automated evidence capture for audits." },
-    { stamp: "2025-03-02 17:45:39", level: "OK", tag: "sre", message: "Production readiness checks now block risk without slowing normal delivery." },
-    { stamp: "2025-05-14 08:24:50", level: "INFO", tag: "platform", message: "Expanded paved-road platform modules for new service launches." },
-    { stamp: "2025-07-09 12:38:08", level: "OK", tag: "leadership", message: "Operational review process now links reliability outcomes to roadmap choices." },
-    { stamp: "2025-10-17 11:11:42", level: "INFO", tag: "delivery", message: "Reduced repetitive release toil with policy-aware deployment automation." },
-    { stamp: "2026-01-06 09:07:21", level: "OK", tag: "reliability", message: "Current platform posture: stable, observable, and resilient under change." },
-    { stamp: "2026-02-18 16:19:55", level: "OK", tag: "leadership", message: "Ready to lead modern platform, automation, and reliability programs today." }
+  var CAREER_TIMELINE_ENTRIES = [
+    {
+      id: "current-role",
+      period: "[2024 -> Present]",
+      company: "Company Name (Current Role Placeholder)",
+      role: "ServiceNow CMDB / Discovery SME",
+      responsibilities: [
+        "Enterprise CMDB architecture and lifecycle governance.",
+        "Discovery infrastructure visibility and operational alignment.",
+        "CI lifecycle ownership with stakeholder accountability."
+      ],
+      focus: [
+        "MID Server architecture",
+        "Discovery credential management",
+        "CI reconciliation and normalization"
+      ],
+      contributions: [
+        "Stabilized Discovery execution standards for shared environments.",
+        "Improved CI relationship integrity for cross-team service dependencies.",
+        "Established CMDB data quality review cadence for platform teams."
+      ],
+      platforms: [
+        "ServiceNow",
+        "CMDB",
+        "Discovery",
+        "Enterprise Infrastructure"
+      ]
+    },
+    {
+      id: "capital-one",
+      period: "[2019-2023]",
+      company: "Capital One",
+      role: "Senior ServiceNow CMDB / Discovery Engineer",
+      responsibilities: [
+        "Led CMDB governance improvements for enterprise visibility.",
+        "Improved infrastructure inventory confidence across service owners.",
+        "Stabilized Discovery patterns and credential workflows."
+      ],
+      focus: [
+        "CMDB data quality",
+        "Discovery reliability",
+        "CI relationship modeling"
+      ],
+      contributions: [
+        "Reduced noisy CI duplicates through normalization and reconciliation tuning.",
+        "Improved platform reporting trust for operational and audit stakeholders.",
+        "Aligned CMDB architecture decisions with infrastructure operations."
+      ],
+      platforms: [
+        "ServiceNow",
+        "CMDB",
+        "Discovery",
+        "Enterprise Infrastructure"
+      ]
+    },
+    {
+      id: "platform-specialist",
+      period: "[2017-2019]",
+      company: "Company Name (Platform Specialist Placeholder)",
+      role: "ServiceNow Engineer / Platform Specialist",
+      responsibilities: [
+        "Discovery configuration and troubleshooting for enterprise networks.",
+        "CI classification and normalization across technology domains.",
+        "Infrastructure data modeling for operational reporting."
+      ],
+      focus: [
+        "Discovery pattern stability",
+        "Service Mapping readiness",
+        "Operational reporting"
+      ],
+      contributions: [
+        "Improved discovery error triage with repeatable diagnostics.",
+        "Hardened CI classification rules to reduce long-tail data drift.",
+        "Supported governance teams with better platform evidence quality."
+      ],
+      platforms: [
+        "ServiceNow",
+        "Discovery",
+        "Service Mapping",
+        "Infrastructure Data Models"
+      ]
+    },
+    {
+      id: "infra-engineering",
+      period: "[2014-2017]",
+      company: "Company Name (Infrastructure Engineering Placeholder)",
+      role: "Infrastructure / Systems Engineering Role",
+      responsibilities: [
+        "Enterprise infrastructure operations and reliability support.",
+        "Platform health monitoring and service continuity improvements.",
+        "Operational automation for recurring systems tasks."
+      ],
+      focus: [
+        "Infrastructure visibility",
+        "Monitoring and operational tooling",
+        "Automation-first operational practices"
+      ],
+      contributions: [
+        "Documented recovery runbooks that shortened incident response time.",
+        "Introduced repeatable operational checks for critical systems.",
+        "Improved handoff clarity between operations and engineering teams."
+      ],
+      platforms: [
+        "Enterprise Infrastructure",
+        "Monitoring Systems",
+        "Operational Tooling"
+      ]
+    }
   ];
 
   var state = {
@@ -373,7 +438,9 @@
     hireChadRunId: 0,
     systemsMapLayer: "core",
     careerLogFilter: "",
-    careerLogLines: CAREER_LOG_SEED.slice(),
+    careerLogExpanded: {
+      "current-role": true
+    },
     notificationsScheduled: false,
     recruiterActivityStarted: false,
     lastRecruiterActivityKey: "",
@@ -383,7 +450,6 @@
     lines: []
   };
   var systemMonitorInterval = null;
-  var careerLogInterval = null;
   var notificationSequence = 0;
   var notificationScheduleTimers = [];
   var recruiterActivityTimer = null;
@@ -1167,84 +1233,127 @@
     focusLauncherForWindow(proofOfWorkWindow);
   }
 
-  function pad2(value) {
-    return String(value).padStart(2, "0");
+  function createCareerListSection(label, values, className) {
+    var section = document.createElement("section");
+    var heading = document.createElement("p");
+    var list = document.createElement("ul");
+
+    section.className = className || "career-entry-section";
+    heading.className = "career-entry-label";
+    heading.textContent = label + ":";
+
+    for (var i = 0; i < values.length; i += 1) {
+      var item = document.createElement("li");
+      item.textContent = values[i];
+      list.appendChild(item);
+    }
+
+    section.appendChild(heading);
+    section.appendChild(list);
+    return section;
   }
 
-  function getCurrentLogTimestamp() {
-    var now = new Date();
+  function careerEntryMatchesFilter(entry, query) {
+    if (!query) {
+      return true;
+    }
 
-    return (
-      now.getFullYear() +
-      "-" + pad2(now.getMonth() + 1) +
-      "-" + pad2(now.getDate()) +
-      " " + pad2(now.getHours()) +
-      ":" + pad2(now.getMinutes()) +
-      ":" + pad2(now.getSeconds())
-    );
+    var searchable = [
+      entry.period,
+      entry.company,
+      entry.role,
+      entry.responsibilities.join(" "),
+      entry.focus.join(" "),
+      entry.contributions.join(" "),
+      entry.platforms.join(" ")
+    ].join(" ").toLowerCase();
+
+    return searchable.indexOf(query) !== -1;
   }
 
-  function formatCareerLogEntry(entry) {
-    return (
-      entry.stamp +
-      " [" + entry.level + "]" +
-      " [" + entry.tag + "] " +
-      entry.message
-    );
+  function toggleCareerEntry(entryId) {
+    state.careerLogExpanded[entryId] = !state.careerLogExpanded[entryId];
+    renderCareerLog();
   }
 
   function renderCareerLog() {
     var query = state.careerLogFilter.trim().toLowerCase();
-    var fragment = document.createDocumentFragment();
-    var hasVisibleLines = false;
+    var container = document.createElement("div");
+    var hasEntries = false;
 
+    container.className = "career-log-container";
     careerLogContent.innerHTML = "";
 
-    for (var i = 0; i < state.careerLogLines.length; i += 1) {
-      var lineEntry = state.careerLogLines[i];
-      var searchableText = (lineEntry.tag + " " + lineEntry.message).toLowerCase();
+    for (var i = 0; i < CAREER_TIMELINE_ENTRIES.length; i += 1) {
+      var entry = CAREER_TIMELINE_ENTRIES[i];
 
-      if (query && searchableText.indexOf(query) === -1) {
+      if (!careerEntryMatchesFilter(entry, query)) {
         continue;
       }
 
-      var line = document.createElement("div");
-      line.className = "career-log-line level-" + lineEntry.level.toLowerCase();
-      line.textContent = formatCareerLogEntry(lineEntry);
-      fragment.appendChild(line);
-      hasVisibleLines = true;
+      hasEntries = true;
+      var expanded = !!state.careerLogExpanded[entry.id];
+      var article = document.createElement("article");
+      var header = document.createElement("div");
+      var period = document.createElement("span");
+      var company = document.createElement("span");
+      var role = document.createElement("p");
+      var detailBlock = document.createElement("div");
+      var platformLabel = document.createElement("p");
+
+      article.className = "career-entry" + (expanded ? " is-expanded" : "");
+      article.setAttribute("data-entry-id", entry.id);
+      article.setAttribute("role", "button");
+      article.setAttribute("tabindex", "0");
+      article.setAttribute("aria-expanded", expanded ? "true" : "false");
+
+      header.className = "career-entry-header";
+      period.className = "career-entry-period";
+      period.textContent = entry.period;
+      company.className = "career-entry-company";
+      company.textContent = entry.company;
+      header.appendChild(period);
+      header.appendChild(company);
+
+      role.className = "career-entry-role";
+      role.textContent = entry.role;
+
+      article.appendChild(header);
+      article.appendChild(role);
+      article.appendChild(createCareerListSection("Impact", entry.responsibilities, "career-entry-section"));
+      article.appendChild(createCareerListSection("Architectural Focus", entry.focus, "career-entry-section"));
+
+      detailBlock.className = "career-entry-extra";
+      detailBlock.appendChild(createCareerListSection("Key Contributions", entry.contributions, "career-entry-section"));
+      platformLabel.className = "career-entry-platforms";
+      platformLabel.textContent = "Platforms: " + entry.platforms.join(" | ");
+      detailBlock.appendChild(platformLabel);
+      article.appendChild(detailBlock);
+
+      (function (entryId) {
+        article.addEventListener("click", function () {
+          toggleCareerEntry(entryId);
+        });
+
+        article.addEventListener("keydown", function (event) {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            toggleCareerEntry(entryId);
+          }
+        });
+      })(entry.id);
+
+      container.appendChild(article);
     }
 
-    if (!hasVisibleLines) {
-      var emptyLine = document.createElement("div");
-      emptyLine.className = "career-log-line level-info";
-      emptyLine.textContent = "No log lines match current filter.";
-      fragment.appendChild(emptyLine);
+    if (!hasEntries) {
+      var empty = document.createElement("div");
+      empty.className = "career-log-empty";
+      empty.textContent = "No career entries match the current filter.";
+      container.appendChild(empty);
     }
 
-    careerLogContent.appendChild(fragment);
-    careerLogContent.scrollTop = careerLogContent.scrollHeight;
-  }
-
-  function appendCareerLogLine(lineEntry) {
-    state.careerLogLines.push(lineEntry);
-
-    if (state.careerLogLines.length > CAREER_LOG_MAX_LINES) {
-      state.careerLogLines.splice(0, state.careerLogLines.length - CAREER_LOG_MAX_LINES);
-    }
-
-    if (careerLogWindow.classList.contains("open")) {
-      renderCareerLog();
-    }
-  }
-
-  function appendCareerLogHeartbeat() {
-    appendCareerLogLine({
-      stamp: getCurrentLogTimestamp(),
-      level: "INFO",
-      tag: "workstation",
-      message: "Recruiter is reading logs..."
-    });
+    careerLogContent.appendChild(container);
   }
 
   function openCareerLogWindow() {
@@ -1255,6 +1364,14 @@
   }
 
   function bindCareerLogInteractions() {
+    var titleElement = careerLogWindow.querySelector(".window-title");
+
+    if (titleElement) {
+      titleElement.textContent = "career.log — less";
+    }
+
+    careerLogFilterInput.placeholder = "filter timeline (company, cmdb, discovery, infrastructure...)";
+
     careerLogFilterInput.addEventListener("input", function (event) {
       state.careerLogFilter = event.target.value || "";
       renderCareerLog();
@@ -1274,14 +1391,6 @@
     });
 
     renderCareerLog();
-  }
-
-  function startCareerLogStream() {
-    if (careerLogInterval) {
-      window.clearInterval(careerLogInterval);
-    }
-
-    careerLogInterval = window.setInterval(appendCareerLogHeartbeat, CAREER_LOG_LIVE_MS);
   }
 
   function renderSystemsMapLayer(layerName) {
@@ -1928,7 +2037,6 @@
     activateDesktop();
     bindDesktopInteractions();
     startSystemMonitor();
-    startCareerLogStream();
 
     bootSequence.style.transitionDuration = DESKTOP_TRANSITION_MS + "ms";
     bootSequence.classList.add("hidden");
