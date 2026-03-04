@@ -270,6 +270,27 @@ body {
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.45);
 }
 
+.arch-banner {
+  position: absolute;
+  top: 2.1rem;
+  left: 1rem;
+  z-index: 2;
+  margin: 0;
+  padding: 0.36rem 0.5rem;
+  border: 1px solid rgba(190, 221, 243, 0.22);
+  border-radius: 8px;
+  background: rgba(7, 13, 24, 0.34);
+  color: rgba(229, 240, 251, 0.78);
+  font-size: 12px;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  white-space: pre-line;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  opacity: 0.7;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.42);
+  pointer-events: none;
+}
+
 #desktop-tagline {
   position: absolute;
   top: 1.06rem;
@@ -546,6 +567,44 @@ body {
   font-size: 0.68rem;
 }
 
+.recruiter-activity {
+  position: absolute;
+  left: 20px;
+  bottom: 80px;
+  z-index: 3;
+  width: min(300px, 36vw);
+  padding: 8px 12px;
+  border: 1px solid rgba(201, 228, 245, 0.24);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.45);
+  color: rgba(227, 241, 252, 0.9);
+  opacity: 0.85;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.32);
+  pointer-events: none;
+}
+
+.recruiter-activity-title {
+  margin: 0;
+  color: rgba(242, 250, 255, 0.9);
+  font-size: 0.66rem;
+  line-height: 1.25;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.recruiter-activity-message {
+  margin: 0.24rem 0 0;
+  color: rgba(219, 237, 250, 0.88);
+  font-size: 0.72rem;
+  line-height: 1.32;
+  opacity: 1;
+  transition: opacity 220ms ease;
+}
+
+.recruiter-activity-message.is-updating {
+  opacity: 0.45;
+}
+
 #notifications {
   position: absolute;
   top: 10rem;
@@ -779,7 +838,7 @@ body {
   text-shadow: 0 0 8px rgba(0, 0, 0, 0.42);
 }
 
-.desktop-hint {
+.engineer-hint {
   position: absolute;
   left: 0;
   bottom: 20px;
@@ -2433,6 +2492,14 @@ body[data-theme="matrix"] #terminal::before {
     font-size: 0.67rem;
   }
 
+  .arch-banner {
+    top: 1.72rem;
+    left: 0.78rem;
+    padding: 0.28rem 0.38rem;
+    font-size: 0.54rem;
+    line-height: 1.34;
+  }
+
   #desktop-tagline {
     left: 4.7rem;
     top: 0.84rem;
@@ -2479,6 +2546,23 @@ body[data-theme="matrix"] #terminal::before {
     right: 0.62rem;
     width: min(192px, 46vw);
     padding: 0.34rem;
+  }
+
+  .recruiter-activity {
+    left: 0.62rem;
+    bottom: 4.55rem;
+    width: min(220px, 52vw);
+    padding: 0.38rem 0.48rem;
+  }
+
+  .recruiter-activity-title {
+    font-size: 0.57rem;
+  }
+
+  .recruiter-activity-message {
+    margin-top: 0.16rem;
+    font-size: 0.6rem;
+    line-height: 1.32;
   }
 
   #notifications {
@@ -2598,7 +2682,7 @@ body[data-theme="matrix"] #terminal::before {
     font-size: 0.56rem;
   }
 
-  .desktop-hint {
+  .engineer-hint {
     bottom: 0.88rem;
     padding: 0 0.8rem;
     font-size: 0.6rem;
@@ -2907,6 +2991,15 @@ body[data-theme="matrix"] #terminal::before {
     top: 0.56rem;
     left: 0.62rem;
     font-size: 0.62rem;
+  }
+
+  .arch-banner {
+    top: 1.42rem;
+    left: 0.62rem;
+    padding: 0.22rem 0.3rem;
+    font-size: 0.48rem;
+    line-height: 1.3;
+    opacity: 0.66;
   }
 
   #desktop-tagline {
@@ -3225,6 +3318,23 @@ body[data-theme="matrix"] #terminal::before {
     overflow: hidden;
   }
 
+  .recruiter-activity {
+    left: 0.46rem;
+    bottom: calc(var(--dock-h, 0px) + env(safe-area-inset-bottom, 0px) + 4.1rem);
+    width: min(210px, 64vw);
+    padding: 0.3rem 0.4rem;
+  }
+
+  .recruiter-activity-title {
+    font-size: 0.51rem;
+  }
+
+  .recruiter-activity-message {
+    margin-top: 0.12rem;
+    font-size: 0.54rem;
+    line-height: 1.3;
+  }
+
   .pip-title {
     margin-top: 0.3rem;
     font-size: 0.58rem;
@@ -3355,7 +3465,7 @@ body[data-theme="matrix"] #terminal::before {
     font-size: 0.5rem;
   }
 
-  .desktop-hint {
+  .engineer-hint {
     bottom: calc(var(--dock-h, 0px) + env(safe-area-inset-bottom, 0px) + 0.58rem);
     padding: 0 0.58rem;
     font-size: 0.52rem;

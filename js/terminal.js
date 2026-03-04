@@ -23,6 +23,8 @@
   var onboardingStartButton = document.getElementById("onboarding-start");
   var pipVideo = document.getElementById("pip-video");
   var notifications = document.getElementById("notifications");
+  var recruiterActivityPanel = document.getElementById("recruiter-activity");
+  var recruiterActivityMessage = document.getElementById("recruiter-activity-message");
   var systemMonitorStats = document.getElementById("system-monitor-stats");
   var launcherButtons = document.querySelectorAll("#desktop-launcher .launcher-button");
   var terminalWindow = document.getElementById("terminal-window");
@@ -71,6 +73,8 @@
     !onboardingStartButton ||
     !pipVideo ||
     !notifications ||
+    !recruiterActivityPanel ||
+    !recruiterActivityMessage ||
     !systemMonitorStats ||
     !launcherButtons.length ||
     !terminalWindow ||
@@ -118,7 +122,7 @@
   var NOTIFICATION_LIFE_MS = 6000;
   var NOTIFICATION_EXIT_MS = 220;
   var RECRUITER_ACTIVITY_MIN_DELAY_MS = 20000;
-  var RECRUITER_ACTIVITY_MAX_DELAY_MS = 90000;
+  var RECRUITER_ACTIVITY_MAX_DELAY_MS = 40000;
   var RECRUITER_ACTIVITY_TITLE = "Recruiter Activity";
   var HIRE_CHAD_STEP_DELAY_MS = 190;
   var HIRE_CHAD_DOT_DELAY_MS = 75;
@@ -266,6 +270,13 @@
     "proof_opened"
   ];
   var RECRUITER_ENGAGEMENT_SYSTEM_LINE = "recruiter engagement detected";
+  var RECRUITER_ACTIVITY_MESSAGES = [
+    "● 2 recruiters viewing this portfolio",
+    "● 3 recruiters reviewing Proof of Work",
+    "● A recruiter opened Hire Chad",
+    "● Someone downloaded the resume",
+    "● A recruiter is reviewing Interview Prep"
+  ];
 
   var HIRE_CHAD_SEQUENCE = [
     { type: "line", text: "sudo hire-chad", className: "is-command", pause: 220 },
@@ -523,6 +534,7 @@
   var notificationSequence = 0;
   var notificationScheduleTimers = [];
   var recruiterActivityTimer = null;
+  var recruiterActivityFadeTimer = null;
   var terminalActivityHintTimer = null;
   var recruiterCtaBanner = null;
   var windowCloseTimers = {};
@@ -2267,207 +2279,49 @@
   }
 
   function showNotification(config) {
-    if (!config) {
+    // Popup notifications are disabled in favor of the recruiter activity panel.
+    void config;
+  }
+
+  function chooseRecruiterActivityMessage() {
+    var nextMessage = pickRandomItem(RECRUITER_ACTIVITY_MESSAGES);
+    var attempts = 0;
+
+    while (
+      RECRUITER_ACTIVITY_MESSAGES.length > 1 &&
+      nextMessage === state.lastRecruiterActivityKey &&
+      attempts < 8
+    ) {
+      nextMessage = pickRandomItem(RECRUITER_ACTIVITY_MESSAGES);
+      attempts += 1;
+    }
+
+    state.lastRecruiterActivityKey = nextMessage;
+    return nextMessage;
+  }
+
+  function setRecruiterActivityMessage(message, animate) {
+    if (!message) {
       return;
     }
 
-    notificationSequence += 1;
-    positionNotifications();
-
-    var notification = document.createElement("article");
-    notification.className = "chados-notification";
-    notification.setAttribute("role", "status");
-    notification.setAttribute("aria-live", "polite");
-    notification.setAttribute("aria-atomic", "true");
-    notification.setAttribute("data-notification-id", String(notificationSequence));
-
-    var heading = document.createElement("div");
-    heading.className = "notification-head";
-
-    if (config.icon) {
-      var icon = document.createElement("span");
-      icon.className = "notification-icon";
-      icon.setAttribute("aria-hidden", "true");
-      icon.textContent = config.icon;
-      heading.appendChild(icon);
+    if (recruiterActivityFadeTimer) {
+      window.clearTimeout(recruiterActivityFadeTimer);
+      recruiterActivityFadeTimer = null;
     }
 
-    var title = document.createElement("p");
-    title.className = "notification-title";
-    title.textContent = config.title || "System";
-    heading.appendChild(title);
-
-    var timestamp = document.createElement("span");
-    timestamp.className = "notification-time";
-    timestamp.textContent = getNotificationTimestamp();
-    heading.appendChild(timestamp);
-
-    var message = document.createElement("p");
-    message.className = "notification-message";
-    message.textContent = config.message || "";
-
-    notification.appendChild(heading);
-    notification.appendChild(message);
-    notification.addEventListener("click", function () {
-      dismissNotification(notification);
-    });
-    notification.__onDismiss = typeof config.onDismiss === "function"
-      ? config.onDismiss
-      : null;
-
-    notifications.appendChild(notification);
-    window.requestAnimationFrame(function () {
-      notification.classList.add("is-visible");
-    });
-
-    notification.__autoDismissTimer = window.setTimeout(function () {
-      dismissNotification(notification);
-    }, NOTIFICATION_LIFE_MS);
-  }
-
-  function getRecruiterContextTagFromWindow(windowElement) {
-    if (windowElement === systemsMapWindow) {
-      return "mind-map";
+    if (!animate) {
+      recruiterActivityMessage.textContent = message;
+      recruiterActivityMessage.classList.remove("is-updating");
+      return;
     }
 
-    if (windowElement === automationLabWindow) {
-      return "automation-lab";
-    }
-
-    if (windowElement === careerLogWindow) {
-      return "career-log";
-    }
-
-    if (windowElement === hireChadWindow) {
-      return "hire-chad";
-    }
-
-    if (windowElement === terminalWindow) {
-      return "terminal";
-    }
-
-    if (windowElement === proofOfWorkWindow) {
-      return "proof-of-work";
-    }
-
-    if (windowElement === resumeWindow) {
-      return "resume";
-    }
-
-    if (windowElement === skillsWindow) {
-      return "skills";
-    }
-
-    if (windowElement === interviewPrepWindow) {
-      return "interview-prep";
-    }
-
-    return "general";
-  }
-
-  function getRecruiterContextTag() {
-    var activeWindow = desktopWindows.querySelector(".chados-window.open.is-active");
-
-    if (activeWindow) {
-      return getRecruiterContextTagFromWindow(activeWindow);
-    }
-
-    var trackedWindows = [
-      systemsMapWindow,
-      automationLabWindow,
-      careerLogWindow,
-      hireChadWindow,
-      proofOfWorkWindow,
-      resumeWindow,
-      skillsWindow,
-      interviewPrepWindow,
-      terminalWindow
-    ];
-
-    for (var i = 0; i < trackedWindows.length; i += 1) {
-      if (trackedWindows[i].classList.contains("open")) {
-        return getRecruiterContextTagFromWindow(trackedWindows[i]);
-      }
-    }
-
-    return "general";
-  }
-
-  function getRecruiterTemplateWeight(template, contextTag) {
-    if (!template.tags || !template.tags.length) {
-      return 1;
-    }
-
-    if (template.tags.indexOf(contextTag) !== -1) {
-      return 3;
-    }
-
-    if (contextTag === "general" && template.tags.indexOf("general") !== -1) {
-      return 2;
-    }
-
-    return 1;
-  }
-
-  function chooseRecruiterActivityTemplate() {
-    var contextTag = getRecruiterContextTag();
-    var candidates = [];
-
-    for (var i = 0; i < RECRUITER_ACTIVITY_TEMPLATES.length; i += 1) {
-      var template = RECRUITER_ACTIVITY_TEMPLATES[i];
-
-      if (
-        RECRUITER_ACTIVITY_TEMPLATES.length > 1 &&
-        template.key === state.lastRecruiterActivityKey
-      ) {
-        continue;
-      }
-
-      candidates.push({
-        template: template,
-        weight: getRecruiterTemplateWeight(template, contextTag)
-      });
-    }
-
-    if (!candidates.length) {
-      for (var j = 0; j < RECRUITER_ACTIVITY_TEMPLATES.length; j += 1) {
-        candidates.push({
-          template: RECRUITER_ACTIVITY_TEMPLATES[j],
-          weight: getRecruiterTemplateWeight(RECRUITER_ACTIVITY_TEMPLATES[j], contextTag)
-        });
-      }
-    }
-
-    var totalWeight = 0;
-    for (var k = 0; k < candidates.length; k += 1) {
-      totalWeight += candidates[k].weight;
-    }
-
-    var pick = Math.random() * totalWeight;
-    var running = 0;
-
-    for (var m = 0; m < candidates.length; m += 1) {
-      running += candidates[m].weight;
-      if (pick <= running) {
-        return candidates[m].template;
-      }
-    }
-
-    return candidates[candidates.length - 1].template;
-  }
-
-  function buildRecruiterActivityNotification() {
-    var template = chooseRecruiterActivityTemplate();
-    var message = typeof template.message === "function"
-      ? template.message()
-      : template.message;
-
-    state.lastRecruiterActivityKey = template.key;
-
-    return {
-      title: RECRUITER_ACTIVITY_TITLE,
-      message: message
-    };
+    recruiterActivityMessage.classList.add("is-updating");
+    recruiterActivityFadeTimer = window.setTimeout(function () {
+      recruiterActivityMessage.textContent = message;
+      recruiterActivityMessage.classList.remove("is-updating");
+      recruiterActivityFadeTimer = null;
+    }, 140);
   }
 
   function getNextRecruiterActivityDelay() {
@@ -2490,9 +2344,8 @@
         return;
       }
 
-      var notificationConfig = buildRecruiterActivityNotification();
-      notificationConfig.onDismiss = scheduleNextRecruiterActivityNotification;
-      showNotification(notificationConfig);
+      setRecruiterActivityMessage(chooseRecruiterActivityMessage(), true);
+      scheduleNextRecruiterActivityNotification();
     }, getNextRecruiterActivityDelay());
   }
 
@@ -2501,27 +2354,15 @@
       return;
     }
 
+    recruiterActivityPanel.setAttribute("aria-label", RECRUITER_ACTIVITY_TITLE);
     state.recruiterActivityStarted = true;
+    state.lastRecruiterActivityKey = RECRUITER_ACTIVITY_MESSAGES[0];
+    setRecruiterActivityMessage(RECRUITER_ACTIVITY_MESSAGES[0], false);
     scheduleNextRecruiterActivityNotification();
   }
 
   function scheduleDesktopNotifications() {
-    if (state.notificationsScheduled) {
-      return;
-    }
-
-    state.notificationsScheduled = true;
-    positionNotifications();
-
-    for (var i = 0; i < INITIAL_NOTIFICATIONS.length; i += 1) {
-      (function (notificationConfig) {
-        var timer = window.setTimeout(function () {
-          showNotification(notificationConfig);
-        }, notificationConfig.delay);
-
-        notificationScheduleTimers.push(timer);
-      })(INITIAL_NOTIFICATIONS[i]);
-    }
+    // Popup notifications are disabled in favor of the recruiter activity panel.
   }
 
   function bindWindowSystem() {
@@ -2685,8 +2526,6 @@
     bindCareerLogInteractions();
     bindResumeViewerInteractions();
     ensureRecruiterCtaBanner();
-    positionNotifications();
-    window.addEventListener("resize", positionNotifications);
   }
 
   function renderSystemMonitor() {
@@ -2759,7 +2598,6 @@
     await sleep(DESKTOP_TRANSITION_MS);
     bootSequence.setAttribute("aria-hidden", "true");
 
-    scheduleDesktopNotifications();
     startRecruiterActivityNotifications();
     if (!maybeShowOnboardingOverlay()) {
       terminalLauncher.focus();
