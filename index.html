@@ -72,6 +72,13 @@ CMDB Governance • Discovery Architecture • Service Mapping</p>
       </div>
 
       <div class="launcher-entry">
+        <button id="interview-prep-launcher" class="launcher-button" type="button" aria-label="Open interview.txt" title="interview.txt">
+          <span class="launcher-icon" aria-hidden="true">txt</span>
+        </button>
+        <span class="launcher-label">Interview Prep</span>
+      </div>
+
+      <div class="launcher-entry">
         <button id="automation-lab-launcher" class="launcher-button" type="button" aria-label="Open Automation Lab" title="Automation Lab">
           <span class="launcher-icon" aria-hidden="true">&#9881;</span>
         </button>
@@ -464,6 +471,67 @@ workstation mode</p>
                 <li>increased infrastructure visibility</li>
                 <li>improved incident response</li>
                 <li>stronger service mapping foundations</li>
+              </ul>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="interview-prep-window" class="chados-window" data-app="interview-prep" aria-label="Interview prep window" aria-hidden="true">
+        <header class="window-titlebar">
+          <p class="window-title">interview-prep.txt — less</p>
+          <div class="window-controls">
+            <button class="window-control window-close" type="button" data-window-action="close" aria-label="Close interview prep window" title="Close">✕</button>
+          </div>
+        </header>
+
+        <div class="app-window-body interview-prep-body">
+          <div class="interview-prep-notes">
+            <section class="interview-prep-section">
+              <h3>ServiceNow Interview Preparation</h3>
+              <p>These are common architecture questions I often discuss when explaining CMDB, Discovery, and service visibility.</p>
+            </section>
+
+            <section class="interview-prep-section">
+              <h3>Question 1</h3>
+              <p class="interview-prep-question">How do you maintain CMDB data quality?</p>
+              <p class="interview-prep-answer-label">Answer</p>
+              <p>CMDB data quality depends on a combination of Discovery reliability, identification rules, reconciliation strategy, and normalization.</p>
+              <p class="interview-prep-list-label">Key focus areas:</p>
+              <ul>
+                <li>CI identification rules</li>
+                <li>reconciliation rules</li>
+                <li>normalization</li>
+                <li>CI ownership and lifecycle</li>
+              </ul>
+            </section>
+
+            <section class="interview-prep-section">
+              <h3>Question 2</h3>
+              <p class="interview-prep-question">How do you troubleshoot Discovery failures?</p>
+              <p class="interview-prep-answer-label">Answer</p>
+              <p>Discovery troubleshooting typically follows this order:</p>
+              <ol>
+                <li>Network connectivity</li>
+                <li>Credentials</li>
+                <li>MID Server health</li>
+                <li>Discovery patterns</li>
+                <li>CI classification</li>
+              </ol>
+              <p>This approach isolates the layer where Discovery is failing.</p>
+            </section>
+
+            <section class="interview-prep-section">
+              <h3>Question 3</h3>
+              <p class="interview-prep-question">How do you implement CSDM successfully?</p>
+              <p class="interview-prep-answer-label">Answer</p>
+              <p>Successful CSDM implementation focuses on aligning the service model with how the organization delivers products.</p>
+              <p class="interview-prep-list-label">This includes:</p>
+              <ul>
+                <li>defining service boundaries</li>
+                <li>aligning CI classes to CSDM layers</li>
+                <li>connecting infrastructure to applications</li>
+                <li>linking services to business capabilities</li>
               </ul>
             </section>
           </div>

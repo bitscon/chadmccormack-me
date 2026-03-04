@@ -988,6 +988,11 @@ body[data-theme="matrix"] #terminal::before {
   height: min(74vh, 640px);
 }
 
+#interview-prep-window {
+  width: min(860px, calc(100% - 7rem));
+  height: min(74vh, 640px);
+}
+
 .app-window-body {
   display: flex;
   flex-direction: column;
@@ -1456,6 +1461,75 @@ body[data-theme="matrix"] #terminal::before {
 }
 
 .skills-section ul {
+  margin: 0.28rem 0 0;
+  padding-left: 1rem;
+  color: var(--terminal-muted);
+  font-size: 0.72rem;
+  line-height: 1.38;
+}
+
+.interview-prep-body {
+  gap: 0.66rem;
+}
+
+.interview-prep-notes {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid var(--terminal-border);
+  border-radius: 10px;
+  background: rgba(1, 7, 9, 0.58);
+  padding: 0.72rem 0.78rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--terminal-muted) transparent;
+}
+
+.interview-prep-notes::-webkit-scrollbar {
+  width: 10px;
+}
+
+.interview-prep-notes::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.interview-prep-notes::-webkit-scrollbar-thumb {
+  background: var(--terminal-muted);
+}
+
+.interview-prep-section + .interview-prep-section {
+  margin-top: 0.56rem;
+  padding-top: 0.56rem;
+  border-top: 1px solid rgba(148, 196, 220, 0.24);
+}
+
+.interview-prep-section h3 {
+  margin: 0;
+  color: rgba(226, 246, 255, 0.95);
+  font-size: 0.76rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.interview-prep-section p {
+  margin: 0.28rem 0 0;
+  color: var(--terminal-muted);
+  font-size: 0.72rem;
+  line-height: 1.38;
+}
+
+.interview-prep-question,
+.interview-prep-answer-label,
+.interview-prep-list-label {
+  color: rgba(210, 239, 255, 0.92);
+}
+
+.interview-prep-answer-label,
+.interview-prep-list-label {
+  letter-spacing: 0.02em;
+}
+
+.interview-prep-section ul,
+.interview-prep-section ol {
   margin: 0.28rem 0 0;
   padding-left: 1rem;
   color: var(--terminal-muted);
@@ -2510,6 +2584,11 @@ body[data-theme="matrix"] #terminal::before {
     height: 74vh;
   }
 
+  #interview-prep-window {
+    width: 96vw;
+    height: 74vh;
+  }
+
   .mind-map-container {
     grid-template-columns: 1fr;
     gap: 0.6rem;
@@ -2841,6 +2920,11 @@ body[data-theme="matrix"] #terminal::before {
     height: 66vh;
   }
 
+  #interview-prep-window {
+    width: 96vw;
+    height: 66vh;
+  }
+
   .mind-map-nodes {
     gap: 0.36rem;
   }
@@ -3038,6 +3122,14 @@ body[data-theme="matrix"] #terminal::before {
 
   .skills-section h3,
   .skills-section ul {
+    font-size: 0.56rem;
+    line-height: 1.32;
+  }
+
+  .interview-prep-section h3,
+  .interview-prep-section p,
+  .interview-prep-section ul,
+  .interview-prep-section ol {
     font-size: 0.56rem;
     line-height: 1.32;
   }
