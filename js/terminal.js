@@ -1,7 +1,8 @@
 (function () {
+  var bootScreen = document.getElementById("boot-screen");
   var bootSequence = document.getElementById("boot-sequence");
   var biosScreen = document.getElementById("bios-screen");
-  var biosCopy = biosScreen.querySelector(".boot-copy");
+  var biosCopy = biosScreen ? biosScreen.querySelector(".boot-copy") : null;
   var kernelScreen = document.getElementById("kernel-screen");
   var asciiScreen = document.getElementById("ascii-screen");
   var kernelLog = document.getElementById("kernel-log");
@@ -51,13 +52,7 @@
   var promptLabel = document.querySelector(".prompt");
 
   if (
-    !bootSequence ||
-    !biosScreen ||
-    !biosCopy ||
-    !kernelScreen ||
-    !asciiScreen ||
-    !kernelLog ||
-    !asciiBanner ||
+    !bootScreen ||
     !desktop ||
     !desktopWindows ||
     !terminalLauncher ||
@@ -2660,31 +2655,31 @@
   async function runBootExperience() {
     restoreTheme();
 
-    setActiveBootScreen(biosScreen);
-    await runBiosChecks();
+    await sleep(2200);
 
-    setActiveBootScreen(kernelScreen);
-    await runKernelBootLogs();
-    await sleep(KERNEL_POST_DELAY_MS);
-
-    setActiveBootScreen(asciiScreen);
-    showAsciiBanner();
-    await sleep(ASCII_HOLD_MS);
+    bootScreen.classList.add("is-fading");
 
     activateDesktop();
     bindDesktopInteractions();
     startSystemMonitor();
 
-    bootSequence.style.transitionDuration = DESKTOP_TRANSITION_MS + "ms";
-    bootSequence.classList.add("hidden");
-    await sleep(DESKTOP_TRANSITION_MS);
-    bootSequence.setAttribute("aria-hidden", "true");
-
     startRecruiterActivityNotifications();
     if (!maybeShowOnboardingOverlay()) {
       terminalLauncher.focus();
     }
+
+    await sleep(600);
+
+    if (bootScreen.parentNode) {
+      bootScreen.parentNode.removeChild(bootScreen);
+    }
   }
 
-  runBootExperience();
+  if (document.readyState === "complete") {
+    runBootExperience();
+  } else {
+    window.addEventListener("load", function () {
+      runBootExperience();
+    });
+  }
 })();
