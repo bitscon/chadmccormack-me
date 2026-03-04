@@ -2491,55 +2491,55 @@ body[data-theme="matrix"] #terminal::before {
   margin: 0;
 }
 
-.prompt-row {
+.prompt-row,
+.terminal-input-line {
   display: flex;
   align-items: center;
   gap: 0.55rem;
   width: 100%;
 }
 
-.prompt {
+.prompt,
+.terminal-prompt {
   color: var(--terminal-prompt);
   flex: 0 0 auto;
   text-shadow: 0 0 8px rgba(0, 255, 156, 0.35);
 }
 
-.input-wrap {
+.input-wrap,
+.terminal-input-wrap {
   display: flex;
   align-items: center;
   flex: 1;
   min-width: 0;
 }
 
-#command-input {
+#command-input,
+.terminal-input {
   width: 100%;
   min-width: 0;
   border: 0;
   margin: 0;
   padding: 0;
   background: transparent;
-  color: var(--terminal-fg);
-  font: inherit;
-  caret-color: var(--terminal-fg);
+  border: none;
+  outline: none;
+  color: #6ef7c8;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 14px;
+  flex: 1;
+  caret-color: #6ef7c8;
 }
 
-#command-input:focus {
+#command-input:focus,
+.terminal-input:focus {
   outline: none;
 }
 
-#command-input:focus-visible {
+#command-input:focus-visible,
+.terminal-input:focus-visible {
   outline: 2px solid var(--terminal-focus);
   outline-offset: 2px;
-}
-
-.cursor {
-  width: 0.7ch;
-  height: 1.1em;
-  margin-left: 0.15rem;
-  background: var(--terminal-fg);
-  box-shadow: 0 0 8px var(--terminal-fg);
-  animation: blink 1s steps(2, start) infinite;
-  flex: 0 0 auto;
 }
 
 .sr-only {
@@ -2574,18 +2574,6 @@ body[data-theme="matrix"] #terminal::before {
   to {
     opacity: 0;
     transform: scale(0.95);
-  }
-}
-
-@keyframes blink {
-  0%,
-  49% {
-    opacity: 1;
-  }
-
-  50%,
-  100% {
-    opacity: 0;
   }
 }
 
@@ -3152,13 +3140,15 @@ body[data-theme="matrix"] #terminal::before {
     padding: 0.86rem;
   }
 
-  .prompt-row {
+  .prompt-row,
+  .terminal-input-line {
     align-items: flex-start;
     flex-direction: column;
     gap: 0.35rem;
   }
 
-  .input-wrap {
+  .input-wrap,
+  .terminal-input-wrap {
     width: 100%;
   }
 }

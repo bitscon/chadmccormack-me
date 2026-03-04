@@ -277,6 +277,32 @@
     "● Someone downloaded the resume",
     "● A recruiter is reviewing Interview Prep"
   ];
+  var TAB_COMPLETE_COMMANDS = [
+    "open",
+    "resume",
+    "career",
+    "mindmap",
+    "proof",
+    "automation",
+    "contact",
+    "hire-chad",
+    "lab",
+    "map",
+    "help",
+    "clear",
+    "ls",
+    "cat"
+  ];
+  var TAB_COMPLETE_FILES = [
+    "about.txt",
+    "experience.txt",
+    "projects.txt",
+    "thinking.txt",
+    "contact.txt",
+    "motto.txt",
+    "automation-lab/",
+    "resume.pdf"
+  ];
 
   var HIRE_CHAD_SEQUENCE = [
     { type: "line", text: "sudo hire-chad", className: "is-command", pause: 220 },
@@ -1164,36 +1190,71 @@
   }
 
   function getCommandNames() {
-    var commands = window.TerminalCommands || {};
-    var names = Object.keys(commands);
-
-    if (names.indexOf("clear") !== -1 && names.indexOf("cls") === -1) {
-      names.push("cls");
-    }
-
-    names.sort();
-    return names;
+    return TAB_COMPLETE_COMMANDS.slice();
   }
 
-  function autoCompleteCommand() {
-    var value = input.value;
+  function getCompletionInputState(rawValue) {
+    var match = rawValue.match(/^(.*?)([^\s]*)$/);
+    var prefix = match ? match[1] : "";
+    var token = match ? match[2] : rawValue;
 
-    if (!value.trim()) {
-      return;
-    }
+    return {
+      prefix: prefix,
+      token: token,
+      normalizedToken: token.toLowerCase(),
+      isCommandToken: prefix.trim().length === 0
+    };
+  }
 
-    if (/\s/.test(value.trim())) {
-      return;
-    }
-
-    var token = value.trim().toLowerCase();
-    var names = getCommandNames();
+  function getTabCompletionMatches(rawValue) {
+    var inputState = getCompletionInputState(rawValue);
+    var candidates = inputState.isCommandToken ? getCommandNames() : TAB_COMPLETE_FILES;
     var matches = [];
 
-    for (var i = 0; i < names.length; i += 1) {
-      if (names[i].indexOf(token) === 0) {
-        matches.push(names[i]);
+    for (var i = 0; i < candidates.length; i += 1) {
+      if (candidates[i].toLowerCase().indexOf(inputState.normalizedToken) === 0) {
+        matches.push(candidates[i]);
       }
+    }
+
+    matches.sort();
+
+    return {
+      inputState: inputState,
+      matches: matches
+    };
+  }
+
+  function applySingleTabCompletion(inputState, match) {
+    var suffix = "";
+
+    if (inputState.isCommandToken || match.slice(-1) !== "/") {
+      suffix = " ";
+    }
+
+    input.value = inputState.prefix + match + suffix;
+    input.setSelectionRange(input.value.length, input.value.length);
+  }
+
+  function printTabCompletionSuggestions(rawValue, matches) {
+    echoCommand(rawValue);
+    print("");
+
+    for (var i = 0; i < matches.length; i += 1) {
+      print(matches[i]);
+    }
+
+    scrollToBottom();
+  }
+
+  function handleTabCompletion() {
+    var rawValue = input.value;
+    var result = getTabCompletionMatches(rawValue);
+    var inputState = result.inputState;
+    var matches = result.matches;
+
+    if (!rawValue.trim()) {
+      return;
     }
 
     if (!matches.length) {
@@ -1201,12 +1262,32 @@
     }
 
     if (matches.length === 1) {
-      input.value = matches[0] + " ";
-      input.setSelectionRange(input.value.length, input.value.length);
+      applySingleTabCompletion(inputState, matches[0]);
       return;
     }
 
-    print("Suggestions: " + matches.join("  "));
+    printTabCompletionSuggestions(rawValue, matches);
+  }
+
+  function initializeTerminalInputLine() {
+    var promptRow = form.querySelector(".prompt-row");
+    var inputWrap = form.querySelector(".input-wrap");
+    var fakeCarets = form.querySelectorAll(".cursor, .terminal-cursor, .fake-caret, .blinking-cursor");
+
+    if (promptRow) {
+      promptRow.classList.add("terminal-input-line");
+    }
+
+    if (inputWrap) {
+      inputWrap.classList.add("terminal-input-wrap");
+    }
+
+    promptLabel.classList.add("terminal-prompt");
+    input.classList.add("terminal-input");
+
+    for (var i = 0; i < fakeCarets.length; i += 1) {
+      fakeCarets[i].remove();
+    }
   }
 
   function applyHistoryInput() {
@@ -1261,7 +1342,7 @@
   function onKeyDown(event) {
     if (event.key === "Tab") {
       event.preventDefault();
-      autoCompleteCommand();
+      handleTabCompletion();
       input.focus();
       return;
     }
@@ -2554,6 +2635,7 @@
   function initializeTerminalSession() {
     restoreHistory();
     renderPrompt();
+    initializeTerminalInputLine();
 
     print("Workshop ready.");
     print("Type 'help' to explore.");
