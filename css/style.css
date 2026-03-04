@@ -627,6 +627,117 @@ body {
   line-height: 1.34;
 }
 
+#recruiter-cta-banner {
+  position: absolute;
+  right: 1rem;
+  bottom: 6.1rem;
+  z-index: 5;
+  width: min(320px, 34vw);
+  padding: 0.56rem 0.72rem 0.64rem;
+  border-radius: 12px;
+  border: 1px solid rgba(196, 227, 255, 0.3);
+  background: rgba(10, 16, 30, 0.8);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.42);
+  color: rgba(236, 246, 255, 0.94);
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+@supports ((-webkit-backdrop-filter: blur(8px)) or (backdrop-filter: blur(8px))) {
+  #recruiter-cta-banner {
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+}
+
+#recruiter-cta-banner.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.recruiter-cta-close {
+  appearance: none;
+  position: absolute;
+  top: 0.36rem;
+  right: 0.42rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 6px;
+  border: 1px solid rgba(222, 239, 255, 0.38);
+  background: rgba(18, 28, 48, 0.64);
+  color: rgba(236, 246, 255, 0.88);
+  font: inherit;
+  font-size: 0.64rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.recruiter-cta-close:hover {
+  border-color: rgba(240, 248, 255, 0.72);
+}
+
+.recruiter-cta-close:focus {
+  outline: none;
+}
+
+.recruiter-cta-close:focus-visible {
+  outline: 2px solid rgba(234, 248, 255, 0.92);
+  outline-offset: 1px;
+}
+
+.recruiter-cta-title {
+  margin: 0;
+  padding-right: 1.36rem;
+  color: rgba(245, 251, 255, 0.96);
+  font-size: 0.72rem;
+  line-height: 1.28;
+}
+
+.recruiter-cta-subtitle {
+  margin: 0.18rem 0 0;
+  color: rgba(214, 236, 255, 0.88);
+  font-size: 0.68rem;
+  line-height: 1.3;
+}
+
+.recruiter-cta-details {
+  margin: 0.28rem 0 0;
+  color: rgba(215, 233, 248, 0.82);
+  font-size: 0.64rem;
+  line-height: 1.35;
+}
+
+.recruiter-cta-action {
+  appearance: none;
+  margin-top: 0.46rem;
+  border: 1px solid rgba(209, 236, 255, 0.46);
+  border-radius: 8px;
+  padding: 0.34rem 0.56rem;
+  background: linear-gradient(180deg, rgba(98, 148, 255, 0.48), rgba(38, 67, 162, 0.5));
+  color: rgba(240, 248, 255, 0.96);
+  font: inherit;
+  font-size: 0.65rem;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.recruiter-cta-action:hover {
+  border-color: rgba(228, 246, 255, 0.82);
+  box-shadow: 0 0 18px rgba(119, 199, 255, 0.28);
+}
+
+.recruiter-cta-action:focus {
+  outline: none;
+}
+
+.recruiter-cta-action:focus-visible {
+  outline: 2px solid rgba(232, 247, 255, 0.94);
+  outline-offset: 1px;
+}
+
 #system-monitor {
   position: absolute;
   right: 1rem;
@@ -2235,6 +2346,43 @@ body[data-theme="matrix"] #terminal::before {
     gap: 8px;
   }
 
+  #recruiter-cta-banner {
+    right: 0.62rem;
+    bottom: 8rem;
+    width: min(230px, 56vw);
+    border-radius: 10px;
+    padding: 0.48rem 0.58rem 0.56rem;
+  }
+
+  .recruiter-cta-close {
+    top: 0.3rem;
+    right: 0.34rem;
+    width: 1.06rem;
+    height: 1.06rem;
+    font-size: 0.56rem;
+  }
+
+  .recruiter-cta-title {
+    font-size: 0.63rem;
+  }
+
+  .recruiter-cta-subtitle {
+    margin-top: 0.14rem;
+    font-size: 0.6rem;
+  }
+
+  .recruiter-cta-details {
+    margin-top: 0.2rem;
+    font-size: 0.57rem;
+    line-height: 1.32;
+  }
+
+  .recruiter-cta-action {
+    margin-top: 0.36rem;
+    font-size: 0.58rem;
+    padding: 0.28rem 0.44rem;
+  }
+
   .chados-notification {
     border-radius: 10px;
     padding: 0.44rem 0.54rem 0.46rem 0.68rem;
@@ -2917,6 +3065,43 @@ body[data-theme="matrix"] #terminal::before {
     top: 6rem;
     width: min(214px, 62vw);
     gap: 7px;
+  }
+
+  #recruiter-cta-banner {
+    right: 0.46rem;
+    bottom: calc(var(--dock-h) + env(safe-area-inset-bottom, 0px) + 3.9rem);
+    width: min(214px, 62vw);
+    border-radius: 9px;
+    padding: 0.42rem 0.48rem 0.48rem;
+  }
+
+  .recruiter-cta-close {
+    top: 0.26rem;
+    right: 0.28rem;
+    width: 0.96rem;
+    height: 0.96rem;
+    font-size: 0.5rem;
+  }
+
+  .recruiter-cta-title {
+    font-size: 0.58rem;
+  }
+
+  .recruiter-cta-subtitle {
+    margin-top: 0.1rem;
+    font-size: 0.55rem;
+  }
+
+  .recruiter-cta-details {
+    margin-top: 0.18rem;
+    font-size: 0.53rem;
+    line-height: 1.3;
+  }
+
+  .recruiter-cta-action {
+    margin-top: 0.3rem;
+    font-size: 0.54rem;
+    padding: 0.24rem 0.4rem;
   }
 
   .chados-notification {

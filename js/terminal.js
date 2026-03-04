@@ -255,6 +255,13 @@
       "hiring lead opened Hire Chad."
     ]
   };
+  var RECRUITER_CTA_EVENT_NAMES = [
+    "resume_opened",
+    "career_opened",
+    "mindmap_opened",
+    "proof_opened"
+  ];
+  var RECRUITER_ENGAGEMENT_SYSTEM_LINE = "recruiter engagement detected";
 
   var HIRE_CHAD_SEQUENCE = [
     { type: "line", text: "sudo hire-chad", className: "is-command", pause: 220 },
@@ -500,6 +507,8 @@
     notificationsScheduled: false,
     recruiterActivityStarted: false,
     lastRecruiterActivityKey: "",
+    recruiterCtaShownThisVisit: false,
+    pendingRecruiterEngagementLine: false,
     onboardingVisible: false,
     windowZ: 2000
   };
@@ -511,6 +520,7 @@
   var notificationScheduleTimers = [];
   var recruiterActivityTimer = null;
   var terminalActivityHintTimer = null;
+  var recruiterCtaBanner = null;
   var windowCloseTimers = {};
   var desktopPopupTimer = null;
   var activeDrag = null;
@@ -621,6 +631,10 @@
     }
 
     persistEvents(events);
+
+    if (RECRUITER_CTA_EVENT_NAMES.indexOf(normalizedEventName) !== -1) {
+      maybeShowRecruiterCtaBanner();
+    }
   }
 
   function pickRandomItem(items) {
@@ -722,6 +736,133 @@
       printSystemHint(buildTerminalActivityHint());
       scheduleTerminalActivityHint();
     }, randomInt(ACTIVITY_HINT_MIN_DELAY_MS, ACTIVITY_HINT_MAX_DELAY_MS));
+  }
+
+  function getRecruiterCtaEventCount(events) {
+    var seen = {};
+    var count = 0;
+
+    for (var index = 0; index < RECRUITER_CTA_EVENT_NAMES.length; index += 1) {
+      seen[RECRUITER_CTA_EVENT_NAMES[index]] = false;
+    }
+
+    for (var i = 0; i < events.length; i += 1) {
+      var currentName = events[i].name;
+
+      if (Object.prototype.hasOwnProperty.call(seen, currentName) && !seen[currentName]) {
+        seen[currentName] = true;
+        count += 1;
+      }
+    }
+
+    return count;
+  }
+
+  function shouldShowRecruiterCtaBanner() {
+    var events = [];
+    var count = 0;
+
+    if (state.recruiterCtaShownThisVisit) {
+      return false;
+    }
+
+    events = getStoredEvents();
+    count = getRecruiterCtaEventCount(events);
+    return count >= 2;
+  }
+
+  function hideRecruiterCtaBanner() {
+    if (!recruiterCtaBanner) {
+      return;
+    }
+
+    recruiterCtaBanner.classList.remove("is-visible");
+    recruiterCtaBanner.setAttribute("aria-hidden", "true");
+  }
+
+  function printRecruiterEngagementLine() {
+    if (!state.terminalInitialized) {
+      state.pendingRecruiterEngagementLine = true;
+      return;
+    }
+
+    appendLine("[system] " + RECRUITER_ENGAGEMENT_SYSTEM_LINE, "command-echo");
+  }
+
+  function ensureRecruiterCtaBanner() {
+    if (recruiterCtaBanner) {
+      return recruiterCtaBanner;
+    }
+
+    var banner = document.createElement("aside");
+    var closeButton = document.createElement("button");
+    var title = document.createElement("p");
+    var subtitle = document.createElement("p");
+    var details = document.createElement("p");
+    var openButton = document.createElement("button");
+
+    banner.id = "recruiter-cta-banner";
+    banner.setAttribute("aria-hidden", "true");
+    banner.setAttribute("aria-live", "polite");
+    banner.setAttribute("role", "status");
+
+    closeButton.type = "button";
+    closeButton.className = "recruiter-cta-close";
+    closeButton.setAttribute("aria-label", "Dismiss recruiter prompt");
+    closeButton.textContent = "x";
+
+    title.className = "recruiter-cta-title";
+    title.textContent = "Interested in what you see?";
+
+    subtitle.className = "recruiter-cta-subtitle";
+    subtitle.textContent = "Let's talk.";
+
+    details.className = "recruiter-cta-details";
+    details.textContent = "View \"Hire Chad\" or email to schedule a quick intro.";
+
+    openButton.type = "button";
+    openButton.className = "recruiter-cta-action";
+    openButton.textContent = "Open Hire Chad";
+
+    closeButton.addEventListener("click", function () {
+      hideRecruiterCtaBanner();
+    });
+
+    openButton.addEventListener("click", function () {
+      hideRecruiterCtaBanner();
+      openHireChadWindow();
+    });
+
+    banner.appendChild(closeButton);
+    banner.appendChild(title);
+    banner.appendChild(subtitle);
+    banner.appendChild(details);
+    banner.appendChild(openButton);
+
+    desktop.appendChild(banner);
+    recruiterCtaBanner = banner;
+    return recruiterCtaBanner;
+  }
+
+  function showRecruiterCtaBanner() {
+    var banner = ensureRecruiterCtaBanner();
+
+    if (!banner || state.recruiterCtaShownThisVisit) {
+      return;
+    }
+
+    state.recruiterCtaShownThisVisit = true;
+    banner.classList.add("is-visible");
+    banner.setAttribute("aria-hidden", "false");
+    printRecruiterEngagementLine();
+  }
+
+  function maybeShowRecruiterCtaBanner() {
+    if (!shouldShowRecruiterCtaBanner()) {
+      return;
+    }
+
+    showRecruiterCtaBanner();
   }
 
   function getPromptText() {
@@ -2469,6 +2610,7 @@
     bindSystemsMapInteractions();
     bindCareerLogInteractions();
     bindResumeViewerInteractions();
+    ensureRecruiterCtaBanner();
     positionNotifications();
     window.addEventListener("resize", positionNotifications);
   }
@@ -2503,6 +2645,10 @@
     print("Workshop ready.");
     print("Type 'help' to explore.");
     print("Tip: Type 'resume' or click Resume.pdf to start.");
+    if (state.pendingRecruiterEngagementLine) {
+      appendLine("[system] " + RECRUITER_ENGAGEMENT_SYSTEM_LINE, "command-echo");
+      state.pendingRecruiterEngagementLine = false;
+    }
 
     form.addEventListener("submit", onSubmit);
     input.addEventListener("keydown", onKeyDown);
