@@ -9,6 +9,8 @@
   var detailSubtitle = document.getElementById("mind-map-detail-subtitle");
   var detailDescription = document.getElementById("mind-map-detail-description");
   var detailPhilosophy = document.getElementById("mind-map-detail-philosophy");
+  var hireChadOutput = document.getElementById("hire-chad-output");
+  var hireChadScheduleObserver = null;
 
   var PROOF_WORK_DIAGRAMS = [
     {
@@ -249,7 +251,75 @@
     proofWorkList.insertBefore(section, proofWorkList.firstChild);
   }
 
+  function ensureHireChadScheduleSection() {
+    var section = null;
+    var title = null;
+    var description = null;
+    var button = null;
+    var divider = null;
+
+    if (!hireChadOutput || hireChadOutput.querySelector(".hire-schedule-section")) {
+      return;
+    }
+
+    divider = document.createElement("hr");
+    divider.className = "hire-decision-divider";
+
+    section = document.createElement("section");
+    section.className = "hire-decision-section hire-schedule-section";
+
+    title = document.createElement("h3");
+    title.textContent = "Schedule a Call";
+
+    description = document.createElement("p");
+    description.textContent = "If you'd like to discuss ServiceNow CMDB architecture, Discovery strategy, or enterprise service modeling, I would be happy to connect.";
+
+    button = document.createElement("a");
+    button.className = "cta-button";
+    button.href = "mailto:chad@chadmccormack.me?subject=ServiceNow%20Opportunity";
+    button.textContent = "Schedule a Call";
+    button.setAttribute("aria-label", "Schedule a call with Chad");
+    button.setAttribute("title", "Schedule a Call");
+
+    section.appendChild(title);
+    section.appendChild(description);
+    section.appendChild(button);
+
+    hireChadOutput.appendChild(divider);
+    hireChadOutput.appendChild(section);
+  }
+
+  function bindHireChadScheduleSection() {
+    var hireLauncher = null;
+
+    if (!hireChadOutput) {
+      return;
+    }
+
+    ensureHireChadScheduleSection();
+
+    hireLauncher = document.getElementById("hire-chad-launcher");
+    if (hireLauncher) {
+      hireLauncher.addEventListener("click", function () {
+        window.setTimeout(ensureHireChadScheduleSection, 0);
+      });
+    }
+
+    if (!window.MutationObserver) {
+      return;
+    }
+
+    hireChadScheduleObserver = new MutationObserver(function () {
+      ensureHireChadScheduleSection();
+    });
+
+    hireChadScheduleObserver.observe(hireChadOutput, {
+      childList: true
+    });
+  }
+
   buildProofOfWorkArchitectureSection();
+  bindHireChadScheduleSection();
 
   if (
     !mindMapWindow ||
