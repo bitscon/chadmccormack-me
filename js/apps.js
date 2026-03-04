@@ -12,7 +12,7 @@
 
   var PROOF_WORK_DIAGRAMS = [
     {
-      title: "Discovery Reliability Pipeline",
+      title: "Discovery to CMDB Pipeline",
       ascii: [
         "Infrastructure Environment",
         "        |",
@@ -39,7 +39,7 @@
       ]
     },
     {
-      title: "CMDB Data Governance Model",
+      title: "CMDB Data Quality Model",
       ascii: [
         "Infrastructure Data",
         "        |",
@@ -63,7 +63,7 @@
       ]
     },
     {
-      title: "Service Visibility Architecture",
+      title: "Service Visibility Model",
       ascii: [
         "Infrastructure",
         "        |",
@@ -88,41 +88,41 @@
     },
     {
       title: "Question",
-      question: "How does CSDM connect infrastructure to services?",
+      question: "How does CSDM connect products, services, and infrastructure?",
       ascii: [
-        "Infrastructure CI",
-        "        |",
-        "        v",
-        "Application CI",
-        "        |",
-        "        v",
-        "Technical Service",
+        "Product / Product Offering",
         "        |",
         "        v",
         "Business Service",
         "        |",
         "        v",
-        "Business Capability",
+        "Technical Service",
         "        |",
         "        v",
-        "Business Application"
+        "Application Service",
+        "        |",
+        "        v",
+        "Application",
+        "        |",
+        "        v",
+        "Infrastructure (Servers, Databases, Networks)"
       ].join("\n"),
-      description: "The Common Service Data Model (CSDM) provides a structured way to connect infrastructure to applications, services, and business capabilities.",
-      focusLabel: "This enables:",
+      description: "The Common Service Data Model (CSDM) provides a structured way to connect products and services to the underlying applications and infrastructure that support them.",
+      focusLabel: "This model enables:",
       focus: [
-        "clearer service ownership",
+        "clear service ownership",
+        "product-aligned service management",
         "reliable incident impact analysis",
-        "service-aligned operations",
         "consistent service mapping"
       ],
-      practiceTitle: "CSDM in Practice",
-      practiceDescription: "I help organizations implement CSDM in ways that align with their operational goals and service management practices.",
+      practiceTitle: "CSDM Implementation Approach",
+      practiceDescription: "When implementing CSDM, I focus on aligning the service model to how the organization delivers products and operates services.",
       practiceLabel: "This includes:",
       practiceItems: [
-        "defining service boundaries",
-        "aligning CI classes to the CSDM model",
-        "guiding teams on service ownership",
-        "enabling service visibility for operations teams"
+        "defining product and service boundaries",
+        "aligning CI classes to the CSDM layers",
+        "mapping infrastructure to applications",
+        "connecting services to business capabilities"
       ]
     }
   ];
