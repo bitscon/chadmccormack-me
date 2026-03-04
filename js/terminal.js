@@ -1,12 +1,6 @@
 (function () {
   var bootScreen = document.getElementById("boot-screen");
-  var bootSequence = document.getElementById("boot-sequence");
-  var biosScreen = document.getElementById("bios-screen");
-  var biosCopy = biosScreen ? biosScreen.querySelector(".boot-copy") : null;
-  var kernelScreen = document.getElementById("kernel-screen");
-  var asciiScreen = document.getElementById("ascii-screen");
-  var kernelLog = document.getElementById("kernel-log");
-  var asciiBanner = document.getElementById("ascii-banner");
+  var bootConsole = document.getElementById("boot-console");
 
   var desktop = document.getElementById("desktop");
   var desktopWindows = document.getElementById("desktop-windows");
@@ -53,6 +47,7 @@
 
   if (
     !bootScreen ||
+    !bootConsole ||
     !desktop ||
     !desktopWindows ||
     !terminalLauncher ||
@@ -107,12 +102,9 @@
   var THEMES = ["dark", "light", "matrix"];
   var BASE_PROMPT = "chad@workshop:~$";
 
-  var BIOS_DURATION_MS = 3500;
-  var BIOS_DOT_DELAY_MS = 70;
-  var KERNEL_LINE_DELAY_MS = 180;
-  var KERNEL_POST_DELAY_MS = 1200;
-  var ASCII_HOLD_MS = 1500;
-  var DESKTOP_TRANSITION_MS = 500;
+  var BOOT_LINE_DELAY_MS = 120;
+  var BOOT_DESKTOP_REVEAL_DELAY_MS = 400;
+  var BOOT_FADE_DURATION_MS = 400;
   var TERMINAL_CLOSE_MS = 200;
   var NOTIFICATION_LIFE_MS = 6000;
   var NOTIFICATION_EXIT_MS = 220;
@@ -124,37 +116,18 @@
   var ACTIVITY_HINT_MIN_DELAY_MS = 45000;
   var ACTIVITY_HINT_MAX_DELAY_MS = 90000;
 
-  var BIOS_CHECKS = [
-    { label: "Memory test", dots: 13 },
-    { label: "CPU detected", dots: 12 },
-    { label: "Storage mounted", dots: 9 }
+  var BOOT_LINES = [
+    "ChadOS 24.04 LTS (workstation)",
+    "",
+    "[  OK  ] Initializing kernel modules",
+    "[  OK  ] Starting system services",
+    "[  OK  ] Loading CMDB architecture",
+    "[  OK  ] Discovery engines online",
+    "[  OK  ] CSDM service model loaded",
+    "[  OK  ] Terminal interface ready",
+    "",
+    "chad@workshop:~$"
   ];
-
-  var KERNEL_LINES = [
-    "[ 0.0001 ] Booting Workshop OS",
-    "[ 0.1021 ] Initializing CPU scheduler",
-    "[ 0.2201 ] Loading kernel modules",
-    "[ 0.3310 ] Detecting system devices",
-    "[ 0.4411 ] Starting networking services",
-    "[ 0.5520 ] Starting container runtime",
-    "[ 0.6621 ] Starting automation subsystem",
-    "[ 0.7812 ] Starting infrastructure subsystem",
-    "[ 0.8923 ] Mounting /home filesystem",
-    "[ 1.0034 ] Launching graphical environment",
-    "[ OK ] Started Network Manager",
-    "[ OK ] Started Container Services",
-    "[ OK ] Started Automation Runtime",
-    "[ OK ] Started Workshop Services"
-  ];
-
-  var ASCII_ART = [
-    "██████╗██╗  ██╗ █████╗ ██████╗",
-    "██╔════╝██║  ██║██╔══██╗██╔══██╗",
-    "██║     ███████║███████║██║  ██║",
-    "██║     ██╔══██║██╔══██║██║  ██║",
-    "╚██████╗██║  ██║██║  ██║██████╔╝",
-    "╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝"
-  ].join("\n");
 
   var INITIAL_NOTIFICATIONS = [
     {
@@ -547,9 +520,6 @@
     pendingRecruiterEngagementLine: false,
     onboardingVisible: false,
     windowZ: 2000
-  };
-  var biosAnimationState = {
-    lines: []
   };
   var systemMonitorInterval = null;
   var notificationSequence = 0;
@@ -1045,10 +1015,6 @@
     output.scrollTop = output.scrollHeight;
   }
 
-  function scrollKernelToBottom() {
-    kernelLog.scrollTop = kernelLog.scrollHeight;
-  }
-
   function appendLine(text, className) {
     var line = document.createElement("div");
     line.className = "output-line" + (className ? " " + className : "");
@@ -1375,99 +1341,43 @@
     }
   }
 
-  function setActiveBootScreen(nextScreen) {
-    var screens = [biosScreen, kernelScreen, asciiScreen];
-
-    for (var i = 0; i < screens.length; i += 1) {
-      var active = screens[i] === nextScreen;
-      screens[i].classList.toggle("active", active);
-      screens[i].setAttribute("aria-hidden", active ? "false" : "true");
+  function printBootLine(index) {
+    if (index >= BOOT_LINES.length) {
+      revealDesktop();
+      return;
     }
+
+    bootConsole.textContent += BOOT_LINES[index] + "\n";
+
+    window.setTimeout(function () {
+      printBootLine(index + 1);
+    }, BOOT_LINE_DELAY_MS);
   }
 
-  function renderBiosLines(lines) {
-    biosCopy.textContent = lines.join("\n");
-  }
+  function revealDesktop() {
+    window.setTimeout(function () {
+      bootScreen.classList.add("is-fading");
+      activateDesktop();
+      bindDesktopInteractions();
+      startSystemMonitor();
+      startRecruiterActivityNotifications();
 
-  function getBiosDotCount(label) {
-    for (var i = 0; i < BIOS_CHECKS.length; i += 1) {
-      if (BIOS_CHECKS[i].label === label) {
-        return BIOS_CHECKS[i].dots;
+      if (!maybeShowOnboardingOverlay()) {
+        terminalLauncher.focus();
       }
-    }
 
-    return 13;
+      window.setTimeout(function () {
+        if (bootScreen.parentNode) {
+          bootScreen.parentNode.removeChild(bootScreen);
+        }
+      }, BOOT_FADE_DURATION_MS);
+    }, BOOT_DESKTOP_REVEAL_DELAY_MS);
   }
 
-  async function animateOkLine(label) {
-    var lines = biosAnimationState.lines;
-    var lineIndex = lines.length;
-    var resolvedDotCount = getBiosDotCount(label);
-    var dots = "";
-
-    lines.push(label);
-    lines[lineIndex] = label;
-    renderBiosLines(lines);
-
-    for (var i = 0; i < resolvedDotCount; i += 1) {
-      dots += ".";
-      lines[lineIndex] = label + dots;
-      renderBiosLines(lines);
-      await sleep(BIOS_DOT_DELAY_MS);
-    }
-
-    lines[lineIndex] = label + dots + "OK";
-    renderBiosLines(lines);
-  }
-
-  async function runBiosChecks() {
-    var biosStart = Date.now();
-    biosAnimationState.lines = [
-      "Workshop BIOS v1.0",
-      "Initializing hardware...",
-      ""
-    ];
-    var lines = biosAnimationState.lines;
-
-    renderBiosLines(lines);
-    await sleep(180);
-
-    for (var i = 0; i < BIOS_CHECKS.length; i += 1) {
-      await animateOkLine(BIOS_CHECKS[i].label);
-    }
-
-    lines.push("");
-    lines.push("Boot device found: /dev/workshop");
-    lines.push("");
-    lines.push("Press DEL to enter setup");
-    renderBiosLines(lines);
-
-    var elapsed = Date.now() - biosStart;
-    if (elapsed < BIOS_DURATION_MS) {
-      await sleep(BIOS_DURATION_MS - elapsed);
-    }
-  }
-
-  async function printKernelLine(lineText) {
-    var line = document.createElement("div");
-    line.className = "kernel-line";
-    line.textContent = lineText;
-    kernelLog.appendChild(line);
-    scrollKernelToBottom();
-
-    await sleep(KERNEL_LINE_DELAY_MS);
-  }
-
-  async function runKernelBootLogs() {
-    kernelLog.innerHTML = "";
-
-    for (var i = 0; i < KERNEL_LINES.length; i += 1) {
-      await printKernelLine(KERNEL_LINES[i]);
-    }
-  }
-
-  function showAsciiBanner() {
-    asciiBanner.textContent = ASCII_ART;
+  function startBootSequence() {
+    restoreTheme();
+    bootConsole.textContent = "";
+    printBootLine(0);
   }
 
   function activateDesktop() {
@@ -2652,34 +2562,11 @@
     scrollToBottom();
   }
 
-  async function runBootExperience() {
-    restoreTheme();
-
-    await sleep(2200);
-
-    bootScreen.classList.add("is-fading");
-
-    activateDesktop();
-    bindDesktopInteractions();
-    startSystemMonitor();
-
-    startRecruiterActivityNotifications();
-    if (!maybeShowOnboardingOverlay()) {
-      terminalLauncher.focus();
-    }
-
-    await sleep(600);
-
-    if (bootScreen.parentNode) {
-      bootScreen.parentNode.removeChild(bootScreen);
-    }
-  }
-
   if (document.readyState === "complete") {
-    runBootExperience();
+    startBootSequence();
   } else {
     window.addEventListener("load", function () {
-      runBootExperience();
+      startBootSequence();
     });
   }
 })();
