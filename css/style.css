@@ -779,6 +779,24 @@ body {
   text-shadow: 0 0 8px rgba(0, 0, 0, 0.42);
 }
 
+.desktop-hint {
+  position: absolute;
+  left: 0;
+  bottom: 20px;
+  z-index: 2;
+  width: 100%;
+  margin: 0;
+  padding: 0 1rem;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.35;
+  color: rgba(231, 241, 251, 0.78);
+  opacity: 0.7;
+  letter-spacing: 0.01em;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
 #desktop-windows {
   position: absolute;
   inset: 0;
@@ -2580,6 +2598,12 @@ body[data-theme="matrix"] #terminal::before {
     font-size: 0.56rem;
   }
 
+  .desktop-hint {
+    bottom: 0.88rem;
+    padding: 0 0.8rem;
+    font-size: 0.6rem;
+  }
+
   #desktop-popup {
     bottom: 4.1rem;
     font-size: 0.58rem;
@@ -3329,6 +3353,12 @@ body[data-theme="matrix"] #terminal::before {
     left: 0.62rem;
     bottom: calc(var(--dock-h) + env(safe-area-inset-bottom, 0px) + 0.5rem);
     font-size: 0.5rem;
+  }
+
+  .desktop-hint {
+    bottom: calc(var(--dock-h, 0px) + env(safe-area-inset-bottom, 0px) + 0.58rem);
+    padding: 0 0.58rem;
+    font-size: 0.52rem;
   }
 
   #desktop-popup {
