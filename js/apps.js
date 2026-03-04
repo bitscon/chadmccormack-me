@@ -10,6 +10,9 @@
   var detailDescription = document.getElementById("mind-map-detail-description");
   var detailPhilosophy = document.getElementById("mind-map-detail-philosophy");
   var hireChadOutput = document.getElementById("hire-chad-output");
+  var pipVideo = document.getElementById("pip-video");
+  var meetChadButton = document.getElementById("meet-chad");
+  var recruiterActivityMessage = document.getElementById("recruiter-activity-message");
   var onboardingOverlay = document.getElementById("onboarding-overlay");
   var onboardingCard = onboardingOverlay ? onboardingOverlay.querySelector(".onboarding-card") : null;
   var onboardingStartButton = document.getElementById("onboarding-start");
@@ -281,6 +284,123 @@
     };
   }
 
+  function normalizeTerminalTitles() {
+    var commands = window.TerminalCommands;
+    var titleLineOne = "Information Systems Engineer";
+    var titleLineTwo = "ServiceNow CMDB • Discovery • CSDM";
+
+    if (!commands || typeof commands !== "object") {
+      return;
+    }
+
+    if (commands.banner) {
+      commands.banner.run = function () {
+        return {
+          type: "text",
+          payload: "CHAD MCCORMACK\n" + titleLineOne + "\n" + titleLineTwo
+        };
+      };
+    }
+
+    if (commands.whoami) {
+      commands.whoami.run = function () {
+        return {
+          type: "text",
+          payload:
+            "Chad McCormack\n" +
+            titleLineOne + "\n" +
+            titleLineTwo + "\n\n" +
+            "\"I do what I cannot, to learn what I cannot do!\""
+        };
+      };
+    }
+
+    if (commands.resume) {
+      commands.resume.run = function () {
+        return {
+          type: "text",
+          payload:
+            "Chad McCormack\n" +
+            titleLineOne + "\n" +
+            titleLineTwo + "\n\n" +
+            "Summary\n" +
+            "- Improved enterprise infrastructure visibility for operations teams\n" +
+            "- Strengthened CMDB governance, reconciliation, and data quality controls\n" +
+            "- Increased Discovery reliability across complex environments\n\n" +
+            "Navigation\n\n" +
+            "career      open Career Log\n" +
+            "mindmap     open Mind Map\n" +
+            "proof       open Proof of Work\n" +
+            "automation  open Automation Lab\n" +
+            "contact     view Contact"
+        };
+      };
+    }
+  }
+
+  function normalizeRecruiterActivityText(value) {
+    var legacyBrand = "Chad" + "OS";
+
+    if (typeof value !== "string") {
+      return value;
+    }
+
+    return value.split(legacyBrand).join("Chad McCormack");
+  }
+
+  function bindRecruiterActivityTextNormalizer() {
+    var observer = null;
+
+    if (!recruiterActivityMessage) {
+      return;
+    }
+
+    recruiterActivityMessage.textContent = normalizeRecruiterActivityText(recruiterActivityMessage.textContent);
+
+    if (!window.MutationObserver) {
+      return;
+    }
+
+    observer = new MutationObserver(function () {
+      recruiterActivityMessage.textContent = normalizeRecruiterActivityText(recruiterActivityMessage.textContent);
+    });
+
+    observer.observe(recruiterActivityMessage, {
+      childList: true,
+      characterData: true,
+      subtree: true
+    });
+  }
+
+  function bindMeetChadButton() {
+    var openIntroVideo = null;
+
+    if (!pipVideo) {
+      return;
+    }
+
+    openIntroVideo = function () {
+      var sourceUrl = pipVideo.getAttribute("data-video-src") || "/assets/intro.mp4";
+      window.open(sourceUrl, "_blank", "noopener,noreferrer");
+    };
+
+    pipVideo.addEventListener("click", function (event) {
+      if (event.target && event.target.id === "meet-chad") {
+        return;
+      }
+
+      openIntroVideo();
+    });
+
+    if (meetChadButton) {
+      meetChadButton.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        openIntroVideo();
+      });
+    }
+  }
+
   function buildProofOfWorkArchitectureSection() {
     var section = null;
     var heading = null;
@@ -547,6 +667,9 @@
   bindHireChadScheduleSection();
   bindWelcomeHint();
   ensureGlobalTerminalRunner();
+  normalizeTerminalTitles();
+  bindRecruiterActivityTextNormalizer();
+  bindMeetChadButton();
 
   if (
     !mindMapWindow ||
