@@ -910,3 +910,113 @@ body[data-theme="matrix"] #terminal::before {
     width: 100%;
   }
 }
+
+@media (max-width: 520px) {
+  :root {
+    --dock-h: 112px;
+  }
+
+  #desktop {
+    padding: 0.72rem;
+  }
+
+  #os-brand {
+    top: 0.56rem;
+    left: 0.62rem;
+    font-size: 0.62rem;
+  }
+
+  #desktop-launcher {
+    left: 50%;
+    top: auto;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 0.24rem);
+    transform: translateX(-50%);
+    width: calc(100% - 0.8rem);
+    height: var(--dock-h);
+    padding: 0.44rem 0.22rem calc(env(safe-area-inset-bottom, 0px) + 0.18rem);
+    border-radius: 14px;
+    border: 1px solid rgba(221, 239, 255, 0.16);
+    background: rgba(8, 15, 32, 0.42);
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.2rem;
+    overflow: hidden;
+  }
+
+  .launcher-entry {
+    flex: 1 1 0;
+    min-width: 0;
+    gap: 0.16rem;
+  }
+
+  .launcher-button {
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 10px;
+  }
+
+  .launcher-icon {
+    font-size: 0.68rem;
+  }
+
+  .launcher-label {
+    max-width: 100%;
+    font-size: 0.46rem;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #pip-video {
+    top: 0.46rem;
+    right: 0.46rem;
+    width: min(220px, 56vw);
+    max-height: 160px;
+    padding: 0.28rem;
+    overflow: hidden;
+  }
+
+  .pip-title {
+    margin-top: 0.3rem;
+    font-size: 0.58rem;
+  }
+
+  .pip-subtitle {
+    display: none;
+  }
+
+  #system-monitor {
+    right: 0.5rem;
+    bottom: calc(var(--dock-h) + env(safe-area-inset-bottom, 0px) + 0.42rem);
+    width: min(170px, 48vw);
+    padding: 0.3rem 0.36rem;
+    border-radius: 10px;
+  }
+
+  .monitor-title {
+    margin-bottom: 0.2rem;
+    font-size: 0.52rem;
+  }
+
+  #system-monitor-stats {
+    max-height: 2.55em;
+    overflow: hidden;
+    white-space: pre-line;
+    font-size: 0.5rem;
+    line-height: 1.25;
+  }
+
+  #desktop-mode {
+    left: 0.62rem;
+    bottom: calc(var(--dock-h) + env(safe-area-inset-bottom, 0px) + 0.5rem);
+    font-size: 0.5rem;
+  }
+
+  #desktop-popup {
+    bottom: calc(var(--dock-h) + env(safe-area-inset-bottom, 0px) + 0.52rem);
+    font-size: 0.52rem;
+  }
+}
