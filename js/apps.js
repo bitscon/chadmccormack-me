@@ -1,4 +1,6 @@
 (function () {
+  var proofOfWorkWindow = document.getElementById("proof-of-work-window");
+  var proofWorkList = proofOfWorkWindow ? proofOfWorkWindow.querySelector(".proof-work-list") : null;
   var mindMapWindow = document.getElementById("systems-map-window");
   var mindMapCanvas = document.getElementById("mind-map-canvas");
   var mindMapNodes = document.getElementById("mind-map-nodes");
@@ -7,6 +9,124 @@
   var detailSubtitle = document.getElementById("mind-map-detail-subtitle");
   var detailDescription = document.getElementById("mind-map-detail-description");
   var detailPhilosophy = document.getElementById("mind-map-detail-philosophy");
+
+  var PROOF_WORK_DIAGRAMS = [
+    {
+      title: "Discovery Pipeline",
+      ascii: [
+        "Infrastructure Environment",
+        "        |",
+        "        v",
+        "Discovery Scan",
+        "        |",
+        "        v",
+        "Credential Strategy",
+        "        |",
+        "        v",
+        "Discovery Patterns",
+        "        |",
+        "        v",
+        "CI Classification",
+        "        |",
+        "        v",
+        "CMDB Population"
+      ].join("\n"),
+      description: "Discovery must reliably identify infrastructure, classify it correctly, and populate the CMDB with accurate and normalized configuration items."
+    },
+    {
+      title: "CMDB Governance Model",
+      ascii: [
+        "Infrastructure Data",
+        "        |",
+        "        v",
+        "CI Classification",
+        "        |",
+        "        v",
+        "Normalization Rules",
+        "        |",
+        "        v",
+        "Reconciliation Engine",
+        "        |",
+        "        v",
+        "Trusted CMDB"
+      ].join("\n"),
+      description: "A CMDB only becomes valuable when data quality, ownership, and reconciliation rules ensure the data can be trusted by operations and leadership."
+    },
+    {
+      title: "Service Visibility Model",
+      ascii: [
+        "Infrastructure",
+        "        |",
+        "        v",
+        "Configuration Items",
+        "        |",
+        "        v",
+        "CI Relationships",
+        "        |",
+        "        v",
+        "Business Services",
+        "        |",
+        "        v",
+        "Operational Visibility"
+      ].join("\n"),
+      description: "Linking infrastructure to services allows operations teams to understand impact, accelerate troubleshooting, and make informed operational decisions."
+    }
+  ];
+
+  function buildProofOfWorkArchitectureSection() {
+    var section = null;
+    var heading = null;
+    var intro = null;
+    var diagramList = null;
+
+    if (!proofWorkList || proofWorkList.querySelector(".proof-work-diagram-section")) {
+      return;
+    }
+
+    section = document.createElement("section");
+    section.className = "proof-work-diagram-section";
+
+    heading = document.createElement("h3");
+    heading.className = "proof-work-diagram-heading";
+    heading.textContent = "Enterprise Architecture Examples";
+
+    intro = document.createElement("p");
+    intro.className = "proof-work-diagram-intro";
+    intro.textContent = "Examples of how I structure ServiceNow Discovery and CMDB to create reliable infrastructure visibility for operations teams.";
+
+    diagramList = document.createElement("div");
+    diagramList.className = "proof-work-diagram-list";
+
+    for (var i = 0; i < PROOF_WORK_DIAGRAMS.length; i += 1) {
+      var diagram = PROOF_WORK_DIAGRAMS[i];
+      var block = document.createElement("article");
+      var title = document.createElement("h4");
+      var ascii = document.createElement("pre");
+      var description = document.createElement("p");
+
+      block.className = "diagram-block";
+      title.className = "diagram-title";
+      title.textContent = diagram.title;
+
+      ascii.className = "diagram-ascii";
+      ascii.textContent = diagram.ascii;
+
+      description.className = "diagram-description";
+      description.textContent = diagram.description;
+
+      block.appendChild(title);
+      block.appendChild(ascii);
+      block.appendChild(description);
+      diagramList.appendChild(block);
+    }
+
+    section.appendChild(heading);
+    section.appendChild(intro);
+    section.appendChild(diagramList);
+    proofWorkList.insertBefore(section, proofWorkList.firstChild);
+  }
+
+  buildProofOfWorkArchitectureSection();
 
   if (
     !mindMapWindow ||
