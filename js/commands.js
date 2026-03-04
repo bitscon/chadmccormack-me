@@ -39,6 +39,12 @@
       url: "/assets/chad-mccormack-resume.pdf"
     }
   };
+  var APP_LAUNCHERS = {
+    career: "career-log-launcher",
+    mindmap: "systems-map-launcher",
+    proof: "proof-of-work-launcher",
+    automation: "automation-lab-launcher"
+  };
 
   function text(payload) {
     return {
@@ -79,6 +85,18 @@
       .replace(/'/g, "&#39;");
   }
 
+  function openDesktopWindow(target) {
+    var launcherId = APP_LAUNCHERS[target];
+    var launcher = launcherId ? document.getElementById(launcherId) : null;
+
+    if (!launcher || typeof launcher.click !== "function") {
+      return text("unable to open '" + target + "' right now");
+    }
+
+    launcher.click();
+    return null;
+  }
+
   window.TerminalCommands = {
     help: {
       run: function () {
@@ -95,7 +113,11 @@
             "banner\n" +
             "open\n" +
             "resume\n" +
-            "projects\n" +
+            "career\n" +
+            "mindmap\n" +
+            "proof\n" +
+            "automation\n" +
+            "contact\n" +
             "hire-chad\n" +
             "lab\n" +
             "map"
@@ -211,32 +233,51 @@
       run: function () {
         return text(
           "Chad McCormack\n" +
-            "Systems Architect | Infrastructure Automation Engineer\n\n" +
-            "Specializes in:\n\n" +
-            "• Infrastructure architecture\n" +
-            "• Automation systems\n" +
-            "• DevOps tooling\n" +
-            "• AI-assisted engineering workflows\n" +
-            "• Systems thinking\n\n" +
-            "Type:\n\n" +
-            "projects\n" +
-            "lab\n" +
-            "map\n\n" +
-            "to explore."
+            "ServiceNow CMDB / Discovery SME\n\n" +
+            "Enterprise infrastructure visibility\n" +
+            "CMDB governance and data quality\n" +
+            "Discovery architecture and reliability\n\n" +
+            "Commands\n\n" +
+            "career      open career timeline\n" +
+            "mindmap     CMDB / Discovery architecture model\n" +
+            "proof       enterprise proof of work\n" +
+            "automation  operational automation examples\n" +
+            "contact     how to reach Chad"
         );
       }
     },
 
-    projects: {
+    career: {
+      run: function () {
+        return openDesktopWindow("career");
+      }
+    },
+
+    mindmap: {
+      run: function () {
+        return openDesktopWindow("mindmap");
+      }
+    },
+
+    proof: {
+      run: function () {
+        return openDesktopWindow("proof");
+      }
+    },
+
+    automation: {
+      run: function () {
+        return openDesktopWindow("automation");
+      }
+    },
+
+    contact: {
       run: function () {
         return text(
-          "projects/\n\n" +
-            "billy-ai-runtime\n" +
-            "automation-lab\n" +
-            "infrastructure-architectures\n" +
-            "ai-assisted-workflows\n\n" +
-            "Type:\n\n" +
-            "cat projects/<name>"
+          "Contact\n\n" +
+            "Email: chad@example.com\n" +
+            "LinkedIn: https://linkedin.com/in/chad-placeholder\n" +
+            "References available upon request."
         );
       }
     },
@@ -297,4 +338,9 @@
       }
     }
   };
+
+  window.TerminalCommands.cv = window.TerminalCommands.resume;
+  window.TerminalCommands.experience = window.TerminalCommands.career;
+  window.TerminalCommands.architecture = window.TerminalCommands.mindmap;
+  window.TerminalCommands.projects = window.TerminalCommands.proof;
 })();
