@@ -98,27 +98,23 @@ workstation mode</p>
         <header class="window-titlebar">
           <p class="window-title">Terminal — chad@workshop</p>
           <div class="window-controls">
-            <button class="window-control window-minimize" type="button" data-window-action="minimize" aria-label="Minimize terminal window" title="Minimize">—</button>
-            <button class="window-control window-maximize" type="button" data-window-action="maximize" aria-label="Maximize terminal window" title="Maximize">□</button>
             <button id="terminal-close" class="window-control window-close" type="button" data-window-action="close" aria-label="Close terminal window" title="Close">✕</button>
           </div>
         </header>
 
-        <div class="window-body">
-          <div id="terminal" aria-label="Terminal portfolio interface">
-            <div id="output" role="log" aria-live="polite" aria-atomic="false"></div>
+        <div id="terminal" aria-label="Terminal portfolio interface">
+          <div id="output" role="log" aria-live="polite" aria-atomic="false"></div>
 
-            <form id="command-form" autocomplete="off">
-              <label class="sr-only" for="command-input">Terminal command input</label>
-              <div class="prompt-row">
-                <span class="prompt" aria-hidden="true">chad@workshop:~$</span>
-                <div class="input-wrap">
-                  <input id="command-input" type="text" inputmode="text" autocapitalize="off" autocomplete="off" spellcheck="false">
-                  <span class="cursor" aria-hidden="true"></span>
-                </div>
+          <form id="command-form" autocomplete="off">
+            <label class="sr-only" for="command-input">Terminal command input</label>
+            <div class="prompt-row">
+              <span class="prompt" aria-hidden="true">chad@workshop:~$</span>
+              <div class="input-wrap">
+                <input id="command-input" type="text" inputmode="text" autocapitalize="off" autocomplete="off" spellcheck="false">
+                <span class="cursor" aria-hidden="true"></span>
               </div>
-            </form>
-          </div>
+            </div>
+          </form>
         </div>
       </section>
     </div>

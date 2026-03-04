@@ -616,64 +616,51 @@
     setWindowFocused(windowElement);
   }
 
-  function getWindowSize(windowElement) {
-    var rect = windowElement.getBoundingClientRect();
-    var computed = window.getComputedStyle(windowElement);
-    var width = rect.width || parseFloat(computed.width) || 0;
-    var height = rect.height || parseFloat(computed.height) || 0;
-
-    return {
-      width: width,
-      height: height
-    };
-  }
-
-  function clampWindowPosition(windowElement, proposedLeft, proposedTop) {
-    var desktopRect = desktop.getBoundingClientRect();
-    var windowSize = getWindowSize(windowElement);
-    var minLeft = 8;
-    var minTop = 8;
-    var maxLeft = Math.max(minLeft, desktopRect.width - windowSize.width - 8);
-    var maxTop = Math.max(minTop, desktopRect.height - 54);
-
-    return {
-      left: Math.min(maxLeft, Math.max(minLeft, proposedLeft)),
-      top: Math.min(maxTop, Math.max(minTop, proposedTop))
-    };
-  }
-
   function centerWindow(windowElement, force) {
     if (!force && windowElement.dataset.positioned === "true") {
       return;
     }
 
-    var desktopRect = desktop.getBoundingClientRect();
-    var windowSize = getWindowSize(windowElement);
-    var centeredLeft = Math.round((desktopRect.width - windowSize.width) / 2);
-    var centeredTop = Math.round((desktopRect.height - windowSize.height) / 2);
-    var clamped = clampWindowPosition(windowElement, centeredLeft, centeredTop);
+    var desktopRect = desktopWindows.getBoundingClientRect();
+    var windowRect = windowElement.getBoundingClientRect();
+    var centeredLeft = Math.round((desktopRect.width - windowRect.width) / 2);
+    var centeredTop = Math.round((desktopRect.height - windowRect.height) / 2);
 
-    windowElement.style.left = clamped.left + "px";
-    windowElement.style.top = clamped.top + "px";
+    windowElement.style.left = centeredLeft + "px";
+    windowElement.style.top = centeredTop + "px";
     windowElement.dataset.positioned = "true";
   }
 
-  function constrainWindowToDesktop(windowElement) {
-    if (!windowElement.classList.contains("open")) {
+  function stopWindowDrag(targetWindow) {
+    if (!activeDrag) {
       return;
     }
 
-    var currentLeft = parseFloat(windowElement.style.left);
-    var currentTop = parseFloat(windowElement.style.top);
-
-    if (Number.isNaN(currentLeft) || Number.isNaN(currentTop)) {
-      centerWindow(windowElement, true);
+    if (targetWindow && activeDrag.windowElement !== targetWindow) {
       return;
     }
 
-    var clamped = clampWindowPosition(windowElement, currentLeft, currentTop);
-    windowElement.style.left = clamped.left + "px";
-    windowElement.style.top = clamped.top + "px";
+    activeDrag.windowElement.classList.remove("dragging");
+    document.removeEventListener("mousemove", onWindowDragMouseMove);
+    document.removeEventListener("mouseup", onWindowDragMouseUp);
+    activeDrag = null;
+  }
+
+  function onWindowDragMouseMove(event) {
+    if (!activeDrag) {
+      return;
+    }
+
+    var nextLeft = (event.clientX - activeDrag.offsetX) - activeDrag.desktopLeft;
+    var nextTop = (event.clientY - activeDrag.offsetY) - activeDrag.desktopTop;
+
+    activeDrag.windowElement.style.left = nextLeft + "px";
+    activeDrag.windowElement.style.top = nextTop + "px";
+    activeDrag.windowElement.dataset.positioned = "true";
+  }
+
+  function onWindowDragMouseUp() {
+    stopWindowDrag();
   }
 
   function openChadWindow(windowElement) {
@@ -701,6 +688,7 @@
       return;
     }
 
+    stopWindowDrag(windowElement);
     clearWindowCloseTimer(windowElement);
     windowElement.classList.remove("launched");
     windowElement.classList.remove("open");
@@ -744,39 +732,8 @@
       return;
     }
 
-    function stopDrag() {
-      if (!activeDrag || activeDrag.windowElement !== windowElement) {
-        return;
-      }
-
-      windowElement.classList.remove("dragging");
-      activeDrag = null;
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
-    }
-
-    function onMouseMove(event) {
-      if (!activeDrag || activeDrag.windowElement !== windowElement) {
-        return;
-      }
-
-      var deltaX = event.clientX - activeDrag.startX;
-      var deltaY = event.clientY - activeDrag.startY;
-      var nextLeft = activeDrag.originLeft + deltaX;
-      var nextTop = activeDrag.originTop + deltaY;
-      var clamped = clampWindowPosition(windowElement, nextLeft, nextTop);
-
-      windowElement.style.left = clamped.left + "px";
-      windowElement.style.top = clamped.top + "px";
-      windowElement.dataset.positioned = "true";
-    }
-
-    function onMouseUp() {
-      stopDrag();
-    }
-
     function onMouseDown(event) {
-      if (event.button !== 0 || event.target.closest(".window-controls")) {
+      if (event.button !== 0 || event.target.closest(".window-control")) {
         return;
       }
 
@@ -787,18 +744,19 @@
       bringWindowToFront(windowElement);
 
       var rect = windowElement.getBoundingClientRect();
-      var desktopRect = desktop.getBoundingClientRect();
+      var desktopRect = desktopWindows.getBoundingClientRect();
+      stopWindowDrag();
       activeDrag = {
         windowElement: windowElement,
-        startX: event.clientX,
-        startY: event.clientY,
-        originLeft: rect.left - desktopRect.left,
-        originTop: rect.top - desktopRect.top
+        desktopLeft: desktopRect.left,
+        desktopTop: desktopRect.top,
+        offsetX: event.clientX - rect.left,
+        offsetY: event.clientY - rect.top
       };
 
       windowElement.classList.add("dragging");
-      document.addEventListener("mousemove", onMouseMove);
-      document.addEventListener("mouseup", onMouseUp);
+      document.addEventListener("mousemove", onWindowDragMouseMove);
+      document.addEventListener("mouseup", onWindowDragMouseUp);
       event.preventDefault();
     }
 
@@ -873,14 +831,6 @@
       event.preventDefault();
       event.stopPropagation();
       handleWindowControl(controlButton.getAttribute("data-window-action"), windowElement);
-    });
-
-    window.addEventListener("resize", function () {
-      var windows = desktopWindows.querySelectorAll(".chados-window.open");
-
-      for (var j = 0; j < windows.length; j += 1) {
-        constrainWindowToDesktop(windows[j]);
-      }
     });
   }
 

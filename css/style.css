@@ -455,7 +455,7 @@ body {
   top: 0;
   display: flex;
   flex-direction: column;
-  width: min(980px, calc(100vw - 220px));
+  width: min(980px, calc(100% - 4rem));
   height: min(78vh, 720px);
   border-radius: 14px;
   border: 1px solid var(--window-shell-border);
@@ -515,7 +515,6 @@ body {
   background: var(--window-titlebar-bg);
   cursor: grab;
   user-select: none;
-  touch-action: none;
 }
 
 .chados-window.dragging .window-titlebar {
@@ -568,12 +567,6 @@ body {
   margin: 0;
   color: var(--window-title-color);
   font-size: 0.89rem;
-}
-
-.window-body {
-  display: flex;
-  flex: 1;
-  min-height: 0;
 }
 
 #terminal {
