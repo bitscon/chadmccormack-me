@@ -2557,7 +2557,7 @@
 
     print("Workshop ready.");
     print("Type 'help' to explore.");
-    print("Tip: Type 'resume' or click Resume.pdf to start.");
+    print("Engineer tip: type 'help' to explore the workspace.");
     if (state.pendingRecruiterEngagementLine) {
       appendLine("[system] " + RECRUITER_ENGAGEMENT_SYSTEM_LINE, "command-echo");
       state.pendingRecruiterEngagementLine = false;
