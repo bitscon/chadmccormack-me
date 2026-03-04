@@ -319,111 +319,122 @@
     }
   };
 
+  var CAREER_SUMMARY = {
+    title: "Career Summary",
+    description: [
+      "ServiceNow CMDB / Discovery SME with enterprise experience designing infrastructure visibility and configuration data governance for large corporate environments."
+    ],
+    specialties: [
+      "CMDB architecture and governance",
+      "ServiceNow Discovery reliability",
+      "infrastructure classification and CI modeling",
+      "service visibility for operations teams"
+    ]
+  };
+
   var CAREER_TIMELINE_ENTRIES = [
     {
       id: "current-role",
       period: "[2024 -> Present]",
-      company: "Company Name (Current Role Placeholder)",
+      company: "Enterprise Financial Services Organization (Current Placeholder)",
       role: "ServiceNow CMDB / Discovery SME",
       responsibilities: [
-        "Enterprise CMDB architecture and lifecycle governance.",
-        "Discovery infrastructure visibility and operational alignment.",
-        "CI lifecycle ownership with stakeholder accountability."
+        "Drove enterprise CMDB architecture standards and data governance controls.",
+        "Improved Discovery reliability across shared enterprise infrastructure domains.",
+        "Aligned CI lifecycle ownership between platform and operations teams."
       ],
       focus: [
         "MID Server architecture",
-        "Discovery credential management",
+        "discovery credential strategy",
         "CI reconciliation and normalization"
       ],
       contributions: [
-        "Stabilized Discovery execution standards for shared environments.",
-        "Improved CI relationship integrity for cross-team service dependencies.",
-        "Established CMDB data quality review cadence for platform teams."
+        "Improved discovery pattern stability for critical enterprise segments.",
+        "Strengthened CI relationship quality for downstream service visibility.",
+        "Implemented recurring CMDB data quality checkpoints with platform owners."
       ],
       platforms: [
-        "ServiceNow",
-        "CMDB",
-        "Discovery",
+        "ServiceNow CMDB",
+        "ServiceNow Discovery",
         "Enterprise Infrastructure"
       ]
     },
     {
       id: "capital-one",
-      period: "[2019-2023]",
+      period: "[2019 - 2023]",
       company: "Capital One",
       role: "Senior ServiceNow CMDB / Discovery Engineer",
       responsibilities: [
-        "Led CMDB governance improvements for enterprise visibility.",
-        "Improved infrastructure inventory confidence across service owners.",
-        "Stabilized Discovery patterns and credential workflows."
+        "Improved CMDB data quality and trust across operations teams.",
+        "Stabilized discovery patterns and credential workflows.",
+        "Increased infrastructure visibility across enterprise environments."
       ],
       focus: [
-        "CMDB data quality",
-        "Discovery reliability",
-        "CI relationship modeling"
+        "CMDB governance and CI lifecycle",
+        "discovery coverage and reliability",
+        "infrastructure relationship modeling"
       ],
       contributions: [
-        "Reduced noisy CI duplicates through normalization and reconciliation tuning.",
-        "Improved platform reporting trust for operational and audit stakeholders.",
-        "Aligned CMDB architecture decisions with infrastructure operations."
+        "Discovery pattern troubleshooting across complex infrastructure estates.",
+        "CI classification improvements for cleaner reconciliation outcomes.",
+        "Service visibility improvements for incident and support workflows."
       ],
       platforms: [
-        "ServiceNow",
-        "CMDB",
-        "Discovery",
+        "ServiceNow CMDB",
+        "ServiceNow Discovery",
         "Enterprise Infrastructure"
       ]
     },
     {
       id: "platform-specialist",
-      period: "[2017-2019]",
-      company: "Company Name (Platform Specialist Placeholder)",
+      period: "[2016 - 2019]",
+      company: "Enterprise Technology Organization (Platform Specialist Placeholder)",
       role: "ServiceNow Engineer / Platform Specialist",
       responsibilities: [
-        "Discovery configuration and troubleshooting for enterprise networks.",
-        "CI classification and normalization across technology domains.",
-        "Infrastructure data modeling for operational reporting."
+        "Configured and troubleshot Discovery for mixed enterprise environments.",
+        "Improved CI classification and normalization across infrastructure classes.",
+        "Supported infrastructure data modeling for operational reporting."
       ],
       focus: [
         "Discovery pattern stability",
-        "Service Mapping readiness",
+        "service mapping readiness",
         "Operational reporting"
       ],
       contributions: [
-        "Improved discovery error triage with repeatable diagnostics.",
-        "Hardened CI classification rules to reduce long-tail data drift.",
-        "Supported governance teams with better platform evidence quality."
+        "Created repeatable triage workflows for discovery failure analysis.",
+        "Reduced CI data drift through better classification and model controls.",
+        "Improved evidence quality for governance and audit stakeholders."
       ],
       platforms: [
-        "ServiceNow",
-        "Discovery",
+        "ServiceNow CMDB",
+        "ServiceNow Discovery",
         "Service Mapping",
-        "Infrastructure Data Models"
+        "Infrastructure Data Modeling"
       ]
     },
     {
       id: "infra-engineering",
-      period: "[2014-2017]",
-      company: "Company Name (Infrastructure Engineering Placeholder)",
-      role: "Infrastructure / Systems Engineering Role",
+      period: "[Earlier Roles]",
+      company: "Enterprise Infrastructure Organizations",
+      role: "Infrastructure / Systems Engineering",
       responsibilities: [
-        "Enterprise infrastructure operations and reliability support.",
-        "Platform health monitoring and service continuity improvements.",
-        "Operational automation for recurring systems tasks."
+        "Managed enterprise infrastructure operations and reliability workflows.",
+        "Built monitoring and operational tooling for service continuity.",
+        "Automated repeat operational tasks to reduce support toil."
       ],
       focus: [
         "Infrastructure visibility",
-        "Monitoring and operational tooling",
+        "monitoring and operational tooling",
         "Automation-first operational practices"
       ],
       contributions: [
-        "Documented recovery runbooks that shortened incident response time.",
-        "Introduced repeatable operational checks for critical systems.",
-        "Improved handoff clarity between operations and engineering teams."
+        "Documented runbooks that improved incident response consistency.",
+        "Introduced recurring operational checks for critical platform services.",
+        "Improved handoff quality between infrastructure operations and engineering."
       ],
       platforms: [
         "Enterprise Infrastructure",
-        "Monitoring Systems",
+        "Monitoring and Alerting",
         "Operational Tooling"
       ]
     }
@@ -1253,6 +1264,36 @@
     return section;
   }
 
+  function createCareerSummarySection() {
+    var summary = document.createElement("section");
+    var title = document.createElement("h3");
+    var description = document.createElement("p");
+    var specialtyTitle = document.createElement("p");
+    var specialtyList = document.createElement("ul");
+
+    summary.className = "career-summary";
+    title.className = "career-summary-title";
+    title.textContent = CAREER_SUMMARY.title;
+
+    description.className = "career-summary-description";
+    description.textContent = CAREER_SUMMARY.description.join(" ");
+
+    specialtyTitle.className = "career-summary-specialty-title";
+    specialtyTitle.textContent = "Specialties";
+
+    for (var i = 0; i < CAREER_SUMMARY.specialties.length; i += 1) {
+      var item = document.createElement("li");
+      item.textContent = CAREER_SUMMARY.specialties[i];
+      specialtyList.appendChild(item);
+    }
+
+    summary.appendChild(title);
+    summary.appendChild(description);
+    summary.appendChild(specialtyTitle);
+    summary.appendChild(specialtyList);
+    return summary;
+  }
+
   function careerEntryMatchesFilter(entry, query) {
     if (!query) {
       return true;
@@ -1283,6 +1324,7 @@
 
     container.className = "career-log-container";
     careerLogContent.innerHTML = "";
+    container.appendChild(createCareerSummarySection());
 
     for (var i = 0; i < CAREER_TIMELINE_ENTRIES.length; i += 1) {
       var entry = CAREER_TIMELINE_ENTRIES[i];
@@ -1321,12 +1363,13 @@
       article.appendChild(header);
       article.appendChild(role);
       article.appendChild(createCareerListSection("Impact", entry.responsibilities, "career-entry-section"));
-      article.appendChild(createCareerListSection("Architectural Focus", entry.focus, "career-entry-section"));
+      article.appendChild(createCareerListSection("Platform Focus", entry.focus, "career-entry-section"));
+      article.appendChild(createCareerListSection("Platforms", entry.platforms, "career-entry-section"));
 
       detailBlock.className = "career-entry-extra";
       detailBlock.appendChild(createCareerListSection("Key Contributions", entry.contributions, "career-entry-section"));
       platformLabel.className = "career-entry-platforms";
-      platformLabel.textContent = "Platforms: " + entry.platforms.join(" | ");
+      platformLabel.textContent = "Click entry to collapse or expand contribution details.";
       detailBlock.appendChild(platformLabel);
       article.appendChild(detailBlock);
 
