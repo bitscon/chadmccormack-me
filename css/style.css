@@ -500,8 +500,13 @@ body {
   pointer-events: auto;
 }
 
-.chados-window.focused {
+.chados-window.is-active {
+  border-color: rgba(230, 245, 255, 0.26);
   box-shadow: var(--terminal-shadow), 0 0 64px rgba(160, 238, 255, 0.18), var(--window-inner-glow);
+}
+
+.chados-window.recentering {
+  transition: left 200ms ease, top 200ms ease, transform 200ms ease;
 }
 
 .window-titlebar {
@@ -567,6 +572,12 @@ body {
   margin: 0;
   color: var(--window-title-color);
   font-size: 0.89rem;
+  opacity: 0.82;
+  transition: opacity 160ms ease;
+}
+
+.chados-window.is-active .window-title {
+  opacity: 1;
 }
 
 #terminal {

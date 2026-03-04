@@ -96,7 +96,7 @@
     theme: "dark",
     promptTimestampEnabled: false,
     terminalInitialized: false,
-    windowZ: 40
+    windowZ: 2000
   };
   var biosAnimationState = {
     lines: []
@@ -600,7 +600,7 @@
 
     for (var i = 0; i < windows.length; i += 1) {
       windows[i].classList.toggle(
-        "focused",
+        "is-active",
         windows[i] === windowElement && windows[i].classList.contains("open")
       );
     }
@@ -616,19 +616,48 @@
     setWindowFocused(windowElement);
   }
 
+  function getWindowCenterPosition(windowElement) {
+    var desktopRect = desktopWindows.getBoundingClientRect();
+    var windowRect = windowElement.getBoundingClientRect();
+
+    return {
+      left: Math.round((desktopRect.width - windowRect.width) / 2),
+      top: Math.round((desktopRect.height - windowRect.height) / 2)
+    };
+  }
+
   function centerWindow(windowElement, force) {
     if (!force && windowElement.dataset.positioned === "true") {
       return;
     }
 
-    var desktopRect = desktopWindows.getBoundingClientRect();
-    var windowRect = windowElement.getBoundingClientRect();
-    var centeredLeft = Math.round((desktopRect.width - windowRect.width) / 2);
-    var centeredTop = Math.round((desktopRect.height - windowRect.height) / 2);
+    var centered = getWindowCenterPosition(windowElement);
 
-    windowElement.style.left = centeredLeft + "px";
-    windowElement.style.top = centeredTop + "px";
+    windowElement.style.left = centered.left + "px";
+    windowElement.style.top = centered.top + "px";
     windowElement.dataset.positioned = "true";
+  }
+
+  function recenterWindow(windowElement) {
+    if (!windowElement || !windowElement.classList.contains("open")) {
+      return;
+    }
+
+    stopWindowDrag(windowElement);
+    bringWindowToFront(windowElement);
+
+    var centered = getWindowCenterPosition(windowElement);
+    windowElement.classList.remove("recentering");
+    // Force reflow so recenter animation reliably replays.
+    void windowElement.offsetWidth;
+    windowElement.classList.add("recentering");
+    windowElement.style.left = centered.left + "px";
+    windowElement.style.top = centered.top + "px";
+    windowElement.dataset.positioned = "true";
+
+    window.setTimeout(function () {
+      windowElement.classList.remove("recentering");
+    }, 210);
   }
 
   function stopWindowDrag(targetWindow) {
@@ -692,7 +721,8 @@
     clearWindowCloseTimer(windowElement);
     windowElement.classList.remove("launched");
     windowElement.classList.remove("open");
-    windowElement.classList.remove("focused");
+    windowElement.classList.remove("is-active");
+    windowElement.classList.remove("recentering");
     windowElement.classList.add("closing");
 
     var windowId = getWindowId(windowElement);
@@ -761,6 +791,13 @@
     }
 
     titlebar.addEventListener("mousedown", onMouseDown);
+    titlebar.addEventListener("dblclick", function (event) {
+      if (event.target.closest(".window-control")) {
+        return;
+      }
+
+      recenterWindow(windowElement);
+    });
     windowElement.dataset.draggableBound = "true";
   }
 
@@ -832,6 +869,20 @@
       event.stopPropagation();
       handleWindowControl(controlButton.getAttribute("data-window-action"), windowElement);
     });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key !== "Escape") {
+        return;
+      }
+
+      if (
+        terminalWindow.classList.contains("open") &&
+        terminalWindow.classList.contains("is-active")
+      ) {
+        event.preventDefault();
+        closeTerminalWindow();
+      }
+    });
   }
 
   function bindDesktopInteractions() {
@@ -853,6 +904,7 @@
     desktop.addEventListener("click", function (event) {
       if (event.target === desktop) {
         setSelectedLauncherButton(null);
+        setWindowFocused(null);
       }
     });
 
