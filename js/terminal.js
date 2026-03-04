@@ -10,7 +10,9 @@
   var desktop = document.getElementById("desktop");
   var desktopWindows = document.getElementById("desktop-windows");
   var terminalLauncher = document.getElementById("terminal-launcher");
+  var hireChadLauncher = document.getElementById("hire-chad-launcher");
   var systemsMapLauncher = document.getElementById("systems-map-launcher");
+  var automationLabLauncher = document.getElementById("automation-lab-launcher");
   var careerLogLauncher = document.getElementById("career-log-launcher");
   var desktopPopup = document.getElementById("desktop-popup");
   var pipVideo = document.getElementById("pip-video");
@@ -18,8 +20,11 @@
   var systemMonitorStats = document.getElementById("system-monitor-stats");
   var launcherButtons = document.querySelectorAll("#desktop-launcher .launcher-button");
   var terminalWindow = document.getElementById("terminal-window");
+  var hireChadWindow = document.getElementById("hire-chad-window");
   var systemsMapWindow = document.getElementById("systems-map-window");
+  var automationLabWindow = document.getElementById("automation-lab-window");
   var careerLogWindow = document.getElementById("career-log-window");
+  var hireChadOutput = document.getElementById("hire-chad-output");
   var systemsMapContent = document.getElementById("systems-map-content");
   var systemsMapLayerButtons = document.querySelectorAll("#systems-map-window .systems-map-layer");
   var careerLogFilterInput = document.getElementById("career-log-filter");
@@ -42,7 +47,9 @@
     !desktop ||
     !desktopWindows ||
     !terminalLauncher ||
+    !hireChadLauncher ||
     !systemsMapLauncher ||
+    !automationLabLauncher ||
     !careerLogLauncher ||
     !desktopPopup ||
     !pipVideo ||
@@ -50,8 +57,11 @@
     !systemMonitorStats ||
     !launcherButtons.length ||
     !terminalWindow ||
+    !hireChadWindow ||
     !systemsMapWindow ||
+    !automationLabWindow ||
     !careerLogWindow ||
+    !hireChadOutput ||
     !systemsMapContent ||
     !systemsMapLayerButtons.length ||
     !careerLogFilterInput ||
@@ -83,6 +93,8 @@
   var CAREER_LOG_MAX_LINES = 120;
   var NOTIFICATION_LIFE_MS = 6000;
   var NOTIFICATION_EXIT_MS = 220;
+  var HIRE_CHAD_STEP_DELAY_MS = 190;
+  var HIRE_CHAD_DOT_DELAY_MS = 75;
 
   var BIOS_CHECKS = [
     { label: "Memory test", dots: 13 },
@@ -135,6 +147,37 @@
       title: "AI Assistant",
       message: "Billy runtime standing by."
     }
+  ];
+
+  var HIRE_CHAD_SEQUENCE = [
+    { type: "line", text: "sudo hire-chad", className: "is-command", pause: 220 },
+    { type: "line", text: "[sudo] password for recruiter: ********", className: "is-command", pause: 220 },
+    { type: "line", text: "", pause: 180 },
+    { type: "line", text: "Initializing candidate analysis...", className: "is-section", pause: 240 },
+    { type: "line", text: "", pause: 180 },
+    { type: "line", text: "Loading profile: Chad McCormack", pause: 190 },
+    { type: "line", text: "Target role: Creative Systems Engineer", pause: 220 },
+    { type: "line", text: "", pause: 180 },
+    { type: "line", text: "Checking engineering traits:", className: "is-section", pause: 220 },
+    { type: "ok", label: "Infrastructure architecture", dots: 12 },
+    { type: "ok", label: "Automation engineering", dots: 17 },
+    { type: "ok", label: "Incident response mindset", dots: 14 },
+    { type: "ok", label: "Platform thinking", dots: 22 },
+    { type: "ok", label: "Documentation that ships", dots: 15 },
+    { type: "ok", label: "Curiosity + execution", dots: 18 },
+    { type: "line", text: "", pause: 220 },
+    { type: "line", text: "Evaluating working style...", className: "is-section", pause: 240 },
+    { type: "line", text: "", pause: 170 },
+    { type: "line", text: "Builds systems other engineers enjoy using", pause: 180 },
+    { type: "line", text: "Automates repetitive operational work", pause: 180 },
+    { type: "line", text: "Leaves infrastructure easier than found", pause: 180 },
+    { type: "line", text: "Designs feedback loops into systems", pause: 220 },
+    { type: "line", text: "", pause: 180 },
+    { type: "line", text: "Final recommendation:", className: "is-section", pause: 220 },
+    { type: "line", text: "", pause: 160 },
+    { type: "line", text: "HIRE CHAD.", className: "is-final", pause: 240 },
+    { type: "line", text: "", pause: 180 },
+    { type: "line", text: "Tip: type \"hire-chad --why\" in the terminal.", className: "is-tip", pause: 0 }
   ];
 
   var SYSTEMS_MAP_CORE_ASCII = [
@@ -263,6 +306,7 @@
     theme: "dark",
     promptTimestampEnabled: false,
     terminalInitialized: false,
+    hireChadRunId: 0,
     systemsMapLayer: "core",
     careerLogFilter: "",
     careerLogLines: CAREER_LOG_SEED.slice(),
@@ -925,6 +969,124 @@
     terminalLauncher.focus();
   }
 
+  function getLauncherForWindow(windowElement) {
+    if (windowElement === terminalWindow) {
+      return terminalLauncher;
+    }
+
+    if (windowElement === hireChadWindow) {
+      return hireChadLauncher;
+    }
+
+    if (windowElement === systemsMapWindow) {
+      return systemsMapLauncher;
+    }
+
+    if (windowElement === automationLabWindow) {
+      return automationLabLauncher;
+    }
+
+    if (windowElement === careerLogWindow) {
+      return careerLogLauncher;
+    }
+
+    return null;
+  }
+
+  function focusLauncherForWindow(windowElement) {
+    var launcher = getLauncherForWindow(windowElement);
+
+    if (launcher) {
+      launcher.focus();
+    }
+  }
+
+  function appendHireChadLine(text, className) {
+    var line = document.createElement("div");
+    line.className = "hire-log-line" + (className ? " " + className : "");
+    line.textContent = text;
+    hireChadOutput.appendChild(line);
+    hireChadOutput.scrollTop = hireChadOutput.scrollHeight;
+    return line;
+  }
+
+  function stopHireChadAnimation() {
+    state.hireChadRunId += 1;
+  }
+
+  async function animateHireChadOkLine(label, dots, runId) {
+    var dotCount = typeof dots === "number" && dots > 0 ? dots : 14;
+    var dotText = "";
+    var line = appendHireChadLine(label);
+
+    for (var i = 0; i < dotCount; i += 1) {
+      if (runId !== state.hireChadRunId) {
+        return;
+      }
+
+      dotText += ".";
+      line.textContent = label + dotText;
+      hireChadOutput.scrollTop = hireChadOutput.scrollHeight;
+      await sleep(HIRE_CHAD_DOT_DELAY_MS);
+    }
+
+    if (runId !== state.hireChadRunId) {
+      return;
+    }
+
+    line.textContent = label + dotText + "OK";
+    line.classList.add("is-ok");
+  }
+
+  async function runHireChadSequence() {
+    stopHireChadAnimation();
+    var runId = state.hireChadRunId;
+
+    hireChadOutput.innerHTML = "";
+
+    for (var i = 0; i < HIRE_CHAD_SEQUENCE.length; i += 1) {
+      if (runId !== state.hireChadRunId) {
+        return;
+      }
+
+      var step = HIRE_CHAD_SEQUENCE[i];
+
+      if (step.type === "ok") {
+        await animateHireChadOkLine(step.label, step.dots, runId);
+      } else {
+        appendHireChadLine(step.text, step.className);
+      }
+
+      var waitMs = typeof step.pause === "number" ? step.pause : HIRE_CHAD_STEP_DELAY_MS;
+      if (waitMs > 0) {
+        await sleep(waitMs);
+      }
+    }
+  }
+
+  function openHireChadWindow() {
+    var opened = openChadWindow(hireChadWindow);
+
+    if (opened) {
+      runHireChadSequence();
+    }
+  }
+
+  function closeHireChadWindow() {
+    stopHireChadAnimation();
+    closeChadWindow(hireChadWindow);
+    focusLauncherForWindow(hireChadWindow);
+  }
+
+  function openAutomationLabWindow() {
+    openChadWindow(automationLabWindow);
+  }
+
+  function closeAutomationLabWindow() {
+    closeChadWindow(automationLabWindow);
+    focusLauncherForWindow(automationLabWindow);
+  }
+
   function pad2(value) {
     return String(value).padStart(2, "0");
   }
@@ -1163,7 +1325,18 @@
         return;
       }
 
+      if (windowElement === hireChadWindow) {
+        closeHireChadWindow();
+        return;
+      }
+
+      if (windowElement === automationLabWindow) {
+        closeAutomationLabWindow();
+        return;
+      }
+
       closeChadWindow(windowElement);
+      focusLauncherForWindow(windowElement);
       return;
     }
 
@@ -1360,13 +1533,18 @@
         return;
       }
 
-      closeChadWindow(activeWindow);
-
-      if (activeWindow === careerLogWindow) {
-        careerLogLauncher.focus();
-      } else if (activeWindow === systemsMapWindow) {
-        systemsMapLauncher.focus();
+      if (activeWindow === hireChadWindow) {
+        closeHireChadWindow();
+        return;
       }
+
+      if (activeWindow === automationLabWindow) {
+        closeAutomationLabWindow();
+        return;
+      }
+
+      closeChadWindow(activeWindow);
+      focusLauncherForWindow(activeWindow);
     });
   }
 
@@ -1381,8 +1559,18 @@
             return;
           }
 
+          if (button.id === "hire-chad-launcher") {
+            openHireChadWindow();
+            return;
+          }
+
           if (button.id === "systems-map-launcher") {
             openSystemsMapWindow();
+            return;
+          }
+
+          if (button.id === "automation-lab-launcher") {
+            openAutomationLabWindow();
             return;
           }
 
