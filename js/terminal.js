@@ -98,7 +98,9 @@
   var THEME_KEY = "terminal-theme";
   var HISTORY_KEY = "terminal-history";
   var ONBOARDING_KEY = "chados-onboarding-seen";
+  var EVENTS_KEY = "chados-events";
   var HISTORY_LIMIT = 200;
+  var EVENTS_LIMIT = 20;
   var THEMES = ["dark", "light", "matrix"];
   var BASE_PROMPT = "chad@workshop:~$";
 
@@ -116,6 +118,8 @@
   var RECRUITER_ACTIVITY_TITLE = "Recruiter Activity";
   var HIRE_CHAD_STEP_DELAY_MS = 190;
   var HIRE_CHAD_DOT_DELAY_MS = 75;
+  var ACTIVITY_HINT_MIN_DELAY_MS = 45000;
+  var ACTIVITY_HINT_MAX_DELAY_MS = 90000;
 
   var BIOS_CHECKS = [
     { label: "Memory test", dots: 13 },
@@ -226,6 +230,31 @@
       message: "Engineering manager evaluating platform thinking."
     }
   ];
+
+  var TERMINAL_ACTIVITY_HINTS = {
+    general: [
+      "recruiter reviewing ServiceNow outcomes.",
+      "hiring manager evaluating enterprise CMDB work.",
+      "recruiter comparing Discovery reliability experience."
+    ],
+    resume_opened: [
+      "another recruiter opened Resume.pdf.",
+      "recruiter downloaded Resume.pdf."
+    ],
+    career_opened: [
+      "hiring manager reviewing Career Log."
+    ],
+    mindmap_opened: [
+      "ServiceNow architect viewing CMDB architecture."
+    ],
+    proof_opened: [
+      "recruiter exploring Proof of Work.",
+      "engineering manager reviewing Proof of Work."
+    ],
+    hire_opened: [
+      "hiring lead opened Hire Chad."
+    ]
+  };
 
   var HIRE_CHAD_SEQUENCE = [
     { type: "line", text: "sudo hire-chad", className: "is-command", pause: 220 },
@@ -481,6 +510,7 @@
   var notificationSequence = 0;
   var notificationScheduleTimers = [];
   var recruiterActivityTimer = null;
+  var terminalActivityHintTimer = null;
   var windowCloseTimers = {};
   var desktopPopupTimer = null;
   var activeDrag = null;
@@ -501,6 +531,197 @@
 
   function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function getStoredEvents() {
+    var raw = "";
+    var parsed = null;
+    var source = null;
+    var normalized = [];
+
+    try {
+      raw = window.localStorage.getItem(EVENTS_KEY) || "";
+    } catch (_error) {
+      return [];
+    }
+
+    if (!raw) {
+      return [];
+    }
+
+    try {
+      parsed = JSON.parse(raw);
+    } catch (_error) {
+      return [];
+    }
+
+    if (!parsed || typeof parsed !== "object") {
+      return [];
+    }
+
+    source = Array.isArray(parsed.events) ? parsed.events : [];
+
+    for (var i = 0; i < source.length; i += 1) {
+      var item = source[i];
+      var eventName = "";
+      var timestamp = 0;
+
+      if (!item || typeof item !== "object") {
+        continue;
+      }
+
+      eventName = typeof item.name === "string" ? item.name.trim() : "";
+      timestamp = Number(item.timestamp);
+
+      if (!eventName || !Number.isFinite(timestamp)) {
+        continue;
+      }
+
+      normalized.push({
+        name: eventName,
+        timestamp: Math.floor(timestamp)
+      });
+    }
+
+    if (normalized.length > EVENTS_LIMIT) {
+      normalized = normalized.slice(normalized.length - EVENTS_LIMIT);
+    }
+
+    return normalized;
+  }
+
+  function persistEvents(events) {
+    var payload = {
+      events: events
+    };
+
+    try {
+      window.localStorage.setItem(EVENTS_KEY, JSON.stringify(payload));
+    } catch (_error) {
+      // Ignore storage quota or blocked access errors.
+    }
+  }
+
+  function trackEvent(eventName) {
+    var events = [];
+    var normalizedEventName = typeof eventName === "string" ? eventName.trim() : "";
+
+    if (!normalizedEventName) {
+      return;
+    }
+
+    events = getStoredEvents();
+    events.push({
+      name: normalizedEventName,
+      timestamp: Math.floor(Date.now() / 1000)
+    });
+
+    if (events.length > EVENTS_LIMIT) {
+      events = events.slice(events.length - EVENTS_LIMIT);
+    }
+
+    persistEvents(events);
+  }
+
+  function pickRandomItem(items) {
+    if (!Array.isArray(items) || !items.length) {
+      return "";
+    }
+
+    return items[randomInt(0, items.length - 1)];
+  }
+
+  function hasTrackedEvent(events, eventName) {
+    for (var i = 0; i < events.length; i += 1) {
+      if (events[i].name === eventName) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function getHintEventKeys(events) {
+    var keys = [];
+
+    if (hasTrackedEvent(events, "resume_opened")) {
+      keys.push("resume_opened");
+    }
+
+    if (hasTrackedEvent(events, "career_opened")) {
+      keys.push("career_opened");
+    }
+
+    if (hasTrackedEvent(events, "mindmap_opened")) {
+      keys.push("mindmap_opened");
+    }
+
+    if (hasTrackedEvent(events, "proof_opened")) {
+      keys.push("proof_opened");
+    }
+
+    if (hasTrackedEvent(events, "hire_opened")) {
+      keys.push("hire_opened");
+    }
+
+    return keys;
+  }
+
+  function buildTerminalActivityHint() {
+    var events = getStoredEvents();
+    var eventKeys = getHintEventKeys(events);
+    var useEventHint = eventKeys.length > 0 && Math.random() < 0.75;
+    var eventKey = "";
+    var eventHints = [];
+    var hint = "";
+
+    if (useEventHint) {
+      eventKey = pickRandomItem(eventKeys);
+      eventHints = TERMINAL_ACTIVITY_HINTS[eventKey] || [];
+      hint = pickRandomItem(eventHints);
+    }
+
+    if (!hint) {
+      hint = pickRandomItem(TERMINAL_ACTIVITY_HINTS.general);
+    }
+
+    return hint;
+  }
+
+  function printSystemHint(message) {
+    if (!message || !terminalWindow.classList.contains("open")) {
+      return;
+    }
+
+    appendLine("[system] " + message, "command-echo");
+  }
+
+  function clearTerminalActivityHintTimer() {
+    if (!terminalActivityHintTimer) {
+      return;
+    }
+
+    window.clearTimeout(terminalActivityHintTimer);
+    terminalActivityHintTimer = null;
+  }
+
+  function scheduleTerminalActivityHint() {
+    clearTerminalActivityHintTimer();
+
+    if (!terminalWindow.classList.contains("open")) {
+      return;
+    }
+
+    terminalActivityHintTimer = window.setTimeout(function () {
+      terminalActivityHintTimer = null;
+
+      if (!terminalWindow.classList.contains("open")) {
+        return;
+      }
+
+      printSystemHint(buildTerminalActivityHint());
+      scheduleTerminalActivityHint();
+    }, randomInt(ACTIVITY_HINT_MIN_DELAY_MS, ACTIVITY_HINT_MAX_DELAY_MS));
   }
 
   function getPromptText() {
@@ -1182,6 +1403,7 @@
 
   function openTerminalWindow() {
     openChadWindow(terminalWindow);
+    scheduleTerminalActivityHint();
 
     if (!state.terminalInitialized) {
       initializeTerminalSession();
@@ -1194,6 +1416,7 @@
   }
 
   function closeTerminalWindow() {
+    clearTerminalActivityHintTimer();
     closeChadWindow(terminalWindow);
     terminalLauncher.focus();
   }
@@ -1306,7 +1529,9 @@
   }
 
   function openHireChadWindow() {
-    openChadWindow(hireChadWindow);
+    if (openChadWindow(hireChadWindow)) {
+      trackEvent("hire_opened");
+    }
   }
 
   function closeHireChadWindow() {
@@ -1325,7 +1550,9 @@
   }
 
   function openProofOfWorkWindow() {
-    openChadWindow(proofOfWorkWindow);
+    if (openChadWindow(proofOfWorkWindow)) {
+      trackEvent("proof_opened");
+    }
   }
 
   function closeProofOfWorkWindow() {
@@ -1384,7 +1611,9 @@
 
   function openResumeWindow() {
     renderResumeViewer();
-    openChadWindow(resumeWindow);
+    if (openChadWindow(resumeWindow)) {
+      trackEvent("resume_opened");
+    }
   }
 
   function closeResumeWindow() {
@@ -1573,7 +1802,9 @@
   function openCareerLogWindow() {
     careerLogFilterInput.value = state.careerLogFilter;
     renderCareerLog();
-    openChadWindow(careerLogWindow);
+    if (openChadWindow(careerLogWindow)) {
+      trackEvent("career_opened");
+    }
     careerLogFilterInput.focus();
   }
 
@@ -1645,7 +1876,9 @@
 
   function openSystemsMapWindow() {
     renderSystemsMapLayer(state.systemsMapLayer);
-    openChadWindow(systemsMapWindow);
+    if (openChadWindow(systemsMapWindow)) {
+      trackEvent("mindmap_opened");
+    }
   }
 
   function bindSystemsMapInteractions() {
