@@ -12,7 +12,7 @@
 
   var PROOF_WORK_DIAGRAMS = [
     {
-      title: "Discovery Pipeline",
+      title: "Discovery Reliability Pipeline",
       ascii: [
         "Infrastructure Environment",
         "        |",
@@ -31,10 +31,15 @@
         "        v",
         "CMDB Population"
       ].join("\n"),
-      description: "Discovery must reliably identify infrastructure, classify it correctly, and populate the CMDB with accurate and normalized configuration items."
+      description: "Designed discovery flow patterns that improve infrastructure identification accuracy and produce consistent CMDB population at enterprise scale.",
+      focus: [
+        "Discovery coverage strategy",
+        "Credential and pattern stability",
+        "CI classification integrity"
+      ]
     },
     {
-      title: "CMDB Governance Model",
+      title: "CMDB Data Governance Model",
       ascii: [
         "Infrastructure Data",
         "        |",
@@ -50,10 +55,15 @@
         "        v",
         "Trusted CMDB"
       ].join("\n"),
-      description: "A CMDB only becomes valuable when data quality, ownership, and reconciliation rules ensure the data can be trusted by operations and leadership."
+      description: "Designed governance patterns to improve configuration data accuracy, support operational decision making, and increase trust in CMDB reporting.",
+      focus: [
+        "CI lifecycle ownership",
+        "Reconciliation strategy",
+        "Normalized infrastructure data"
+      ]
     },
     {
-      title: "Service Visibility Model",
+      title: "Service Visibility Architecture",
       ascii: [
         "Infrastructure",
         "        |",
@@ -69,7 +79,12 @@
         "        v",
         "Operational Visibility"
       ].join("\n"),
-      description: "Linking infrastructure to services allows operations teams to understand impact, accelerate troubleshooting, and make informed operational decisions."
+      description: "Enabled service visibility by strengthening CI relationships and topology context, allowing operations teams to troubleshoot faster and assess impact with confidence.",
+      focus: [
+        "CI relationship modeling",
+        "Service topology context",
+        "Operational impact analysis"
+      ]
     }
   ];
 
@@ -103,6 +118,8 @@
       var title = document.createElement("h4");
       var ascii = document.createElement("pre");
       var description = document.createElement("p");
+      var focusLabel = document.createElement("p");
+      var focusList = document.createElement("ul");
 
       block.className = "diagram-block";
       title.className = "diagram-title";
@@ -114,9 +131,22 @@
       description.className = "diagram-description";
       description.textContent = diagram.description;
 
+      focusLabel.className = "diagram-focus-label";
+      focusLabel.textContent = "Architectural Focus:";
+
+      for (var j = 0; j < diagram.focus.length; j += 1) {
+        var focusItem = document.createElement("li");
+        focusItem.textContent = diagram.focus[j];
+        focusList.appendChild(focusItem);
+      }
+
+      focusList.className = "diagram-focus-list";
+
       block.appendChild(title);
       block.appendChild(ascii);
       block.appendChild(description);
+      block.appendChild(focusLabel);
+      block.appendChild(focusList);
       diagramList.appendChild(block);
     }
 

@@ -355,9 +355,9 @@
       company: "Enterprise Financial Services Organization (Current Placeholder)",
       role: "ServiceNow CMDB / Discovery SME",
       responsibilities: [
-        "Drove enterprise CMDB architecture standards and data governance controls.",
-        "Improved Discovery reliability across shared enterprise infrastructure domains.",
-        "Aligned CI lifecycle ownership between platform and operations teams."
+        "Defined enterprise CMDB architecture standards that improved data quality and operational trust across platform stakeholders.",
+        "Improved Discovery reliability for shared infrastructure domains through pattern governance and credential strategy hardening.",
+        "Aligned CI lifecycle ownership and reconciliation policy between platform engineering and operations teams."
       ],
       focus: [
         "MID Server architecture",
@@ -365,9 +365,9 @@
         "CI reconciliation and normalization"
       ],
       contributions: [
-        "Improved discovery pattern stability for critical enterprise segments.",
-        "Strengthened CI relationship quality for downstream service visibility.",
-        "Implemented recurring CMDB data quality checkpoints with platform owners."
+        "Stabilized ServiceNow Discovery for critical infrastructure segments through pattern tuning and execution standards.",
+        "Improved CI relationship integrity to strengthen service visibility and incident impact understanding.",
+        "Established recurring CMDB health checkpoints with platform owners to sustain reporting confidence."
       ],
       platforms: [
         "ServiceNow CMDB",
@@ -381,9 +381,9 @@
       company: "Capital One",
       role: "Senior ServiceNow CMDB / Discovery Engineer",
       responsibilities: [
-        "Improved CMDB data quality and trust across operations teams.",
-        "Stabilized discovery patterns and credential workflows.",
-        "Increased infrastructure visibility across enterprise environments."
+        "Improved CMDB data quality and operational trust through CI lifecycle governance and reconciliation strategy.",
+        "Stabilized ServiceNow Discovery through pattern tuning, credential strategy improvements, and infrastructure classification controls.",
+        "Expanded enterprise infrastructure visibility for operations teams and service owners."
       ],
       focus: [
         "CMDB governance and CI lifecycle",
@@ -391,9 +391,9 @@
         "infrastructure relationship modeling"
       ],
       contributions: [
-        "Discovery pattern troubleshooting across complex infrastructure estates.",
-        "CI classification improvements for cleaner reconciliation outcomes.",
-        "Service visibility improvements for incident and support workflows."
+        "Reduced discovery volatility across complex infrastructure estates by standardizing troubleshooting and pattern maintenance.",
+        "Improved CI classification quality to produce cleaner reconciliation outcomes and stronger audit confidence.",
+        "Enabled service visibility by improving CI relationships and infrastructure topology modeling."
       ],
       platforms: [
         "ServiceNow CMDB",
@@ -407,9 +407,9 @@
       company: "Enterprise Technology Organization (Platform Specialist Placeholder)",
       role: "ServiceNow Engineer / Platform Specialist",
       responsibilities: [
-        "Configured and troubleshot Discovery for mixed enterprise environments.",
-        "Improved CI classification and normalization across infrastructure classes.",
-        "Supported infrastructure data modeling for operational reporting."
+        "Configured and stabilized Discovery for mixed enterprise environments with repeatable operational controls.",
+        "Improved CI classification and normalization across infrastructure classes to reduce data drift.",
+        "Supported infrastructure data modeling that improved operational reporting quality."
       ],
       focus: [
         "Discovery pattern stability",
@@ -417,9 +417,9 @@
         "Operational reporting"
       ],
       contributions: [
-        "Created repeatable triage workflows for discovery failure analysis.",
-        "Reduced CI data drift through better classification and model controls.",
-        "Improved evidence quality for governance and audit stakeholders."
+        "Built repeatable triage workflows for discovery failure analysis and faster recovery.",
+        "Reduced CI data drift through stronger classification rules and normalization controls.",
+        "Improved governance evidence quality for audit and operational leadership reviews."
       ],
       platforms: [
         "ServiceNow CMDB",
@@ -434,9 +434,9 @@
       company: "Enterprise Infrastructure Organizations",
       role: "Infrastructure / Systems Engineering",
       responsibilities: [
-        "Managed enterprise infrastructure operations and reliability workflows.",
-        "Built monitoring and operational tooling for service continuity.",
-        "Automated repeat operational tasks to reduce support toil."
+        "Managed enterprise infrastructure operations with a reliability-first approach to service continuity.",
+        "Built monitoring and operational tooling that improved incident detection and response consistency.",
+        "Automated recurring operational tasks to reduce support toil and improve engineering focus."
       ],
       focus: [
         "Infrastructure visibility",
@@ -444,9 +444,9 @@
         "Automation-first operational practices"
       ],
       contributions: [
-        "Documented runbooks that improved incident response consistency.",
-        "Introduced recurring operational checks for critical platform services.",
-        "Improved handoff quality between infrastructure operations and engineering."
+        "Documented operational runbooks that improved incident response consistency across teams.",
+        "Introduced recurring operational checks for critical platform services to reduce preventable outages.",
+        "Improved handoff quality between infrastructure operations and engineering for faster execution."
       ],
       platforms: [
         "Enterprise Infrastructure",
@@ -1306,11 +1306,7 @@
   }
 
   function openHireChadWindow() {
-    var opened = openChadWindow(hireChadWindow);
-
-    if (opened) {
-      runHireChadSequence();
-    }
+    openChadWindow(hireChadWindow);
   }
 
   function closeHireChadWindow() {
