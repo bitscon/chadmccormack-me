@@ -85,6 +85,45 @@
         "Service topology context",
         "Operational impact analysis"
       ]
+    },
+    {
+      title: "Question",
+      question: "How does CSDM connect infrastructure to services?",
+      ascii: [
+        "Infrastructure CI",
+        "        |",
+        "        v",
+        "Application CI",
+        "        |",
+        "        v",
+        "Technical Service",
+        "        |",
+        "        v",
+        "Business Service",
+        "        |",
+        "        v",
+        "Business Capability",
+        "        |",
+        "        v",
+        "Business Application"
+      ].join("\n"),
+      description: "The Common Service Data Model (CSDM) provides a structured way to connect infrastructure to applications, services, and business capabilities.",
+      focusLabel: "This enables:",
+      focus: [
+        "clearer service ownership",
+        "reliable incident impact analysis",
+        "service-aligned operations",
+        "consistent service mapping"
+      ],
+      practiceTitle: "CSDM in Practice",
+      practiceDescription: "I help organizations implement CSDM in ways that align with their operational goals and service management practices.",
+      practiceLabel: "This includes:",
+      practiceItems: [
+        "defining service boundaries",
+        "aligning CI classes to the CSDM model",
+        "guiding teams on service ownership",
+        "enabling service visibility for operations teams"
+      ]
     }
   ];
 
@@ -117,9 +156,14 @@
       var block = document.createElement("article");
       var title = document.createElement("h4");
       var ascii = document.createElement("pre");
-      var description = document.createElement("p");
-      var focusLabel = document.createElement("p");
-      var focusList = document.createElement("ul");
+      var description = null;
+      var focusLabel = null;
+      var focusList = null;
+      var question = null;
+      var practiceTitle = null;
+      var practiceDescription = null;
+      var practiceLabel = null;
+      var practiceList = null;
 
       block.className = "diagram-block";
       title.className = "diagram-title";
@@ -128,25 +172,74 @@
       ascii.className = "diagram-ascii";
       ascii.textContent = diagram.ascii;
 
-      description.className = "diagram-description";
-      description.textContent = diagram.description;
+      block.appendChild(title);
 
-      focusLabel.className = "diagram-focus-label";
-      focusLabel.textContent = "Architectural Focus:";
-
-      for (var j = 0; j < diagram.focus.length; j += 1) {
-        var focusItem = document.createElement("li");
-        focusItem.textContent = diagram.focus[j];
-        focusList.appendChild(focusItem);
+      if (diagram.question) {
+        question = document.createElement("p");
+        question.className = "diagram-focus-label";
+        question.textContent = diagram.question;
+        block.appendChild(question);
       }
 
-      focusList.className = "diagram-focus-list";
-
-      block.appendChild(title);
       block.appendChild(ascii);
-      block.appendChild(description);
-      block.appendChild(focusLabel);
-      block.appendChild(focusList);
+
+      if (diagram.description) {
+        description = document.createElement("p");
+        description.className = "diagram-description";
+        description.textContent = diagram.description;
+        block.appendChild(description);
+      }
+
+      if (Array.isArray(diagram.focus) && diagram.focus.length) {
+        focusLabel = document.createElement("p");
+        focusLabel.className = "diagram-focus-label";
+        focusLabel.textContent = diagram.focusLabel || "Architectural Focus:";
+
+        focusList = document.createElement("ul");
+        focusList.className = "diagram-focus-list";
+
+        for (var j = 0; j < diagram.focus.length; j += 1) {
+          var focusItem = document.createElement("li");
+          focusItem.textContent = diagram.focus[j];
+          focusList.appendChild(focusItem);
+        }
+
+        block.appendChild(focusLabel);
+        block.appendChild(focusList);
+      }
+
+      if (diagram.practiceTitle) {
+        practiceTitle = document.createElement("p");
+        practiceTitle.className = "diagram-focus-label";
+        practiceTitle.textContent = diagram.practiceTitle;
+        block.appendChild(practiceTitle);
+      }
+
+      if (diagram.practiceDescription) {
+        practiceDescription = document.createElement("p");
+        practiceDescription.className = "diagram-description";
+        practiceDescription.textContent = diagram.practiceDescription;
+        block.appendChild(practiceDescription);
+      }
+
+      if (Array.isArray(diagram.practiceItems) && diagram.practiceItems.length) {
+        practiceLabel = document.createElement("p");
+        practiceLabel.className = "diagram-focus-label";
+        practiceLabel.textContent = diagram.practiceLabel || "This includes:";
+
+        practiceList = document.createElement("ul");
+        practiceList.className = "diagram-focus-list";
+
+        for (var k = 0; k < diagram.practiceItems.length; k += 1) {
+          var practiceItem = document.createElement("li");
+          practiceItem.textContent = diagram.practiceItems[k];
+          practiceList.appendChild(practiceItem);
+        }
+
+        block.appendChild(practiceLabel);
+        block.appendChild(practiceList);
+      }
+
       diagramList.appendChild(block);
     }
 
