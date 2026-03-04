@@ -733,72 +733,77 @@
     terminalLauncher.focus();
   }
 
-  function startWindowDrag(event) {
-    if (event.button !== 0 || event.target.closest(".window-controls")) {
+  function makeWindowDraggable(windowElement) {
+    if (!windowElement || windowElement.dataset.draggableBound === "true") {
       return;
     }
 
-    var windowElement = event.currentTarget.closest(".chados-window");
+    var titlebar = windowElement.querySelector(".window-titlebar");
 
-    if (!windowElement || !windowElement.classList.contains("open")) {
+    if (!titlebar) {
       return;
     }
 
-    bringWindowToFront(windowElement);
+    function stopDrag() {
+      if (!activeDrag || activeDrag.windowElement !== windowElement) {
+        return;
+      }
 
-    var rect = windowElement.getBoundingClientRect();
-    var desktopRect = desktop.getBoundingClientRect();
-    activeDrag = {
-      pointerId: event.pointerId,
-      handle: event.currentTarget,
-      windowElement: windowElement,
-      startX: event.clientX,
-      startY: event.clientY,
-      originLeft: rect.left - desktopRect.left,
-      originTop: rect.top - desktopRect.top
-    };
-
-    windowElement.classList.add("dragging");
-
-    if (typeof event.currentTarget.setPointerCapture === "function") {
-      event.currentTarget.setPointerCapture(event.pointerId);
+      windowElement.classList.remove("dragging");
+      activeDrag = null;
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
     }
 
-    event.preventDefault();
-  }
+    function onMouseMove(event) {
+      if (!activeDrag || activeDrag.windowElement !== windowElement) {
+        return;
+      }
 
-  function moveWindowDrag(event) {
-    if (!activeDrag || activeDrag.pointerId !== event.pointerId) {
-      return;
+      var deltaX = event.clientX - activeDrag.startX;
+      var deltaY = event.clientY - activeDrag.startY;
+      var nextLeft = activeDrag.originLeft + deltaX;
+      var nextTop = activeDrag.originTop + deltaY;
+      var clamped = clampWindowPosition(windowElement, nextLeft, nextTop);
+
+      windowElement.style.left = clamped.left + "px";
+      windowElement.style.top = clamped.top + "px";
+      windowElement.dataset.positioned = "true";
     }
 
-    var deltaX = event.clientX - activeDrag.startX;
-    var deltaY = event.clientY - activeDrag.startY;
-    var nextLeft = activeDrag.originLeft + deltaX;
-    var nextTop = activeDrag.originTop + deltaY;
-    var clamped = clampWindowPosition(activeDrag.windowElement, nextLeft, nextTop);
-
-    activeDrag.windowElement.style.left = clamped.left + "px";
-    activeDrag.windowElement.style.top = clamped.top + "px";
-    activeDrag.windowElement.dataset.positioned = "true";
-  }
-
-  function endWindowDrag(event) {
-    if (!activeDrag || activeDrag.pointerId !== event.pointerId) {
-      return;
+    function onMouseUp() {
+      stopDrag();
     }
 
-    activeDrag.windowElement.classList.remove("dragging");
+    function onMouseDown(event) {
+      if (event.button !== 0 || event.target.closest(".window-controls")) {
+        return;
+      }
 
-    if (
-      activeDrag.handle &&
-      typeof activeDrag.handle.hasPointerCapture === "function" &&
-      activeDrag.handle.hasPointerCapture(event.pointerId)
-    ) {
-      activeDrag.handle.releasePointerCapture(event.pointerId);
+      if (!windowElement.classList.contains("open")) {
+        return;
+      }
+
+      bringWindowToFront(windowElement);
+
+      var rect = windowElement.getBoundingClientRect();
+      var desktopRect = desktop.getBoundingClientRect();
+      activeDrag = {
+        windowElement: windowElement,
+        startX: event.clientX,
+        startY: event.clientY,
+        originLeft: rect.left - desktopRect.left,
+        originTop: rect.top - desktopRect.top
+      };
+
+      windowElement.classList.add("dragging");
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", onMouseUp);
+      event.preventDefault();
     }
 
-    activeDrag = null;
+    titlebar.addEventListener("mousedown", onMouseDown);
+    windowElement.dataset.draggableBound = "true";
   }
 
   function setSelectedLauncherButton(nextButton) {
@@ -838,16 +843,13 @@
   }
 
   function bindWindowSystem() {
-    var titlebars = desktopWindows.querySelectorAll(".chados-window .window-titlebar");
+    var windows = desktopWindows.querySelectorAll(".chados-window");
 
-    for (var i = 0; i < titlebars.length; i += 1) {
-      titlebars[i].addEventListener("pointerdown", startWindowDrag);
-      titlebars[i].addEventListener("pointermove", moveWindowDrag);
-      titlebars[i].addEventListener("pointerup", endWindowDrag);
-      titlebars[i].addEventListener("pointercancel", endWindowDrag);
+    for (var i = 0; i < windows.length; i += 1) {
+      makeWindowDraggable(windows[i]);
     }
 
-    desktopWindows.addEventListener("pointerdown", function (event) {
+    desktopWindows.addEventListener("mousedown", function (event) {
       var focusedWindow = event.target.closest(".chados-window");
 
       if (focusedWindow && focusedWindow.classList.contains("open")) {

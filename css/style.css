@@ -470,7 +470,7 @@ body {
 }
 
 .chados-window.dragging {
-  cursor: move;
+  cursor: grabbing;
   transition: none;
 }
 
@@ -513,9 +513,13 @@ body {
   border-top-left-radius: 14px;
   border-top-right-radius: 14px;
   background: var(--window-titlebar-bg);
-  cursor: move;
+  cursor: grab;
   user-select: none;
   touch-action: none;
+}
+
+.chados-window.dragging .window-titlebar {
+  cursor: grabbing;
 }
 
 .window-controls {
