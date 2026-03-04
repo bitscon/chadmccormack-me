@@ -110,50 +110,79 @@
     "╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝"
   ].join("\n");
 
+  var SYSTEMS_MAP_CORE_ASCII = [
+    "          Users",
+    "            │",
+    "    ┌───────┴────────┐",
+    "    │   Interfaces   │",
+    "    │  APIs / UI /   │",
+    "    │ Integrations   │",
+    "    └───────┬────────┘",
+    "            │",
+    "    ┌───────┴────────┐",
+    "    │   Automation   │",
+    "    │ CI / CD / Jobs │",
+    "    │ Event Systems  │",
+    "    └───────┬────────┘",
+    "            │",
+    "    ┌───────┴────────┐",
+    "    │ Infrastructure │",
+    "    │ Compute / Net  │",
+    "    │ Storage / IAM  │",
+    "    └───────┬────────┘",
+    "            │",
+    "    ┌───────┴────────┐",
+    "    │ Observability  │",
+    "    │ Logs / Metrics │",
+    "    │ Alerts / SLOs  │",
+    "    └───────┬────────┘",
+    "            │",
+    "        Feedback"
+  ].join("\n");
+
   var SYSTEMS_MAP_LAYERS = {
     core: {
       label: "Core",
-      bullets: [
-        "Service boundaries are explicit so teams can move independently.",
-        "Automation and infrastructure decisions are measured by operator clarity.",
-        "Observability closes the loop between change, behavior, and follow-up.",
-        "Design choices optimize for the next engineer inheriting the system."
-      ]
+      bullets: []
     },
     interfaces: {
       label: "Interfaces",
       bullets: [
-        "Predictable contracts between teams, tools, and environments.",
-        "Operational UX is treated as part of platform architecture.",
-        "Self-service entry points mirror real delivery workflows.",
-        "Incident feedback is folded into interface revisions quickly."
+        "API-first integration patterns",
+        "Consistent contract design",
+        "Developer-friendly documentation",
+        "Systems designed for operability",
+        "Interfaces built to reduce cognitive load"
       ]
     },
     automation: {
       label: "Automation",
       bullets: [
-        "CI templates as paved roads.",
-        "Event-driven ops for routine tasks.",
-        "Self-documenting runbooks.",
-        "Idempotent workflows with safe retries."
+        "CI templates as paved roads",
+        "Automated environment provisioning",
+        "Event-driven operations for routine tasks",
+        "Self-documenting runbooks",
+        "ChatOps for operational visibility"
       ]
     },
     infrastructure: {
       label: "Infrastructure",
       bullets: [
-        "Immutable patterns for safe rollbacks.",
-        "Segmentation, least privilege.",
-        "Pragmatic reliability aligned to service criticality.",
-        "Capacity and cost visibility built into platform defaults."
+        "Immutable patterns for safe deployments",
+        "Segmentation and least privilege access",
+        "Infrastructure defined as code",
+        "Reliability-first architecture",
+        "Capacity planning and failure tolerance"
       ]
     },
     governance: {
       label: "Governance",
       bullets: [
-        "Change control that does not slow teams.",
-        "Guardrails over gates.",
-        "Auditability with clear ownership.",
-        "Policy encoded close to delivery paths."
+        "Guardrails over gatekeeping",
+        "Change management that doesn't slow teams",
+        "Auditable automation",
+        "Clear system ownership",
+        "Sustainable operational practices"
       ]
     }
   };
@@ -986,30 +1015,27 @@
   function renderSystemsMapLayer(layerName) {
     var nextLayer = SYSTEMS_MAP_LAYERS[layerName] ? layerName : "core";
     var layerData = SYSTEMS_MAP_LAYERS[nextLayer];
-    var lines = [
-      "SYSTEMS MAP / " + layerData.label.toUpperCase(),
-      "",
-      "Users -> Interfaces -> Automation -> Infrastructure -> Observability -> Feedback loops",
-      "",
-      "  Users",
-      "    |",
-      "    v",
-      "Interfaces -> Automation -> Infrastructure -> Observability",
-      "                      ^                     |",
-      "                      |---------------------|",
-      "                         Feedback loops",
-      "",
-      layerData.label + " layer:"
-    ];
+    var lines = [];
 
     state.systemsMapLayer = nextLayer;
 
-    for (var i = 0; i < layerData.bullets.length; i += 1) {
-      lines.push("- " + layerData.bullets[i]);
+    if (nextLayer === "core") {
+      lines.push("Core");
+      lines.push("");
+      lines.push(SYSTEMS_MAP_CORE_ASCII);
+      lines.push("");
+      lines.push("\"Every system should make the next engineer's job easier.\"");
+    } else {
+      lines.push(layerData.label);
+      lines.push("");
+
+      for (var i = 0; i < layerData.bullets.length; i += 1) {
+        lines.push("- " + layerData.bullets[i]);
+      }
     }
 
     lines.push("");
-    lines.push("Hint: type `map --deep` in Terminal");
+    lines.push("Hint: type `map --deep` in the Terminal.");
     systemsMapContent.textContent = lines.join("\n");
     systemsMapContent.scrollTop = 0;
     systemsMapContent.scrollLeft = 0;
