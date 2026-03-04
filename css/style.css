@@ -738,6 +738,192 @@ body[data-theme="matrix"] #terminal::before {
   gap: 0.72rem;
 }
 
+.mind-map-container {
+  display: grid;
+  grid-template-columns: minmax(740px, 1fr) 300px;
+  gap: 0.72rem;
+  flex: 1;
+  min-height: 0;
+}
+
+.mind-map-canvas-wrap {
+  min-height: 0;
+  overflow: auto;
+  border-radius: 10px;
+  border: 1px solid var(--terminal-border);
+  background: rgba(1, 7, 9, 0.55);
+  scrollbar-width: thin;
+  scrollbar-color: var(--terminal-muted) transparent;
+}
+
+.mind-map-canvas-wrap::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.mind-map-canvas-wrap::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mind-map-canvas-wrap::-webkit-scrollbar-thumb {
+  background: var(--terminal-muted);
+}
+
+.mind-map-canvas {
+  position: relative;
+  width: 100%;
+  min-width: 1100px;
+  min-height: 860px;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(93, 153, 255, 0.14), transparent 45%),
+    linear-gradient(160deg, rgba(10, 16, 25, 0.76), rgba(4, 10, 13, 0.72));
+}
+
+.mind-map-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.mind-map-lines line {
+  stroke: rgba(180, 222, 255, 0.28);
+  stroke-width: 1.3;
+}
+
+.mind-map-lines line.secondary {
+  stroke: rgba(156, 212, 250, 0.18);
+}
+
+.mind-map-nodes {
+  position: absolute;
+  inset: 0;
+}
+
+.mind-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border: 1px solid #3b3f45;
+  border-radius: 11px;
+  background: rgba(20, 20, 22, 0.82);
+  color: #e8f3ff;
+  font: inherit;
+  font-size: 0.72rem;
+  line-height: 1.32;
+  letter-spacing: 0.01em;
+  text-align: left;
+  padding: 0.46rem 0.54rem;
+  min-width: 138px;
+  max-width: 180px;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+  cursor: pointer;
+  transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.mind-node:hover {
+  transform: translate(-50%, -50%) scale(1.03);
+  border-color: rgba(152, 213, 255, 0.88);
+  box-shadow: 0 0 24px rgba(114, 191, 255, 0.3);
+}
+
+.mind-node.is-active {
+  border-color: rgba(190, 233, 255, 0.92);
+  box-shadow: 0 0 26px rgba(118, 205, 255, 0.36);
+}
+
+.mind-node:focus {
+  outline: none;
+}
+
+.mind-node:focus-visible {
+  outline: 2px solid rgba(228, 248, 255, 0.95);
+  outline-offset: 1px;
+}
+
+.mind-node--central {
+  min-width: 200px;
+  max-width: 220px;
+  background: rgba(26, 34, 47, 0.9);
+  border-color: rgba(180, 219, 252, 0.65);
+  font-size: 0.79rem;
+}
+
+.mind-node--primary {
+  min-width: 158px;
+  max-width: 186px;
+  background: rgba(24, 30, 36, 0.88);
+}
+
+.mind-node--secondary {
+  min-width: 130px;
+  max-width: 164px;
+  font-size: 0.67rem;
+  color: rgba(223, 239, 255, 0.92);
+}
+
+.mind-node-title {
+  display: block;
+  font-weight: 700;
+}
+
+.mind-node-subtitle {
+  display: block;
+  margin-top: 0.1rem;
+  color: rgba(184, 218, 246, 0.88);
+}
+
+.mind-map-detail {
+  min-height: 0;
+  overflow: auto;
+  border-radius: 10px;
+  border: 1px solid var(--terminal-border);
+  background: rgba(1, 7, 9, 0.58);
+  padding: 0.7rem 0.74rem;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.mind-map-detail-kicker {
+  margin: 0;
+  color: rgba(176, 218, 250, 0.86);
+  font-size: 0.64rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+#mind-map-detail-title {
+  margin: 0.44rem 0 0;
+  color: rgba(236, 248, 255, 0.97);
+  font-size: 0.95rem;
+  line-height: 1.25;
+}
+
+#mind-map-detail-subtitle {
+  margin: 0.16rem 0 0;
+  color: rgba(176, 220, 246, 0.88);
+  font-size: 0.74rem;
+}
+
+#mind-map-detail-description {
+  margin: 0.66rem 0 0;
+  color: rgba(210, 230, 247, 0.92);
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+
+#mind-map-detail-philosophy {
+  margin: 0.7rem 0 0;
+  padding-top: 0.62rem;
+  border-top: 1px solid rgba(149, 201, 236, 0.28);
+  color: rgba(195, 235, 214, 0.92);
+  font-size: 0.75rem;
+  line-height: 1.42;
+}
+
+.mind-map-legacy {
+  display: none;
+}
+
 .career-log-body {
   gap: 0.62rem;
 }
@@ -1287,6 +1473,15 @@ body[data-theme="matrix"] #terminal::before {
     width: min(94vw, 980px);
     height: min(86vh, 760px);
   }
+
+  .mind-map-container {
+    grid-template-columns: minmax(660px, 1fr) 260px;
+  }
+
+  .mind-map-canvas {
+    min-width: 980px;
+    min-height: 790px;
+  }
 }
 
 @media (max-width: 640px) {
@@ -1426,6 +1621,57 @@ body[data-theme="matrix"] #terminal::before {
   #proof-of-work-window {
     width: 96vw;
     height: 76vh;
+  }
+
+  .mind-map-container {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+
+  .mind-map-canvas-wrap {
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .mind-map-canvas {
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    background: none;
+  }
+
+  .mind-map-lines {
+    display: none;
+  }
+
+  .mind-map-nodes {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    gap: 0.42rem;
+  }
+
+  .mind-node {
+    position: static;
+    transform: none;
+    width: 100%;
+    max-width: none;
+  }
+
+  .mind-node:hover,
+  .mind-node.is-active {
+    transform: none;
+  }
+
+  #mind-map-detail-title {
+    font-size: 0.84rem;
+  }
+
+  #mind-map-detail-description,
+  #mind-map-detail-philosophy {
+    font-size: 0.68rem;
   }
 
   .app-window-body {
@@ -1581,6 +1827,44 @@ body[data-theme="matrix"] #terminal::before {
   #proof-of-work-window {
     width: 96vw;
     height: 67vh;
+  }
+
+  .mind-map-nodes {
+    gap: 0.36rem;
+  }
+
+  .mind-node {
+    padding: 0.4rem 0.46rem;
+  }
+
+  .mind-node-title {
+    font-size: 0.61rem;
+  }
+
+  .mind-node-subtitle {
+    font-size: 0.56rem;
+  }
+
+  .mind-map-detail {
+    padding: 0.56rem 0.6rem;
+  }
+
+  .mind-map-detail-kicker {
+    font-size: 0.52rem;
+  }
+
+  #mind-map-detail-title {
+    font-size: 0.7rem;
+  }
+
+  #mind-map-detail-subtitle {
+    font-size: 0.58rem;
+  }
+
+  #mind-map-detail-description,
+  #mind-map-detail-philosophy {
+    font-size: 0.58rem;
+    line-height: 1.34;
   }
 
   .systems-map-layer {

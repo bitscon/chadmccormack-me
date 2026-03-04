@@ -136,14 +136,33 @@ workstation mode</p>
         </header>
 
         <div class="app-window-body systems-map-body">
-          <div class="systems-map-toolbar" role="toolbar" aria-label="Mind map layers">
-            <button class="systems-map-layer is-active" type="button" data-layer="core">Core</button>
-            <button class="systems-map-layer" type="button" data-layer="interfaces">Interfaces</button>
-            <button class="systems-map-layer" type="button" data-layer="automation">Automation</button>
-            <button class="systems-map-layer" type="button" data-layer="infrastructure">Infrastructure</button>
-            <button class="systems-map-layer" type="button" data-layer="governance">Governance</button>
+          <div id="mind-map-container" class="mind-map-container">
+            <div class="mind-map-canvas-wrap">
+              <div id="mind-map-canvas" class="mind-map-canvas" role="application" aria-label="Interactive engineering mind map">
+                <svg id="mind-map-lines" class="mind-map-lines" aria-hidden="true"></svg>
+                <div id="mind-map-nodes" class="mind-map-nodes"></div>
+              </div>
+            </div>
+
+            <aside id="mind-map-detail" class="mind-map-detail" aria-live="polite">
+              <p class="mind-map-detail-kicker">Node Focus</p>
+              <h3 id="mind-map-detail-title">Chad McCormack</h3>
+              <p id="mind-map-detail-subtitle">Systems Engineer</p>
+              <p id="mind-map-detail-description">A systems-first engineer focused on building resilient automation and infrastructure platforms.</p>
+              <p id="mind-map-detail-philosophy">"Good engineering reduces cognitive load and increases delivery confidence."</p>
+            </aside>
           </div>
-          <pre id="systems-map-content" aria-live="polite"></pre>
+
+          <div class="mind-map-legacy" aria-hidden="true">
+            <div class="systems-map-toolbar" role="toolbar" aria-label="Mind map layers">
+              <button class="systems-map-layer is-active" type="button" data-layer="core">Core</button>
+              <button class="systems-map-layer" type="button" data-layer="interfaces">Interfaces</button>
+              <button class="systems-map-layer" type="button" data-layer="automation">Automation</button>
+              <button class="systems-map-layer" type="button" data-layer="infrastructure">Infrastructure</button>
+              <button class="systems-map-layer" type="button" data-layer="governance">Governance</button>
+            </div>
+            <pre id="systems-map-content" aria-live="polite"></pre>
+          </div>
         </div>
       </section>
 
@@ -259,6 +278,7 @@ workstation mode</p>
   </main>
 
   <script src="js/commands.js"></script>
+  <script src="js/apps.js"></script>
   <script src="js/terminal.js"></script>
 </body>
 </html>
