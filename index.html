@@ -53,10 +53,10 @@ Press DEL to enter setup</pre>
       </div>
 
       <div class="launcher-entry">
-        <button id="systems-map-launcher" class="launcher-button" type="button" aria-label="Open Systems Map" title="Systems Map">
+        <button id="systems-map-launcher" class="launcher-button" type="button" aria-label="Open Mind Map" title="Mind Map">
           <span class="launcher-icon" aria-hidden="true">[ ]</span>
         </button>
-        <span class="launcher-label">Systems Map</span>
+        <span class="launcher-label">Mind Map</span>
       </div>
 
       <div class="launcher-entry">
@@ -71,6 +71,13 @@ Press DEL to enter setup</pre>
           <span class="launcher-icon" aria-hidden="true">log</span>
         </button>
         <span class="launcher-label">Career Log</span>
+      </div>
+
+      <div class="launcher-entry">
+        <button id="proof-of-work-launcher" class="launcher-button" type="button" aria-label="Open Proof of Work" title="Proof of Work">
+          <span class="launcher-icon" aria-hidden="true">pw</span>
+        </button>
+        <span class="launcher-label">Proof of Work</span>
       </div>
     </nav>
 
@@ -120,16 +127,16 @@ workstation mode</p>
         </div>
       </section>
 
-      <section id="systems-map-window" class="chados-window" data-app="systems-map" aria-label="Systems map window" aria-hidden="true">
+      <section id="systems-map-window" class="chados-window" data-app="systems-map" aria-label="Mind map window" aria-hidden="true">
         <header class="window-titlebar">
-          <p class="window-title">systems-map.txt — less</p>
+          <p class="window-title">mind-map.txt — less</p>
           <div class="window-controls">
-            <button class="window-control window-close" type="button" data-window-action="close" aria-label="Close systems map window" title="Close">✕</button>
+            <button class="window-control window-close" type="button" data-window-action="close" aria-label="Close mind map window" title="Close">✕</button>
           </div>
         </header>
 
         <div class="app-window-body systems-map-body">
-          <div class="systems-map-toolbar" role="toolbar" aria-label="Systems map layers">
+          <div class="systems-map-toolbar" role="toolbar" aria-label="Mind map layers">
             <button class="systems-map-layer is-active" type="button" data-layer="core">Core</button>
             <button class="systems-map-layer" type="button" data-layer="interfaces">Interfaces</button>
             <button class="systems-map-layer" type="button" data-layer="automation">Automation</button>
@@ -201,6 +208,49 @@ workstation mode</p>
             <article class="automation-lab-item">
               <h3>Operational Tooling</h3>
               <p>Small internal tools that help engineers visualize infrastructure state and reduce cognitive load during debugging.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="proof-of-work-window" class="chados-window" data-app="proof-of-work" aria-label="Proof of work window" aria-hidden="true">
+        <header class="window-titlebar">
+          <p class="window-title">proof-of-work/ — explorer</p>
+          <div class="window-controls">
+            <button class="window-control window-close" type="button" data-window-action="close" aria-label="Close proof of work window" title="Close">✕</button>
+          </div>
+        </header>
+
+        <div class="app-window-body proof-work-body">
+          <p class="proof-work-intro">Examples of systems, automation, and engineering work I have built.</p>
+
+          <div class="proof-work-list">
+            <article class="proof-work-card">
+              <h3>Billy AI Runtime</h3>
+              <p>Self-hosted AI assistant platform designed to operate as a systems-aware automation agent.</p>
+              <p class="proof-work-meta"><strong>Key ideas:</strong> AI-assisted infrastructure management, agent orchestration, system introspection</p>
+              <p class="proof-work-meta"><strong>Technologies:</strong> Python, LLM integration, Linux automation</p>
+            </article>
+
+            <article class="proof-work-card">
+              <h3>Automation Lab</h3>
+              <p>Collection of automation workflows and operational tooling designed to reduce repetitive engineering tasks.</p>
+              <p class="proof-work-meta"><strong>Key ideas:</strong> operational automation, repeatable infrastructure workflows, reliability improvements</p>
+              <p class="proof-work-meta"><strong>Technologies:</strong> Shell scripting, Python, DevOps tooling</p>
+            </article>
+
+            <article class="proof-work-card">
+              <h3>Infrastructure Architectures</h3>
+              <p>Design patterns for reliable and maintainable infrastructure systems.</p>
+              <p class="proof-work-meta"><strong>Key ideas:</strong> platform thinking, resilient infrastructure, operational simplicity</p>
+              <p class="proof-work-meta"><strong>Technologies:</strong> Cloud platforms, network architecture, automation tooling</p>
+            </article>
+
+            <article class="proof-work-card">
+              <h3>AI-Assisted Engineering Workflows</h3>
+              <p>Exploration of how AI systems can improve engineering productivity and operational visibility.</p>
+              <p class="proof-work-meta"><strong>Key ideas:</strong> human + AI collaboration, engineering documentation, operational assistance</p>
+              <p class="proof-work-meta"><strong>Technologies:</strong> LLMs, automation systems, developer tooling</p>
             </article>
           </div>
         </div>

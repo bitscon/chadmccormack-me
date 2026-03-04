@@ -14,6 +14,7 @@
   var systemsMapLauncher = document.getElementById("systems-map-launcher");
   var automationLabLauncher = document.getElementById("automation-lab-launcher");
   var careerLogLauncher = document.getElementById("career-log-launcher");
+  var proofOfWorkLauncher = document.getElementById("proof-of-work-launcher");
   var desktopPopup = document.getElementById("desktop-popup");
   var pipVideo = document.getElementById("pip-video");
   var notifications = document.getElementById("notifications");
@@ -24,6 +25,7 @@
   var systemsMapWindow = document.getElementById("systems-map-window");
   var automationLabWindow = document.getElementById("automation-lab-window");
   var careerLogWindow = document.getElementById("career-log-window");
+  var proofOfWorkWindow = document.getElementById("proof-of-work-window");
   var hireChadOutput = document.getElementById("hire-chad-output");
   var systemsMapContent = document.getElementById("systems-map-content");
   var systemsMapLayerButtons = document.querySelectorAll("#systems-map-window .systems-map-layer");
@@ -51,6 +53,7 @@
     !systemsMapLauncher ||
     !automationLabLauncher ||
     !careerLogLauncher ||
+    !proofOfWorkLauncher ||
     !desktopPopup ||
     !pipVideo ||
     !notifications ||
@@ -61,6 +64,7 @@
     !systemsMapWindow ||
     !automationLabWindow ||
     !careerLogWindow ||
+    !proofOfWorkWindow ||
     !hireChadOutput ||
     !systemsMapContent ||
     !systemsMapLayerButtons.length ||
@@ -168,9 +172,9 @@
       message: "Another hiring manager just opened career.log."
     },
     {
-      key: "exploring-systems-map",
-      tags: ["systems-map"],
-      message: "Recruiter exploring systems-map.txt."
+      key: "exploring-mind-map",
+      tags: ["mind-map"],
+      message: "Recruiter exploring mind-map.txt."
     },
     {
       key: "evaluating-automation-lab",
@@ -184,7 +188,7 @@
     },
     {
       key: "reviewing-infrastructure-thinking",
-      tags: ["systems-map", "general"],
+      tags: ["mind-map", "general"],
       message: "Recruiter reviewing infrastructure thinking."
     },
     {
@@ -198,13 +202,13 @@
       message: "Recruiter inspecting automation patterns."
     },
     {
-      key: "opened-systems-map",
-      tags: ["systems-map"],
-      message: "Someone just opened the Systems Map."
+      key: "opened-mind-map",
+      tags: ["mind-map"],
+      message: "Someone just opened the Mind Map."
     },
     {
       key: "evaluating-platform-thinking",
-      tags: ["systems-map", "career-log", "general"],
+      tags: ["mind-map", "career-log", "general"],
       message: "Engineering manager evaluating platform thinking."
     }
   ];
@@ -1053,6 +1057,10 @@
       return careerLogLauncher;
     }
 
+    if (windowElement === proofOfWorkWindow) {
+      return proofOfWorkLauncher;
+    }
+
     return null;
   }
 
@@ -1148,6 +1156,15 @@
   function closeAutomationLabWindow() {
     closeChadWindow(automationLabWindow);
     focusLauncherForWindow(automationLabWindow);
+  }
+
+  function openProofOfWorkWindow() {
+    openChadWindow(proofOfWorkWindow);
+  }
+
+  function closeProofOfWorkWindow() {
+    closeChadWindow(proofOfWorkWindow);
+    focusLauncherForWindow(proofOfWorkWindow);
   }
 
   function pad2(value) {
@@ -1398,6 +1415,11 @@
         return;
       }
 
+      if (windowElement === proofOfWorkWindow) {
+        closeProofOfWorkWindow();
+        return;
+      }
+
       closeChadWindow(windowElement);
       focusLauncherForWindow(windowElement);
       return;
@@ -1539,7 +1561,7 @@
 
   function getRecruiterContextTagFromWindow(windowElement) {
     if (windowElement === systemsMapWindow) {
-      return "systems-map";
+      return "mind-map";
     }
 
     if (windowElement === automationLabWindow) {
@@ -1558,6 +1580,10 @@
       return "terminal";
     }
 
+    if (windowElement === proofOfWorkWindow) {
+      return "proof-of-work";
+    }
+
     return "general";
   }
 
@@ -1573,6 +1599,7 @@
       automationLabWindow,
       careerLogWindow,
       hireChadWindow,
+      proofOfWorkWindow,
       terminalWindow
     ];
 
@@ -1777,6 +1804,11 @@
         return;
       }
 
+      if (activeWindow === proofOfWorkWindow) {
+        closeProofOfWorkWindow();
+        return;
+      }
+
       closeChadWindow(activeWindow);
       focusLauncherForWindow(activeWindow);
     });
@@ -1810,6 +1842,11 @@
 
           if (button.id === "career-log-launcher") {
             openCareerLogWindow();
+            return;
+          }
+
+          if (button.id === "proof-of-work-launcher") {
+            openProofOfWorkWindow();
             return;
           }
 

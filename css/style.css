@@ -717,6 +717,11 @@ body[data-theme="matrix"] #terminal::before {
   height: min(72vh, 620px);
 }
 
+#proof-of-work-window {
+  width: min(920px, calc(100% - 7rem));
+  height: min(74vh, 640px);
+}
+
 .app-window-body {
   display: flex;
   flex-direction: column;
@@ -742,6 +747,10 @@ body[data-theme="matrix"] #terminal::before {
 }
 
 .automation-lab-body {
+  gap: 0.72rem;
+}
+
+.proof-work-body {
   gap: 0.72rem;
 }
 
@@ -1028,6 +1037,67 @@ body[data-theme="matrix"] #terminal::before {
   color: var(--terminal-muted);
   font-size: 0.76rem;
   line-height: 1.42;
+}
+
+.proof-work-intro {
+  margin: 0;
+  padding: 0.46rem 0.56rem 0.52rem;
+  border-radius: 9px;
+  border: 1px solid var(--terminal-border);
+  background: rgba(1, 7, 9, 0.55);
+  color: var(--terminal-muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.proof-work-list {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.54rem;
+  padding-right: 0.2rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--terminal-muted) transparent;
+}
+
+.proof-work-list::-webkit-scrollbar {
+  width: 10px;
+}
+
+.proof-work-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.proof-work-list::-webkit-scrollbar-thumb {
+  background: var(--terminal-muted);
+}
+
+.proof-work-card {
+  border: 1px solid var(--terminal-border);
+  border-radius: 10px;
+  background: rgba(1, 7, 9, 0.55);
+  padding: 0.6rem 0.66rem;
+}
+
+.proof-work-card h3 {
+  margin: 0 0 0.3rem;
+  color: rgba(226, 255, 238, 0.95);
+  font-size: 0.82rem;
+  line-height: 1.3;
+}
+
+.proof-work-card p {
+  margin: 0;
+  color: var(--terminal-muted);
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+
+.proof-work-meta {
+  margin-top: 0.34rem;
+  color: rgba(206, 255, 226, 0.88);
 }
 
 #output {
@@ -1353,6 +1423,11 @@ body[data-theme="matrix"] #terminal::before {
     height: 74vh;
   }
 
+  #proof-of-work-window {
+    width: 96vw;
+    height: 76vh;
+  }
+
   .app-window-body {
     padding: 0.74rem;
   }
@@ -1394,6 +1469,18 @@ body[data-theme="matrix"] #terminal::before {
   }
 
   .automation-lab-item p {
+    font-size: 0.66rem;
+  }
+
+  .proof-work-intro {
+    font-size: 0.67rem;
+  }
+
+  .proof-work-card h3 {
+    font-size: 0.72rem;
+  }
+
+  .proof-work-card p {
     font-size: 0.66rem;
   }
 
@@ -1491,6 +1578,11 @@ body[data-theme="matrix"] #terminal::before {
     height: 65vh;
   }
 
+  #proof-of-work-window {
+    width: 96vw;
+    height: 67vh;
+  }
+
   .systems-map-layer {
     font-size: 0.6rem;
   }
@@ -1527,6 +1619,19 @@ body[data-theme="matrix"] #terminal::before {
   }
 
   .automation-lab-item p {
+    font-size: 0.58rem;
+    line-height: 1.34;
+  }
+
+  .proof-work-intro {
+    font-size: 0.58rem;
+  }
+
+  .proof-work-card h3 {
+    font-size: 0.63rem;
+  }
+
+  .proof-work-card p {
     font-size: 0.58rem;
     line-height: 1.34;
   }
