@@ -95,7 +95,6 @@
 
   var THEME_KEY = "terminal-theme";
   var HISTORY_KEY = "terminal-history";
-  var ONBOARDING_KEY = "chados-onboarding-seen";
   var EVENTS_KEY = "chados-events";
   var HISTORY_LIMIT = 200;
   var EVENTS_LIMIT = 20;
@@ -960,23 +959,7 @@
     }
   }
 
-  function hasSeenOnboarding() {
-    try {
-      return window.localStorage.getItem(ONBOARDING_KEY) === "1";
-    } catch (_error) {
-      return false;
-    }
-  }
-
-  function markOnboardingSeen() {
-    try {
-      window.localStorage.setItem(ONBOARDING_KEY, "1");
-    } catch (_error) {
-      // Ignore blocked storage access.
-    }
-  }
-
-  function closeOnboardingOverlay(markSeen) {
+  function closeOnboardingOverlay() {
     if (!state.onboardingVisible) {
       return;
     }
@@ -985,15 +968,11 @@
     onboardingOverlay.classList.remove("visible");
     onboardingOverlay.setAttribute("aria-hidden", "true");
 
-    if (markSeen) {
-      markOnboardingSeen();
-    }
-
     terminalLauncher.focus();
   }
 
   function maybeShowOnboardingOverlay() {
-    if (hasSeenOnboarding()) {
+    if (state.onboardingVisible) {
       return false;
     }
 
@@ -1006,7 +985,7 @@
 
   function bindOnboardingOverlay() {
     onboardingStartButton.addEventListener("click", function () {
-      closeOnboardingOverlay(true);
+      closeOnboardingOverlay();
     });
   }
 
@@ -1365,10 +1344,10 @@
       bindDesktopInteractions();
       startSystemMonitor();
       startRecruiterActivityNotifications();
-
-      if (!maybeShowOnboardingOverlay()) {
-        terminalLauncher.focus();
-      }
+      terminalLauncher.focus();
+      window.setTimeout(function () {
+        maybeShowOnboardingOverlay();
+      }, 600);
 
       window.setTimeout(function () {
         if (bootScreen.parentNode) {
@@ -2395,7 +2374,7 @@
 
       if (state.onboardingVisible) {
         event.preventDefault();
-        closeOnboardingOverlay(true);
+        closeOnboardingOverlay();
         return;
       }
 
