@@ -324,7 +324,7 @@
 
     resumeButton = document.createElement("a");
     resumeButton.className = "cta-button";
-    resumeButton.href = "/resume.pdf";
+    resumeButton.href = "/assets/chad-mccormack-resume.pdf";
     resumeButton.target = "_blank";
     resumeButton.rel = "noopener noreferrer";
     resumeButton.textContent = "Download Resume";
