@@ -1677,7 +1677,44 @@
     }
   }
 
+  function renderHireChadDecisionContent() {
+    stopHireChadAnimation();
+    hireChadOutput.classList.add("hire-decision-with-dividers");
+    hireChadOutput.innerHTML =
+      "<section class=\"hire-decision-section\">" +
+        "<h3>Why Hire Chad</h3>" +
+        "<p>Chad McCormack is a ServiceNow CMDB and Discovery architect focused on building reliable infrastructure visibility for large enterprise environments.</p>" +
+        "<p>His work centers on designing scalable CMDB architectures, implementing Discovery at enterprise scale, and aligning service models with the Common Service Data Model (CSDM).</p>" +
+        "<p>Organizations bring Chad in when they need to:</p>" +
+        "<ul>" +
+          "<li>fix unreliable CMDB data</li>" +
+          "<li>scale ServiceNow Discovery across complex infrastructure</li>" +
+          "<li>design sustainable CSDM-based service models</li>" +
+          "<li>improve operational visibility for IT operations</li>" +
+        "</ul>" +
+        "<p>His experience spans large enterprise environments where accurate infrastructure data is critical for service operations, incident response, and change management.</p>" +
+      "</section>" +
+      "<hr class=\"hire-decision-divider\">" +
+      "<section class=\"hire-decision-section\">" +
+        "<h3>What Chad Brings to an Enterprise Team</h3>" +
+        "<ul>" +
+          "<li>CMDB architecture design</li>" +
+          "<li>enterprise Discovery strategy</li>" +
+          "<li>CSDM service modeling</li>" +
+          "<li>CMDB data quality improvement</li>" +
+          "<li>ServiceNow platform architecture guidance</li>" +
+        "</ul>" +
+      "</section>" +
+      "<hr class=\"hire-decision-divider\">" +
+      "<section class=\"hire-decision-section\">" +
+        "<h3>Next Step</h3>" +
+        "<p>If you are looking for a ServiceNow CMDB / Discovery SME who can design and implement a reliable service model, let's schedule a conversation.</p>" +
+      "</section>";
+    hireChadOutput.scrollTop = 0;
+  }
+
   function openHireChadWindow() {
+    renderHireChadDecisionContent();
     if (openChadWindow(hireChadWindow)) {
       trackEvent("hire_opened");
     }

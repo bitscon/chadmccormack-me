@@ -1912,6 +1912,18 @@ body[data-theme="matrix"] #terminal::before {
   border-top: 1px solid rgba(142, 194, 221, 0.22);
 }
 
+.hire-decision-with-dividers .hire-decision-section + .hire-decision-section {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.hire-decision-divider {
+  margin: 0.56rem 0;
+  border: 0;
+  border-top: 1px solid rgba(142, 194, 221, 0.22);
+}
+
 .hire-decision-section h3 {
   margin: 0;
   color: rgba(212, 245, 255, 0.95);
