@@ -93,6 +93,9 @@
   var CAREER_LOG_MAX_LINES = 120;
   var NOTIFICATION_LIFE_MS = 6000;
   var NOTIFICATION_EXIT_MS = 220;
+  var RECRUITER_ACTIVITY_MIN_DELAY_MS = 20000;
+  var RECRUITER_ACTIVITY_MAX_DELAY_MS = 90000;
+  var RECRUITER_ACTIVITY_TITLE = "Recruiter Activity";
   var HIRE_CHAD_STEP_DELAY_MS = 190;
   var HIRE_CHAD_DOT_DELAY_MS = 75;
 
@@ -146,6 +149,63 @@
       icon: "🤖",
       title: "AI Assistant",
       message: "Billy runtime standing by."
+    }
+  ];
+
+  var RECRUITER_ACTIVITY_TEMPLATES = [
+    {
+      key: "active-reviewers",
+      tags: ["general", "terminal"],
+      message: function () {
+        var count = randomInt(1, 4);
+        var suffix = count === 1 ? "recruiter" : "recruiters";
+        return count + " " + suffix + " currently reviewing this system.";
+      }
+    },
+    {
+      key: "opened-career-log",
+      tags: ["career-log"],
+      message: "Another hiring manager just opened career.log."
+    },
+    {
+      key: "exploring-systems-map",
+      tags: ["systems-map"],
+      message: "Recruiter exploring systems-map.txt."
+    },
+    {
+      key: "evaluating-automation-lab",
+      tags: ["automation-lab"],
+      message: "A hiring team is evaluating automation-lab."
+    },
+    {
+      key: "ran-hire-chad",
+      tags: ["hire-chad", "terminal"],
+      message: "Someone just ran 'hire-chad' in the terminal."
+    },
+    {
+      key: "reviewing-infrastructure-thinking",
+      tags: ["systems-map", "general"],
+      message: "Recruiter reviewing infrastructure thinking."
+    },
+    {
+      key: "engineering-lead-exploring",
+      tags: ["general"],
+      message: "Another engineering lead is exploring ChadOS."
+    },
+    {
+      key: "inspecting-automation-patterns",
+      tags: ["automation-lab", "general"],
+      message: "Recruiter inspecting automation patterns."
+    },
+    {
+      key: "opened-systems-map",
+      tags: ["systems-map"],
+      message: "Someone just opened the Systems Map."
+    },
+    {
+      key: "evaluating-platform-thinking",
+      tags: ["systems-map", "career-log", "general"],
+      message: "Engineering manager evaluating platform thinking."
     }
   ];
 
@@ -311,6 +371,8 @@
     careerLogFilter: "",
     careerLogLines: CAREER_LOG_SEED.slice(),
     notificationsScheduled: false,
+    recruiterActivityStarted: false,
+    lastRecruiterActivityKey: "",
     windowZ: 2000
   };
   var biosAnimationState = {
@@ -320,6 +382,7 @@
   var careerLogInterval = null;
   var notificationSequence = 0;
   var notificationScheduleTimers = [];
+  var recruiterActivityTimer = null;
   var windowCloseTimers = {};
   var desktopPopupTimer = null;
   var activeDrag = null;
@@ -1399,10 +1462,18 @@
     notificationElement.dataset.dismissing = "true";
     notificationElement.classList.remove("is-visible");
     notificationElement.classList.add("is-dismissing");
+    var onDismiss = typeof notificationElement.__onDismiss === "function"
+      ? notificationElement.__onDismiss
+      : null;
+    notificationElement.__onDismiss = null;
 
     window.setTimeout(function () {
       if (notificationElement.parentNode === notifications) {
         notifications.removeChild(notificationElement);
+      }
+
+      if (onDismiss) {
+        onDismiss();
       }
     }, NOTIFICATION_EXIT_MS);
   }
@@ -1452,6 +1523,9 @@
     notification.addEventListener("click", function () {
       dismissNotification(notification);
     });
+    notification.__onDismiss = typeof config.onDismiss === "function"
+      ? config.onDismiss
+      : null;
 
     notifications.appendChild(notification);
     window.requestAnimationFrame(function () {
@@ -1461,6 +1535,166 @@
     notification.__autoDismissTimer = window.setTimeout(function () {
       dismissNotification(notification);
     }, NOTIFICATION_LIFE_MS);
+  }
+
+  function getRecruiterContextTagFromWindow(windowElement) {
+    if (windowElement === systemsMapWindow) {
+      return "systems-map";
+    }
+
+    if (windowElement === automationLabWindow) {
+      return "automation-lab";
+    }
+
+    if (windowElement === careerLogWindow) {
+      return "career-log";
+    }
+
+    if (windowElement === hireChadWindow) {
+      return "hire-chad";
+    }
+
+    if (windowElement === terminalWindow) {
+      return "terminal";
+    }
+
+    return "general";
+  }
+
+  function getRecruiterContextTag() {
+    var activeWindow = desktopWindows.querySelector(".chados-window.open.is-active");
+
+    if (activeWindow) {
+      return getRecruiterContextTagFromWindow(activeWindow);
+    }
+
+    var trackedWindows = [
+      systemsMapWindow,
+      automationLabWindow,
+      careerLogWindow,
+      hireChadWindow,
+      terminalWindow
+    ];
+
+    for (var i = 0; i < trackedWindows.length; i += 1) {
+      if (trackedWindows[i].classList.contains("open")) {
+        return getRecruiterContextTagFromWindow(trackedWindows[i]);
+      }
+    }
+
+    return "general";
+  }
+
+  function getRecruiterTemplateWeight(template, contextTag) {
+    if (!template.tags || !template.tags.length) {
+      return 1;
+    }
+
+    if (template.tags.indexOf(contextTag) !== -1) {
+      return 3;
+    }
+
+    if (contextTag === "general" && template.tags.indexOf("general") !== -1) {
+      return 2;
+    }
+
+    return 1;
+  }
+
+  function chooseRecruiterActivityTemplate() {
+    var contextTag = getRecruiterContextTag();
+    var candidates = [];
+
+    for (var i = 0; i < RECRUITER_ACTIVITY_TEMPLATES.length; i += 1) {
+      var template = RECRUITER_ACTIVITY_TEMPLATES[i];
+
+      if (
+        RECRUITER_ACTIVITY_TEMPLATES.length > 1 &&
+        template.key === state.lastRecruiterActivityKey
+      ) {
+        continue;
+      }
+
+      candidates.push({
+        template: template,
+        weight: getRecruiterTemplateWeight(template, contextTag)
+      });
+    }
+
+    if (!candidates.length) {
+      for (var j = 0; j < RECRUITER_ACTIVITY_TEMPLATES.length; j += 1) {
+        candidates.push({
+          template: RECRUITER_ACTIVITY_TEMPLATES[j],
+          weight: getRecruiterTemplateWeight(RECRUITER_ACTIVITY_TEMPLATES[j], contextTag)
+        });
+      }
+    }
+
+    var totalWeight = 0;
+    for (var k = 0; k < candidates.length; k += 1) {
+      totalWeight += candidates[k].weight;
+    }
+
+    var pick = Math.random() * totalWeight;
+    var running = 0;
+
+    for (var m = 0; m < candidates.length; m += 1) {
+      running += candidates[m].weight;
+      if (pick <= running) {
+        return candidates[m].template;
+      }
+    }
+
+    return candidates[candidates.length - 1].template;
+  }
+
+  function buildRecruiterActivityNotification() {
+    var template = chooseRecruiterActivityTemplate();
+    var message = typeof template.message === "function"
+      ? template.message()
+      : template.message;
+
+    state.lastRecruiterActivityKey = template.key;
+
+    return {
+      title: RECRUITER_ACTIVITY_TITLE,
+      message: message
+    };
+  }
+
+  function getNextRecruiterActivityDelay() {
+    return randomInt(RECRUITER_ACTIVITY_MIN_DELAY_MS, RECRUITER_ACTIVITY_MAX_DELAY_MS);
+  }
+
+  function scheduleNextRecruiterActivityNotification() {
+    if (!state.recruiterActivityStarted) {
+      return;
+    }
+
+    if (recruiterActivityTimer) {
+      window.clearTimeout(recruiterActivityTimer);
+    }
+
+    recruiterActivityTimer = window.setTimeout(function () {
+      recruiterActivityTimer = null;
+
+      if (!state.recruiterActivityStarted) {
+        return;
+      }
+
+      var notificationConfig = buildRecruiterActivityNotification();
+      notificationConfig.onDismiss = scheduleNextRecruiterActivityNotification;
+      showNotification(notificationConfig);
+    }, getNextRecruiterActivityDelay());
+  }
+
+  function startRecruiterActivityNotifications() {
+    if (state.recruiterActivityStarted) {
+      return;
+    }
+
+    state.recruiterActivityStarted = true;
+    scheduleNextRecruiterActivityNotification();
   }
 
   function scheduleDesktopNotifications() {
@@ -1665,6 +1899,7 @@
     bootSequence.setAttribute("aria-hidden", "true");
 
     scheduleDesktopNotifications();
+    startRecruiterActivityNotifications();
     terminalLauncher.focus();
   }
 
