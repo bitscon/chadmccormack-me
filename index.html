@@ -117,6 +117,26 @@ workstation mode</p>
           </form>
         </div>
       </section>
+
+      <section id="systems-map-window" class="chados-window" data-app="systems-map" aria-label="Systems map window" aria-hidden="true">
+        <header class="window-titlebar">
+          <p class="window-title">systems-map.txt — less</p>
+          <div class="window-controls">
+            <button class="window-control window-close" type="button" data-window-action="close" aria-label="Close systems map window" title="Close">✕</button>
+          </div>
+        </header>
+
+        <div class="app-window-body systems-map-body">
+          <div class="systems-map-toolbar" role="toolbar" aria-label="Systems map layers">
+            <button class="systems-map-layer is-active" type="button" data-layer="core">Core</button>
+            <button class="systems-map-layer" type="button" data-layer="interfaces">Interfaces</button>
+            <button class="systems-map-layer" type="button" data-layer="automation">Automation</button>
+            <button class="systems-map-layer" type="button" data-layer="infrastructure">Infrastructure</button>
+            <button class="systems-map-layer" type="button" data-layer="governance">Governance</button>
+          </div>
+          <pre id="systems-map-content" aria-live="polite"></pre>
+        </div>
+      </section>
     </div>
   </main>
 

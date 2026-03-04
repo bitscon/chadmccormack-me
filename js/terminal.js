@@ -10,10 +10,14 @@
   var desktop = document.getElementById("desktop");
   var desktopWindows = document.getElementById("desktop-windows");
   var terminalLauncher = document.getElementById("terminal-launcher");
+  var systemsMapLauncher = document.getElementById("systems-map-launcher");
   var desktopPopup = document.getElementById("desktop-popup");
   var systemMonitorStats = document.getElementById("system-monitor-stats");
   var launcherButtons = document.querySelectorAll("#desktop-launcher .launcher-button");
   var terminalWindow = document.getElementById("terminal-window");
+  var systemsMapWindow = document.getElementById("systems-map-window");
+  var systemsMapContent = document.getElementById("systems-map-content");
+  var systemsMapLayerButtons = document.querySelectorAll("#systems-map-window .systems-map-layer");
   var terminal = document.getElementById("terminal");
   var output = document.getElementById("output");
   var form = document.getElementById("command-form");
@@ -31,10 +35,14 @@
     !desktop ||
     !desktopWindows ||
     !terminalLauncher ||
+    !systemsMapLauncher ||
     !desktopPopup ||
     !systemMonitorStats ||
     !launcherButtons.length ||
     !terminalWindow ||
+    !systemsMapWindow ||
+    !systemsMapContent ||
+    !systemsMapLayerButtons.length ||
     !terminal ||
     !output ||
     !form ||
@@ -90,12 +98,61 @@
     "╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝"
   ].join("\n");
 
+  var SYSTEMS_MAP_LAYERS = {
+    core: {
+      label: "Core",
+      bullets: [
+        "Service boundaries are explicit so teams can move independently.",
+        "Automation and infrastructure decisions are measured by operator clarity.",
+        "Observability closes the loop between change, behavior, and follow-up.",
+        "Design choices optimize for the next engineer inheriting the system."
+      ]
+    },
+    interfaces: {
+      label: "Interfaces",
+      bullets: [
+        "Predictable contracts between teams, tools, and environments.",
+        "Operational UX is treated as part of platform architecture.",
+        "Self-service entry points mirror real delivery workflows.",
+        "Incident feedback is folded into interface revisions quickly."
+      ]
+    },
+    automation: {
+      label: "Automation",
+      bullets: [
+        "CI templates as paved roads.",
+        "Event-driven ops for routine tasks.",
+        "Self-documenting runbooks.",
+        "Idempotent workflows with safe retries."
+      ]
+    },
+    infrastructure: {
+      label: "Infrastructure",
+      bullets: [
+        "Immutable patterns for safe rollbacks.",
+        "Segmentation, least privilege.",
+        "Pragmatic reliability aligned to service criticality.",
+        "Capacity and cost visibility built into platform defaults."
+      ]
+    },
+    governance: {
+      label: "Governance",
+      bullets: [
+        "Change control that does not slow teams.",
+        "Guardrails over gates.",
+        "Auditability with clear ownership.",
+        "Policy encoded close to delivery paths."
+      ]
+    }
+  };
+
   var state = {
     history: [],
     historyIndex: 0,
     theme: "dark",
     promptTimestampEnabled: false,
     terminalInitialized: false,
+    systemsMapLayer: "core",
     windowZ: 2000
   };
   var biosAnimationState = {
@@ -751,6 +808,67 @@
     terminalLauncher.focus();
   }
 
+  function renderSystemsMapLayer(layerName) {
+    var nextLayer = SYSTEMS_MAP_LAYERS[layerName] ? layerName : "core";
+    var layerData = SYSTEMS_MAP_LAYERS[nextLayer];
+    var lines = [
+      "SYSTEMS MAP / " + layerData.label.toUpperCase(),
+      "",
+      "Users -> Interfaces -> Automation -> Infrastructure -> Observability -> Feedback loops",
+      "",
+      "  Users",
+      "    |",
+      "    v",
+      "Interfaces -> Automation -> Infrastructure -> Observability",
+      "                      ^                     |",
+      "                      |---------------------|",
+      "                         Feedback loops",
+      "",
+      layerData.label + " layer:"
+    ];
+
+    state.systemsMapLayer = nextLayer;
+
+    for (var i = 0; i < layerData.bullets.length; i += 1) {
+      lines.push("- " + layerData.bullets[i]);
+    }
+
+    lines.push("");
+    lines.push("Hint: type `map --deep` in Terminal");
+    systemsMapContent.textContent = lines.join("\n");
+    systemsMapContent.scrollTop = 0;
+    systemsMapContent.scrollLeft = 0;
+
+    for (var j = 0; j < systemsMapLayerButtons.length; j += 1) {
+      systemsMapLayerButtons[j].classList.toggle(
+        "is-active",
+        systemsMapLayerButtons[j].getAttribute("data-layer") === nextLayer
+      );
+    }
+  }
+
+  function openSystemsMapWindow() {
+    renderSystemsMapLayer(state.systemsMapLayer);
+    openChadWindow(systemsMapWindow);
+  }
+
+  function bindSystemsMapInteractions() {
+    for (var i = 0; i < systemsMapLayerButtons.length; i += 1) {
+      systemsMapLayerButtons[i].addEventListener("click", function (event) {
+        var layerName = event.currentTarget.getAttribute("data-layer");
+        renderSystemsMapLayer(layerName);
+      });
+    }
+
+    systemsMapWindow.addEventListener("mousedown", function () {
+      if (systemsMapWindow.classList.contains("open")) {
+        bringWindowToFront(systemsMapWindow);
+      }
+    });
+
+    renderSystemsMapLayer(state.systemsMapLayer);
+  }
+
   function makeWindowDraggable(windowElement) {
     if (!windowElement || windowElement.dataset.draggableBound === "true") {
       return;
@@ -896,6 +1014,11 @@
             return;
           }
 
+          if (button.id === "systems-map-launcher") {
+            openSystemsMapWindow();
+            return;
+          }
+
           showDesktopPopup("Open with terminal?");
         });
       })(launcherButtons[i]);
@@ -909,6 +1032,7 @@
     });
 
     bindWindowSystem();
+    bindSystemsMapInteractions();
   }
 
   function renderSystemMonitor() {
