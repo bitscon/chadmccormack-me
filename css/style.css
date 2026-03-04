@@ -495,6 +495,7 @@ body {
   outline-offset: 2px;
 }
 
+#pip-overlay,
 #pip-video {
   position: absolute;
   top: 0.95rem;
@@ -503,26 +504,104 @@ body {
   width: min(318px, 36vw);
   padding: 0.44rem;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.17);
-  background: rgba(10, 12, 18, 0.52);
-  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(0, 255, 170, 0.35);
+  background: rgba(10, 15, 20, 0.85);
+  box-shadow:
+    0 0 8px rgba(0, 255, 170, 0.25),
+    0 0 20px rgba(0, 255, 170, 0.08),
+    0 18px 34px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
 }
 
 @supports ((-webkit-backdrop-filter: blur(10px)) or (backdrop-filter: blur(10px))) {
+  #pip-overlay,
   #pip-video {
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
   }
 }
 
 .pip-frame {
+  position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(130, 224, 188, 0.28);
+  overflow: hidden;
   background:
     radial-gradient(circle at 16% 20%, rgba(255, 195, 131, 0.24), transparent 36%),
     linear-gradient(155deg, rgba(63, 97, 205, 0.45), rgba(38, 22, 82, 0.55));
+}
+
+#pip-headshot,
+.pip-frame {
+  object-fit: cover;
+  border-radius: inherit;
+  filter: contrast(1.05) brightness(0.92) saturate(1.05);
+  animation: pipIdle 6s ease-in-out infinite;
+}
+
+.pip-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(165deg, rgba(162, 216, 255, 0.13), rgba(0, 0, 0, 0));
+}
+
+#pip-hover {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  font-size: 13px;
+  font-family: monospace;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: rgba(219, 250, 232, 0.92);
+  border: 1px solid rgba(122, 227, 178, 0.32);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.pip-frame::after {
+  content: "▶ Meet Chad";
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  font-size: 13px;
+  font-family: monospace;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: rgba(219, 250, 232, 0.92);
+  border: 1px solid rgba(122, 227, 178, 0.32);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+#pip-overlay:hover #pip-hover,
+#pip-video:hover #pip-hover,
+#pip-overlay:hover .pip-frame::after,
+#pip-video:hover .pip-frame::after,
+#pip-video:focus-within .pip-frame::after {
+  opacity: 1;
+}
+
+@keyframes pipIdle {
+  0% {
+    filter: contrast(1.05) brightness(0.92) saturate(1.05);
+  }
+
+  50% {
+    filter: contrast(1.05) brightness(0.95) saturate(1.05);
+  }
+
+  100% {
+    filter: contrast(1.05) brightness(0.92) saturate(1.05);
+  }
 }
 
 .pip-title {
