@@ -466,6 +466,33 @@ body {
   line-height: 1.35;
 }
 
+#welcome-hint {
+  margin-top: 18px;
+  font-family: monospace;
+  font-size: 14px;
+  color: #8ef7c5;
+  opacity: 0.9;
+}
+
+.welcome-command {
+  appearance: none;
+  display: block;
+  margin: 0;
+  padding: 0 0 0 4px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  color: #9fffd2;
+  cursor: pointer;
+  transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+.welcome-command:hover {
+  color: #ffffff;
+  text-shadow: 0 0 6px rgba(0, 255, 170, 0.5);
+}
+
 #onboarding-start {
   appearance: none;
   margin-top: 0.64rem;

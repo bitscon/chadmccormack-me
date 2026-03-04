@@ -10,7 +10,15 @@
   var detailDescription = document.getElementById("mind-map-detail-description");
   var detailPhilosophy = document.getElementById("mind-map-detail-philosophy");
   var hireChadOutput = document.getElementById("hire-chad-output");
+  var onboardingOverlay = document.getElementById("onboarding-overlay");
+  var onboardingCard = onboardingOverlay ? onboardingOverlay.querySelector(".onboarding-card") : null;
+  var onboardingStartButton = document.getElementById("onboarding-start");
   var hireChadScheduleObserver = null;
+  var welcomeHintObserver = null;
+  var welcomeHintTimer = null;
+  var welcomeHintHasRun = false;
+  var WELCOME_HINT_INITIAL_DELAY_MS = 1500;
+  var WELCOME_HINT_LINE_DELAY_MS = 600;
 
   var PROOF_WORK_DIAGRAMS = [
     {
@@ -128,6 +136,150 @@
       ]
     }
   ];
+
+  function ensureWelcomeHintContainer() {
+    var hint = null;
+
+    if (!onboardingCard) {
+      return null;
+    }
+
+    hint = document.getElementById("welcome-hint");
+    if (hint) {
+      return hint;
+    }
+
+    hint = document.createElement("div");
+    hint.id = "welcome-hint";
+    hint.setAttribute("aria-live", "polite");
+    hint.setAttribute("aria-atomic", "true");
+
+    if (
+      onboardingStartButton &&
+      onboardingStartButton.parentNode &&
+      onboardingStartButton.parentNode === onboardingCard
+    ) {
+      onboardingCard.insertBefore(hint, onboardingStartButton);
+      return hint;
+    }
+
+    onboardingCard.appendChild(hint);
+    return hint;
+  }
+
+  function runWelcomeHint() {
+    var lines = [
+      { text: "Try these commands:" },
+      { text: "" },
+      { text: "resume", cmd: "resume" },
+      { text: "proof", cmd: "proof" },
+      { text: "hire-chad", cmd: "hire-chad" }
+    ];
+    var hint = ensureWelcomeHintContainer();
+    var lineIndex = 0;
+
+    if (!hint || welcomeHintHasRun) {
+      return;
+    }
+
+    welcomeHintHasRun = true;
+    hint.innerHTML = "";
+
+    function typeLine() {
+      var entry = null;
+      var line = null;
+
+      if (lineIndex >= lines.length) {
+        return;
+      }
+
+      entry = lines[lineIndex];
+
+      if (entry.cmd) {
+        line = document.createElement("button");
+        line.type = "button";
+        line.className = "welcome-command";
+        line.textContent = entry.text;
+        line.addEventListener("click", function (event) {
+          var command = event.currentTarget ? event.currentTarget.getAttribute("data-command") : "";
+
+          if (!command || typeof window.runTerminalCommand !== "function") {
+            return;
+          }
+
+          window.runTerminalCommand(command);
+        });
+        line.setAttribute("data-command", entry.cmd);
+      } else {
+        line = document.createElement("div");
+        line.textContent = entry.text;
+      }
+
+      hint.appendChild(line);
+      lineIndex += 1;
+
+      window.setTimeout(typeLine, WELCOME_HINT_LINE_DELAY_MS);
+    }
+
+    welcomeHintTimer = window.setTimeout(function () {
+      welcomeHintTimer = null;
+      typeLine();
+    }, WELCOME_HINT_INITIAL_DELAY_MS);
+  }
+
+  function bindWelcomeHint() {
+    if (!onboardingOverlay || !window.MutationObserver) {
+      return;
+    }
+
+    ensureWelcomeHintContainer();
+
+    welcomeHintObserver = new MutationObserver(function () {
+      if (!onboardingOverlay.classList.contains("visible")) {
+        return;
+      }
+
+      runWelcomeHint();
+    });
+
+    welcomeHintObserver.observe(onboardingOverlay, {
+      attributes: true,
+      attributeFilter: ["class"]
+    });
+  }
+
+  function ensureGlobalTerminalRunner() {
+    window.runTerminalCommand = function (commandText) {
+      var terminalWindow = document.getElementById("terminal-window");
+      var terminalLauncher = document.getElementById("terminal-launcher");
+      var commandForm = null;
+      var commandInput = null;
+      var normalizedCommand = typeof commandText === "string" ? commandText.trim() : "";
+
+      if (!normalizedCommand) {
+        return;
+      }
+
+      if (
+        terminalWindow &&
+        terminalLauncher &&
+        !terminalWindow.classList.contains("open")
+      ) {
+        terminalLauncher.click();
+      }
+
+      commandForm = document.getElementById("command-form");
+      commandInput = document.getElementById("command-input");
+
+      if (!commandForm || !commandInput) {
+        return;
+      }
+
+      commandInput.focus();
+      commandInput.value = normalizedCommand;
+      commandForm.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+    };
+  }
 
   function buildProofOfWorkArchitectureSection() {
     var section = null;
@@ -393,6 +545,8 @@
 
   buildProofOfWorkArchitectureSection();
   bindHireChadScheduleSection();
+  bindWelcomeHint();
+  ensureGlobalTerminalRunner();
 
   if (
     !mindMapWindow ||
