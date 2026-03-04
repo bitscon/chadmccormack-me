@@ -350,19 +350,29 @@
 
   function bindRecruiterActivityTextNormalizer() {
     var observer = null;
+    var applyNormalizedText = null;
 
     if (!recruiterActivityMessage) {
       return;
     }
 
-    recruiterActivityMessage.textContent = normalizeRecruiterActivityText(recruiterActivityMessage.textContent);
+    applyNormalizedText = function () {
+      var currentText = recruiterActivityMessage.textContent;
+      var normalizedText = normalizeRecruiterActivityText(currentText);
+
+      if (normalizedText !== currentText) {
+        recruiterActivityMessage.textContent = normalizedText;
+      }
+    };
+
+    applyNormalizedText();
 
     if (!window.MutationObserver) {
       return;
     }
 
     observer = new MutationObserver(function () {
-      recruiterActivityMessage.textContent = normalizeRecruiterActivityText(recruiterActivityMessage.textContent);
+      applyNormalizedText();
     });
 
     observer.observe(recruiterActivityMessage, {
