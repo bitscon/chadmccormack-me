@@ -31,10 +31,10 @@
         "        v",
         "CMDB Population"
       ].join("\n"),
-      description: "Designed discovery flow patterns that improve infrastructure identification accuracy and produce consistent CMDB population at enterprise scale.",
+      description: "Improved discovery reliability and CI identification accuracy across enterprise estates, producing consistent CMDB population.",
       focus: [
         "Discovery coverage strategy",
-        "Credential and pattern stability",
+        "Credential governance and pattern stability",
         "CI classification integrity"
       ]
     },
@@ -55,7 +55,7 @@
         "        v",
         "Trusted CMDB"
       ].join("\n"),
-      description: "Designed governance patterns to improve configuration data accuracy, support operational decision making, and increase trust in CMDB reporting.",
+      description: "Raised CMDB trust for operations and leadership through reconciliation governance, normalization controls, and ownership standards.",
       focus: [
         "CI lifecycle ownership",
         "Reconciliation strategy",
@@ -79,7 +79,7 @@
         "        v",
         "Operational Visibility"
       ].join("\n"),
-      description: "Enabled service visibility by strengthening CI relationships and topology context, allowing operations teams to troubleshoot faster and assess impact with confidence.",
+      description: "Improved incident impact analysis and change confidence by strengthening CI relationships and service topology context.",
       focus: [
         "CI relationship modeling",
         "Service topology context",
@@ -107,7 +107,7 @@
 
     intro = document.createElement("p");
     intro.className = "proof-work-diagram-intro";
-    intro.textContent = "Examples of how I structure ServiceNow Discovery and CMDB to create reliable infrastructure visibility for operations teams.";
+    intro.textContent = "Outcome-focused ServiceNow Discovery and CMDB architecture used to improve enterprise infrastructure visibility.";
 
     diagramList = document.createElement("div");
     diagramList.className = "proof-work-diagram-list";
@@ -175,63 +175,63 @@
     {
       id: "discovery",
       title: "Discovery",
-      purpose: "Accurate infrastructure discovery using ServiceNow Discovery.",
+      purpose: "Reliable enterprise discovery and accurate CI identification.",
       focus: [
-        "MID Server architecture",
-        "credential strategy",
-        "pattern stability",
-        "discovery coverage"
+        "MID Server topology",
+        "Credential governance",
+        "Pattern stability",
+        "Discovery coverage strategy"
       ],
-      explanation: "Discovery quality starts with stable MID Server topology, predictable credentials, and disciplined pattern management.",
+      explanation: "Reliable Discovery improves downstream CMDB quality through stable MID Server design, credential controls, and pattern standards.",
       position: [48, 11]
     },
     {
       id: "infrastructure-data",
       title: "Infrastructure Data",
-      purpose: "Reliable infrastructure inventory.",
+      purpose: "Trusted infrastructure inventory for operations.",
       focus: [
-        "CI classification",
-        "server, network, and application relationships",
-        "normalized infrastructure data"
+        "CI classification standards",
+        "Server, network, and application relationships",
+        "Normalized infrastructure data"
       ],
-      explanation: "Reliable infrastructure data requires clean CI classes, relationship integrity, and consistent normalization standards.",
+      explanation: "Trusted inventory improves incident and change decisions by maintaining clean CI classes, relationship integrity, and normalization standards.",
       position: [48, 30]
     },
     {
       id: "cmdb-governance",
       title: "CMDB Governance",
-      purpose: "Trustworthy configuration data.",
+      purpose: "Sustainable configuration data trust.",
       focus: [
         "CI lifecycle ownership",
-        "reconciliation strategy",
-        "normalization rules",
-        "data quality controls"
+        "Reconciliation strategy",
+        "Normalization rules",
+        "Data quality controls"
       ],
-      explanation: "Governance keeps CMDB data credible by defining ownership, reconciliation rules, and measurable data quality controls.",
+      explanation: "Governance sustains CMDB credibility by defining ownership, reconciliation policy, and measurable data quality controls.",
       position: [48, 50]
     },
     {
       id: "service-mapping",
       title: "Service Mapping",
-      purpose: "Connecting infrastructure to business services.",
+      purpose: "Service context for incident and change decisions.",
       focus: [
-        "application dependency mapping",
-        "service topology",
-        "operational context"
+        "Application dependency mapping",
+        "Service topology",
+        "Operational context"
       ],
-      explanation: "Service Mapping translates infrastructure relationships into business service topology that operations teams can act on.",
+      explanation: "Service Mapping translates infrastructure relationships into business context that operations teams can act on quickly.",
       position: [48, 70]
     },
     {
       id: "operational-visibility",
       title: "Operational Visibility",
-      purpose: "Empowering operations teams.",
+      purpose: "Faster, lower-risk operational response.",
       focus: [
-        "incident impact understanding",
-        "faster troubleshooting",
-        "accurate infrastructure context"
+        "Incident impact understanding",
+        "Faster troubleshooting",
+        "Accurate infrastructure context"
       ],
-      explanation: "Operational visibility closes the loop by helping responders understand impact, context, and the fastest path to resolution.",
+      explanation: "Operational visibility reduces response risk by giving teams clear impact context and faster paths to resolution.",
       position: [48, 89]
     }
   ];

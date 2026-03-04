@@ -1,10 +1,10 @@
 (function () {
   var FILES = {
-    "about.txt": "Chad McCormack is a systems architect and infrastructure automation engineer who builds resilient systems for high-trust delivery.\n\nFocus areas:\n- DevOps platform design\n- Platform reliability engineering\n- Automation that removes repetitive operational work\n\nHe partners with teams to ship faster with stronger operational confidence.",
-    "experience.txt": "Experience highlights:\n- Designed platform architecture for multi-environment delivery\n- Built infrastructure-as-code workflows for repeatable provisioning\n- Improved reliability with observability, runbooks, and incident response patterns\n- Led automation efforts that reduced manual deployment toil",
-    "projects.txt": "1. Billy - AI infrastructure foreman\n   Orchestrates AI-enabled infrastructure workflows and operational tasks for faster execution with guardrails.\n\n2. Homestead Architect - property planning platform\n   Planning system for land and property development that blends mapping, constraints, and staged execution guidance.\n\n3. AI News Pipeline - automated news aggregation + posting system\n   End-to-end pipeline that discovers, filters, summarizes, and publishes targeted updates with minimal human intervention.",
-    "thinking.txt": "Current operating principles:\n- Design for graceful failure before scale\n- Prefer boring infrastructure with sharp automation\n- Keep systems observable, explainable, and operable under stress",
-    "contact.txt": "email: chad@example.com\nlinkedin: https://linkedin.com/in/chad-placeholder\ngithub: https://github.com/chad-placeholder",
+    "about.txt": "Chad McCormack is a ServiceNow CMDB / Discovery SME focused on enterprise infrastructure visibility and configuration data trust.\n\nFocus areas:\n- Improved CMDB trust through governance and ownership standards\n- Increased Discovery reliability across complex infrastructure estates\n- Better incident impact clarity through service visibility\n\nHe aligns platform engineering and operations around reliable ServiceNow data.",
+    "experience.txt": "Experience highlights:\n- Improved CMDB data quality and reporting trust for enterprise stakeholders\n- Stabilized ServiceNow Discovery through MID Server topology, credential governance, and pattern standards\n- Strengthened CI relationship integrity to improve service visibility and change confidence\n- Standardized operational controls that reduced discovery rework and escalation noise\n\nEnterprise organizations:\nCapital One | <Company Name> | <Company Name>",
+    "projects.txt": "1. CMDB Governance Operating Model\n   Improved data trust by defining CI ownership, reconciliation controls, and quality checkpoints.\n\n2. Discovery Reliability Program\n   Increased enterprise coverage with stable credential strategy, MID Server design, and pattern standards.\n\n3. Service Visibility Foundation\n   Strengthened CI relationships and service topology to improve incident impact analysis and change confidence.",
+    "thinking.txt": "Operating principles:\n- Outcome-first architecture with measurable operational impact\n- Governance that improves delivery speed and audit confidence\n- Clear ownership, reconciliation standards, and data quality controls",
+    "contact.txt": "email: <Email Address>\nlinkedin: <LinkedIn URL>\ngithub: <GitHub URL>",
     "motto.txt": "\"I do what I cannot, to learn what I cannot do!\"",
     "resume.pdf": "Binary file detected.\nUse 'open resume' instead.",
     "projects/billy-ai-runtime": "billy-ai-runtime:\nDistributed runtime that orchestrates AI-driven infra workflows with guardrails, observability, and recovery paths.",
@@ -135,7 +135,7 @@
       run: function () {
         return text(
           "Chad McCormack\n" +
-            "Systems Architect | Infrastructure Explorer | Automation Builder\n\n" +
+            "ServiceNow CMDB / Discovery SME\n\n" +
             "\"I do what I cannot, to learn what I cannot do!\""
         );
       }
@@ -201,7 +201,7 @@
       run: function () {
         return text(
           "CHAD MCCORMACK\n" +
-            "Systems Architect | Infrastructure Explorer | Automation Builder"
+            "ServiceNow CMDB / Discovery SME"
         );
       }
     },
@@ -234,15 +234,16 @@
         return text(
           "Chad McCormack\n" +
             "ServiceNow CMDB / Discovery SME\n\n" +
-            "Enterprise infrastructure visibility\n" +
-            "CMDB governance and data quality\n" +
-            "Discovery architecture and reliability\n\n" +
-            "Commands\n\n" +
-            "career      open career timeline\n" +
-            "mindmap     CMDB / Discovery architecture model\n" +
-            "proof       enterprise proof of work\n" +
-            "automation  operational automation examples\n" +
-            "contact     how to reach Chad"
+            "Summary\n" +
+            "- Improved enterprise infrastructure visibility for operations teams\n" +
+            "- Strengthened CMDB governance, reconciliation, and data quality controls\n" +
+            "- Increased Discovery reliability across complex environments\n\n" +
+            "Navigation\n\n" +
+            "career      open Career Log\n" +
+            "mindmap     open Mind Map\n" +
+            "proof       open Proof of Work\n" +
+            "automation  open Automation Lab\n" +
+            "contact     view Contact"
         );
       }
     },
@@ -275,9 +276,9 @@
       run: function () {
         return text(
           "Contact\n\n" +
-            "Email: chad@example.com\n" +
-            "LinkedIn: https://linkedin.com/in/chad-placeholder\n" +
-            "References available upon request."
+            "Email: <Email Address>\n" +
+            "LinkedIn: <LinkedIn URL>\n" +
+            "References: <Reference Name> (available upon request)."
         );
       }
     },
@@ -288,15 +289,15 @@
           "---\n\n" +
             "sudo hire-chad\n\n" +
             "Initializing candidate analysis...\n\n" +
-            "✓ Infrastructure architecture\n" +
-            "✓ Automation engineering\n" +
-            "✓ Systems thinking\n" +
-            "✓ Creative problem solving\n\n" +
+            "✓ Enterprise CMDB architecture\n" +
+            "✓ Discovery reliability\n" +
+            "✓ CMDB governance and data quality\n" +
+            "✓ Service visibility for operations\n\n" +
             "Result:\n\n" +
-            "This engineer builds systems that other engineers enjoy working on.\n\n" +
+            "ServiceNow CMDB / Discovery SME who improves data trust and incident readiness.\n\n" +
             "Recommendation:\n\n" +
-            "## Hire Chad McCormack.\n\n" +
-            "---"
+            "Hire Chad McCormack.\n" +
+            "Email me to schedule a 15-minute intro."
         );
       }
     },
@@ -304,11 +305,11 @@
     lab: {
       run: function () {
         return text(
-          "automation-lab/\n\n" +
-            "terraform-bootstrap\n" +
-            "container-orchestration\n" +
-            "self-healing-jobs\n" +
-            "agent-orchestrator\n\n" +
+          "automation-lab/ — Automation Lab\n\n" +
+            "discovery-health-checks\n" +
+            "cmdb-quality-guardrails\n" +
+            "credential-lifecycle-controls\n" +
+            "service-visibility-reports\n\n" +
             "Type:\n\n" +
             "cat projects/automation-lab"
         );
