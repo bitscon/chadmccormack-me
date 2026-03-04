@@ -251,19 +251,21 @@
     proofWorkList.insertBefore(section, proofWorkList.firstChild);
   }
 
+  function createHireDecisionDivider() {
+    var divider = document.createElement("hr");
+    divider.className = "hire-decision-divider";
+    return divider;
+  }
+
   function ensureHireChadScheduleSection() {
     var section = null;
     var title = null;
     var description = null;
     var button = null;
-    var divider = null;
 
     if (!hireChadOutput || hireChadOutput.querySelector(".hire-schedule-section")) {
       return;
     }
-
-    divider = document.createElement("hr");
-    divider.className = "hire-decision-divider";
 
     section = document.createElement("section");
     section.className = "hire-decision-section hire-schedule-section";
@@ -285,8 +287,74 @@
     section.appendChild(description);
     section.appendChild(button);
 
-    hireChadOutput.appendChild(divider);
+    hireChadOutput.appendChild(createHireDecisionDivider());
     hireChadOutput.appendChild(section);
+  }
+
+  function ensureHireChadQuickLinksSection() {
+    var section = null;
+    var title = null;
+    var actions = null;
+    var linkedInButton = null;
+    var resumeButton = null;
+    var scheduleSection = null;
+    var dividerBeforeSchedule = null;
+
+    if (!hireChadOutput || hireChadOutput.querySelector(".hire-quick-links-section")) {
+      return;
+    }
+
+    section = document.createElement("section");
+    section.className = "hire-decision-section hire-quick-links-section";
+
+    title = document.createElement("h3");
+    title.textContent = "Quick Links";
+
+    actions = document.createElement("div");
+    actions.className = "hire-quick-links-actions";
+
+    linkedInButton = document.createElement("a");
+    linkedInButton.className = "cta-button";
+    linkedInButton.href = "https://linkedin.com/in/chadmccormack";
+    linkedInButton.target = "_blank";
+    linkedInButton.rel = "noopener noreferrer";
+    linkedInButton.textContent = "View LinkedIn";
+    linkedInButton.setAttribute("aria-label", "View Chad on LinkedIn");
+    linkedInButton.setAttribute("title", "View LinkedIn");
+
+    resumeButton = document.createElement("a");
+    resumeButton.className = "cta-button";
+    resumeButton.href = "/resume.pdf";
+    resumeButton.target = "_blank";
+    resumeButton.rel = "noopener noreferrer";
+    resumeButton.textContent = "Download Resume";
+    resumeButton.setAttribute("aria-label", "Download Chad resume");
+    resumeButton.setAttribute("title", "Download Resume");
+
+    actions.appendChild(linkedInButton);
+    actions.appendChild(resumeButton);
+    section.appendChild(title);
+    section.appendChild(actions);
+
+    scheduleSection = hireChadOutput.querySelector(".hire-schedule-section");
+
+    if (!scheduleSection) {
+      hireChadOutput.appendChild(createHireDecisionDivider());
+      hireChadOutput.appendChild(section);
+      return;
+    }
+
+    dividerBeforeSchedule = scheduleSection.previousElementSibling;
+
+    if (dividerBeforeSchedule && dividerBeforeSchedule.classList.contains("hire-decision-divider")) {
+      hireChadOutput.insertBefore(createHireDecisionDivider(), dividerBeforeSchedule);
+      hireChadOutput.insertBefore(section, dividerBeforeSchedule);
+      return;
+    }
+
+    hireChadOutput.insertBefore(createHireDecisionDivider(), scheduleSection);
+    hireChadOutput.insertBefore(section, scheduleSection);
+    hireChadOutput.insertBefore(createHireDecisionDivider(), scheduleSection);
   }
 
   function bindHireChadScheduleSection() {
@@ -297,11 +365,15 @@
     }
 
     ensureHireChadScheduleSection();
+    ensureHireChadQuickLinksSection();
 
     hireLauncher = document.getElementById("hire-chad-launcher");
     if (hireLauncher) {
       hireLauncher.addEventListener("click", function () {
-        window.setTimeout(ensureHireChadScheduleSection, 0);
+        window.setTimeout(function () {
+          ensureHireChadScheduleSection();
+          ensureHireChadQuickLinksSection();
+        }, 0);
       });
     }
 
@@ -311,6 +383,7 @@
 
     hireChadScheduleObserver = new MutationObserver(function () {
       ensureHireChadScheduleSection();
+      ensureHireChadQuickLinksSection();
     });
 
     hireChadScheduleObserver.observe(hireChadOutput, {

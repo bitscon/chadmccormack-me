@@ -1947,7 +1947,7 @@ body[data-theme="matrix"] #terminal::before {
   line-height: 1.38;
 }
 
-.hire-schedule-section .cta-button {
+.hire-decision-section .cta-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1964,12 +1964,24 @@ body[data-theme="matrix"] #terminal::before {
   transition: all 0.2s ease;
 }
 
-.hire-schedule-section .cta-button:hover,
-.hire-schedule-section .cta-button:focus-visible {
+.hire-decision-section .cta-button:hover,
+.hire-decision-section .cta-button:focus-visible {
   border-color: rgba(173, 230, 255, 0.9);
   background: rgba(39, 105, 141, 0.55);
   box-shadow: 0 0 0 1px rgba(151, 222, 252, 0.28), 0 0 14px rgba(89, 177, 225, 0.2);
   color: rgba(239, 252, 255, 1);
+}
+
+.hire-quick-links-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.44rem;
+  margin-top: 0.38rem;
+}
+
+.hire-quick-links-actions .cta-button {
+  flex: 1 1 0;
+  margin-top: 0;
 }
 
 .automation-lab-intro {
@@ -2755,6 +2767,15 @@ body[data-theme="matrix"] #terminal::before {
   .hire-decision-section p,
   .hire-decision-section ul {
     font-size: 0.64rem;
+  }
+
+  .hire-quick-links-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hire-quick-links-actions .cta-button {
+    width: 100%;
   }
 
   .automation-lab-intro {
