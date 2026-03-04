@@ -13,6 +13,8 @@
   var systemsMapLauncher = document.getElementById("systems-map-launcher");
   var careerLogLauncher = document.getElementById("career-log-launcher");
   var desktopPopup = document.getElementById("desktop-popup");
+  var pipVideo = document.getElementById("pip-video");
+  var notifications = document.getElementById("notifications");
   var systemMonitorStats = document.getElementById("system-monitor-stats");
   var launcherButtons = document.querySelectorAll("#desktop-launcher .launcher-button");
   var terminalWindow = document.getElementById("terminal-window");
@@ -43,6 +45,8 @@
     !systemsMapLauncher ||
     !careerLogLauncher ||
     !desktopPopup ||
+    !pipVideo ||
+    !notifications ||
     !systemMonitorStats ||
     !launcherButtons.length ||
     !terminalWindow ||
@@ -77,6 +81,8 @@
   var TERMINAL_CLOSE_MS = 200;
   var CAREER_LOG_LIVE_MS = 6000;
   var CAREER_LOG_MAX_LINES = 120;
+  var NOTIFICATION_LIFE_MS = 6000;
+  var NOTIFICATION_EXIT_MS = 220;
 
   var BIOS_CHECKS = [
     { label: "Memory test", dots: 13 },
@@ -109,6 +115,27 @@
     "╚██████╗██║  ██║██║  ██║██████╔╝",
     "╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝"
   ].join("\n");
+
+  var INITIAL_NOTIFICATIONS = [
+    {
+      delay: 3000,
+      icon: "⚙",
+      title: "Automation",
+      message: "Nightly infrastructure checks completed successfully."
+    },
+    {
+      delay: 8000,
+      icon: "🐳",
+      title: "Containers",
+      message: "7 services running normally."
+    },
+    {
+      delay: 15000,
+      icon: "🤖",
+      title: "AI Assistant",
+      message: "Billy runtime standing by."
+    }
+  ];
 
   var SYSTEMS_MAP_CORE_ASCII = [
     "          Users",
@@ -239,6 +266,7 @@
     systemsMapLayer: "core",
     careerLogFilter: "",
     careerLogLines: CAREER_LOG_SEED.slice(),
+    notificationsScheduled: false,
     windowZ: 2000
   };
   var biosAnimationState = {
@@ -246,6 +274,8 @@
   };
   var systemMonitorInterval = null;
   var careerLogInterval = null;
+  var notificationSequence = 0;
+  var notificationScheduleTimers = [];
   var windowCloseTimers = {};
   var desktopPopupTimer = null;
   var activeDrag = null;
@@ -1156,6 +1186,129 @@
     }, 1400);
   }
 
+  function getNotificationTimestamp() {
+    return new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+  }
+
+  function getNotificationOffset() {
+    if (window.matchMedia("(max-width: 520px)").matches) {
+      return 14;
+    }
+
+    if (window.matchMedia("(max-width: 640px)").matches) {
+      return 12;
+    }
+
+    return 10;
+  }
+
+  function positionNotifications() {
+    var desktopRect = desktop.getBoundingClientRect();
+    var pipRect = pipVideo.getBoundingClientRect();
+    var computedTop = Math.round((pipRect.bottom - desktopRect.top) + getNotificationOffset());
+
+    notifications.style.top = Math.max(8, computedTop) + "px";
+  }
+
+  function dismissNotification(notificationElement) {
+    if (!notificationElement || notificationElement.dataset.dismissing === "true") {
+      return;
+    }
+
+    if (notificationElement.__autoDismissTimer) {
+      window.clearTimeout(notificationElement.__autoDismissTimer);
+      notificationElement.__autoDismissTimer = null;
+    }
+
+    notificationElement.dataset.dismissing = "true";
+    notificationElement.classList.remove("is-visible");
+    notificationElement.classList.add("is-dismissing");
+
+    window.setTimeout(function () {
+      if (notificationElement.parentNode === notifications) {
+        notifications.removeChild(notificationElement);
+      }
+    }, NOTIFICATION_EXIT_MS);
+  }
+
+  function showNotification(config) {
+    if (!config) {
+      return;
+    }
+
+    notificationSequence += 1;
+    positionNotifications();
+
+    var notification = document.createElement("article");
+    notification.className = "chados-notification";
+    notification.setAttribute("role", "status");
+    notification.setAttribute("aria-live", "polite");
+    notification.setAttribute("aria-atomic", "true");
+    notification.setAttribute("data-notification-id", String(notificationSequence));
+
+    var heading = document.createElement("div");
+    heading.className = "notification-head";
+
+    if (config.icon) {
+      var icon = document.createElement("span");
+      icon.className = "notification-icon";
+      icon.setAttribute("aria-hidden", "true");
+      icon.textContent = config.icon;
+      heading.appendChild(icon);
+    }
+
+    var title = document.createElement("p");
+    title.className = "notification-title";
+    title.textContent = config.title || "System";
+    heading.appendChild(title);
+
+    var timestamp = document.createElement("span");
+    timestamp.className = "notification-time";
+    timestamp.textContent = getNotificationTimestamp();
+    heading.appendChild(timestamp);
+
+    var message = document.createElement("p");
+    message.className = "notification-message";
+    message.textContent = config.message || "";
+
+    notification.appendChild(heading);
+    notification.appendChild(message);
+    notification.addEventListener("click", function () {
+      dismissNotification(notification);
+    });
+
+    notifications.appendChild(notification);
+    window.requestAnimationFrame(function () {
+      notification.classList.add("is-visible");
+    });
+
+    notification.__autoDismissTimer = window.setTimeout(function () {
+      dismissNotification(notification);
+    }, NOTIFICATION_LIFE_MS);
+  }
+
+  function scheduleDesktopNotifications() {
+    if (state.notificationsScheduled) {
+      return;
+    }
+
+    state.notificationsScheduled = true;
+    positionNotifications();
+
+    for (var i = 0; i < INITIAL_NOTIFICATIONS.length; i += 1) {
+      (function (notificationConfig) {
+        var timer = window.setTimeout(function () {
+          showNotification(notificationConfig);
+        }, notificationConfig.delay);
+
+        notificationScheduleTimers.push(timer);
+      })(INITIAL_NOTIFICATIONS[i]);
+    }
+  }
+
   function bindWindowSystem() {
     var windows = desktopWindows.querySelectorAll(".chados-window");
 
@@ -1253,6 +1406,8 @@
     bindWindowSystem();
     bindSystemsMapInteractions();
     bindCareerLogInteractions();
+    positionNotifications();
+    window.addEventListener("resize", positionNotifications);
   }
 
   function renderSystemMonitor() {
@@ -1321,6 +1476,7 @@
     await sleep(DESKTOP_TRANSITION_MS);
     bootSequence.setAttribute("aria-hidden", "true");
 
+    scheduleDesktopNotifications();
     terminalLauncher.focus();
   }
 
