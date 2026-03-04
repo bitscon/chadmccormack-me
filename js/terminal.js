@@ -20,6 +20,8 @@
   var desktopPopup = document.getElementById("desktop-popup");
   var onboardingOverlay = document.getElementById("onboarding-overlay");
   var onboardingStartButton = document.getElementById("onboarding-start");
+  var recruiterWidget = document.getElementById("recruiter-widget");
+  var recruiterWidgetActions = document.querySelectorAll("#recruiter-widget [data-dashboard-open]");
   var pipVideo = document.getElementById("pip-video");
   var notifications = document.getElementById("notifications");
   var systemMonitorStats = document.getElementById("system-monitor-stats");
@@ -67,6 +69,8 @@
     !desktopPopup ||
     !onboardingOverlay ||
     !onboardingStartButton ||
+    !recruiterWidget ||
+    !recruiterWidgetActions.length ||
     !pipVideo ||
     !notifications ||
     !systemMonitorStats ||
@@ -2178,6 +2182,31 @@
     });
   }
 
+  function bindRecruiterWidgetInteractions() {
+    function openFromDashboard(actionName) {
+      if (actionName === "career") {
+        careerLogLauncher.click();
+        return;
+      }
+
+      if (actionName === "proof") {
+        proofOfWorkLauncher.click();
+        return;
+      }
+
+      if (actionName === "mindmap") {
+        systemsMapLauncher.click();
+      }
+    }
+
+    for (var i = 0; i < recruiterWidgetActions.length; i += 1) {
+      recruiterWidgetActions[i].addEventListener("click", function (event) {
+        var actionName = event.currentTarget.getAttribute("data-dashboard-open");
+        openFromDashboard(actionName);
+      });
+    }
+  }
+
   function bindDesktopInteractions() {
     for (var i = 0; i < launcherButtons.length; i += 1) {
       (function (button) {
@@ -2237,6 +2266,7 @@
     });
 
     bindWindowSystem();
+    bindRecruiterWidgetInteractions();
     bindOnboardingOverlay();
     bindSystemsMapInteractions();
     bindCareerLogInteractions();
