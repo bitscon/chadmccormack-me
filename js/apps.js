@@ -13,15 +13,26 @@
   var pipVideo = document.getElementById("pip-video");
   var meetChadButton = document.getElementById("meet-chad");
   var recruiterActivityMessage = document.getElementById("recruiter-activity-message");
+  var engineerHint = document.getElementById("engineer-hint") || document.querySelector(".engineer-hint");
   var onboardingOverlay = document.getElementById("onboarding-overlay");
   var onboardingCard = onboardingOverlay ? onboardingOverlay.querySelector(".onboarding-card") : null;
   var onboardingStartButton = document.getElementById("onboarding-start");
   var hireChadScheduleObserver = null;
   var welcomeHintObserver = null;
   var welcomeHintTimer = null;
+  var terminalHintRotateTimer = null;
+  var terminalHintIndex = 0;
   var welcomeHintHasRun = false;
   var WELCOME_HINT_INITIAL_DELAY_MS = 1500;
   var WELCOME_HINT_LINE_DELAY_MS = 600;
+  var TERMINAL_HINT_ROTATE_MS = 6000;
+  var TERMINAL_HINTS = [
+    "Try typing: demo",
+    "Try typing: architecture",
+    "Try typing: proof",
+    "Try typing: resume",
+    "Try typing: hire-chad"
+  ];
 
   var PROOF_WORK_DIAGRAMS = [
     {
@@ -249,6 +260,30 @@
       attributes: true,
       attributeFilter: ["class"]
     });
+  }
+
+  function setEngineerHintText(textValue) {
+    if (!engineerHint) {
+      return;
+    }
+
+    engineerHint.textContent = "Engineer Tip - " + textValue;
+    engineerHint.style.whiteSpace = "normal";
+    engineerHint.style.overflowWrap = "anywhere";
+  }
+
+  function bindRotatingTerminalHints() {
+    if (!engineerHint || terminalHintRotateTimer || !TERMINAL_HINTS.length) {
+      return;
+    }
+
+    terminalHintIndex = Math.floor(Math.random() * TERMINAL_HINTS.length);
+    setEngineerHintText(TERMINAL_HINTS[terminalHintIndex]);
+
+    terminalHintRotateTimer = window.setInterval(function () {
+      terminalHintIndex = (terminalHintIndex + 1) % TERMINAL_HINTS.length;
+      setEngineerHintText(TERMINAL_HINTS[terminalHintIndex]);
+    }, TERMINAL_HINT_ROTATE_MS);
   }
 
   function ensureGlobalTerminalRunner() {
@@ -687,6 +722,7 @@
 
   buildProofOfWorkArchitectureSection();
   bindHireChadScheduleSection();
+  bindRotatingTerminalHints();
   bindWelcomeHint();
   ensureGlobalTerminalRunner();
   normalizeTerminalTitles();
