@@ -24,34 +24,19 @@
   var interviewPrepLauncher = document.getElementById("interview-prep-launcher");
   var pipVideo = document.getElementById("pip-video");
   var meetChadButton = document.getElementById("meet-chad");
-  var bootScreen = document.getElementById("boot-screen");
-  var bootText = document.getElementById("boot-text");
-  var desktop = document.getElementById("desktop");
   var recruiterActivityMessage = document.getElementById("recruiter-activity-message");
   var engineerHint = document.getElementById("engineer-hint") || document.querySelector(".engineer-hint");
   var onboardingOverlay = document.getElementById("onboarding-overlay");
   var onboardingCard = onboardingOverlay ? onboardingOverlay.querySelector(".onboarding-card") : null;
   var onboardingStartButton = document.getElementById("onboarding-start");
-  var hireChadScheduleObserver = null;
   var welcomeHintObserver = null;
   var welcomeHintTimer = null;
   var terminalHintRotateTimer = null;
   var terminalHintIndex = 0;
-  var workstationBootTimer = null;
-  var workstationBootFailsafeTimer = null;
-  var workstationBootRan = false;
   var welcomeHintHasRun = false;
   var WELCOME_HINT_INITIAL_DELAY_MS = 1500;
   var WELCOME_HINT_LINE_DELAY_MS = 600;
-  var WORKSTATION_BOOT_STEP_MS = 320;
-  var WORKSTATION_BOOT_FAILSAFE_MS = 1450;
   var TERMINAL_HINT_ROTATE_MS = 6000;
-  var WORKSTATION_BOOT_MESSAGES = [
-    "Initializing workstation...",
-    "Loading engineering workspace...",
-    "Mounting CMDB architecture modules...",
-    "System ready."
-  ];
   var TERMINAL_HINTS = [
     "Try typing: demo",
     "Try typing: architecture",
@@ -70,123 +55,6 @@
   };
   var markdownHtmlCache = {};
   var markdownLoadCache = {};
-
-  var PROOF_WORK_DIAGRAMS = [
-    {
-      title: "Discovery to CMDB Pipeline",
-      ascii: [
-        "Infrastructure Environment",
-        "        |",
-        "        v",
-        "Discovery Scan",
-        "        |",
-        "        v",
-        "Credential Strategy",
-        "        |",
-        "        v",
-        "Discovery Patterns",
-        "        |",
-        "        v",
-        "CI Classification",
-        "        |",
-        "        v",
-        "CMDB Population"
-      ].join("\n"),
-      description: "Improved discovery reliability and CI identification accuracy across enterprise estates, producing consistent CMDB population.",
-      focus: [
-        "Discovery coverage strategy",
-        "Credential governance and pattern stability",
-        "CI classification integrity"
-      ]
-    },
-    {
-      title: "CMDB Data Quality Model",
-      ascii: [
-        "Infrastructure Data",
-        "        |",
-        "        v",
-        "CI Classification",
-        "        |",
-        "        v",
-        "Normalization Rules",
-        "        |",
-        "        v",
-        "Reconciliation Engine",
-        "        |",
-        "        v",
-        "Trusted CMDB"
-      ].join("\n"),
-      description: "Raised CMDB trust for operations and leadership through reconciliation governance, normalization controls, and ownership standards.",
-      focus: [
-        "CI lifecycle ownership",
-        "Reconciliation strategy",
-        "Normalized infrastructure data"
-      ]
-    },
-    {
-      title: "Service Visibility Model",
-      ascii: [
-        "Infrastructure",
-        "        |",
-        "        v",
-        "Configuration Items",
-        "        |",
-        "        v",
-        "CI Relationships",
-        "        |",
-        "        v",
-        "Business Services",
-        "        |",
-        "        v",
-        "Operational Visibility"
-      ].join("\n"),
-      description: "Improved incident impact analysis and change confidence by strengthening CI relationships and service topology context.",
-      focus: [
-        "CI relationship modeling",
-        "Service topology context",
-        "Operational impact analysis"
-      ]
-    },
-    {
-      title: "Question",
-      question: "How does CSDM connect products, services, and infrastructure?",
-      ascii: [
-        "Product / Product Offering",
-        "        |",
-        "        v",
-        "Business Service",
-        "        |",
-        "        v",
-        "Technical Service",
-        "        |",
-        "        v",
-        "Application Service",
-        "        |",
-        "        v",
-        "Application",
-        "        |",
-        "        v",
-        "Infrastructure (Servers, Databases, Networks)"
-      ].join("\n"),
-      description: "The Common Service Data Model (CSDM) provides a structured way to connect products and services to the underlying applications and infrastructure that support them.",
-      focusLabel: "This model enables:",
-      focus: [
-        "clear service ownership",
-        "product-aligned service management",
-        "reliable incident impact analysis",
-        "consistent service mapping"
-      ],
-      practiceTitle: "CSDM Implementation Approach",
-      practiceDescription: "When implementing CSDM, I focus on aligning the service model to how the organization delivers products and operates services.",
-      practiceLabel: "This includes:",
-      practiceItems: [
-        "defining product and service boundaries",
-        "aligning CI classes to the CSDM layers",
-        "mapping infrastructure to applications",
-        "connecting services to business capabilities"
-      ]
-    }
-  ];
 
   function ensureWelcomeHintContainer() {
     var hint = null;
@@ -222,7 +90,8 @@
     var lines = [
       { text: "Try these commands:" },
       { text: "" },
-      { text: "resume", cmd: "resume" },
+      { text: "demo", cmd: "demo" },
+      { text: "architecture", cmd: "architecture" },
       { text: "proof", cmd: "proof" },
       { text: "hire-chad", cmd: "hire-chad" }
     ];
@@ -297,58 +166,6 @@
       attributes: true,
       attributeFilter: ["class"]
     });
-  }
-
-  function revealDesktopFromWorkstationBoot() {
-    if (!bootScreen || bootScreen.classList.contains("is-fading")) {
-      return;
-    }
-
-    bootScreen.classList.add("is-fading");
-
-    if (desktop) {
-      desktop.classList.add("active");
-      desktop.setAttribute("aria-hidden", "false");
-    }
-  }
-
-  function runWorkstationBootSequence() {
-    var messageIndex = 0;
-
-    if (
-      workstationBootRan ||
-      !bootScreen ||
-      !bootText ||
-      !WORKSTATION_BOOT_MESSAGES.length
-    ) {
-      return;
-    }
-
-    workstationBootRan = true;
-    bootScreen.classList.add("boot-custom");
-    bootText.textContent = "";
-
-    function printNextBootMessage() {
-      if (messageIndex >= WORKSTATION_BOOT_MESSAGES.length) {
-        revealDesktopFromWorkstationBoot();
-        return;
-      }
-
-      if (bootText.textContent) {
-        bootText.textContent += "\n";
-      }
-
-      bootText.textContent += WORKSTATION_BOOT_MESSAGES[messageIndex];
-      messageIndex += 1;
-
-      workstationBootTimer = window.setTimeout(printNextBootMessage, WORKSTATION_BOOT_STEP_MS);
-    }
-
-    printNextBootMessage();
-
-    workstationBootFailsafeTimer = window.setTimeout(function () {
-      revealDesktopFromWorkstationBoot();
-    }, WORKSTATION_BOOT_FAILSAFE_MS);
   }
 
   function setEngineerHintText(textValue) {
@@ -469,6 +286,7 @@
       var h2Match = line.match(/^##\s+(.*)$/);
       var h1Match = line.match(/^#\s+(.*)$/);
       var listMatch = line.match(/^\s*\-\s+(.*)$/);
+      var dividerMatch = line.match(/^\s*---+\s*$/);
 
       if (h3Match) {
         closeList();
@@ -495,6 +313,12 @@
         }
 
         html.push("<li>" + escapeMarkdownHtml(listMatch[1]) + "</li>");
+        continue;
+      }
+
+      if (dividerMatch) {
+        closeList();
+        html.push("<hr>");
         continue;
       }
 
@@ -739,16 +563,25 @@
         };
       };
     }
+
+    if (!commands.hire && commands["hire-chad"]) {
+      commands.hire = commands["hire-chad"];
+    }
   }
 
   function normalizeRecruiterActivityText(value) {
     var legacyBrand = "Chad" + "OS";
+    var normalized = value;
 
     if (typeof value !== "string") {
       return value;
     }
 
-    return value.split(legacyBrand).join("Chad McCormack");
+    normalized = normalized.split(legacyBrand).join("Chad McCormack");
+    normalized = normalized.replace(/ServiceNow architect/gi, "Information Systems Engineer");
+    normalized = normalized.replace(/Enterprise Architect/gi, "Information Systems Engineer");
+    normalized = normalized.replace(/Architecture Architect/gi, "Information Systems Engineer");
+    return normalized;
   }
 
   function bindRecruiterActivityTextNormalizer() {
@@ -814,330 +647,7 @@
     }
   }
 
-  function buildProofOfWorkArchitectureSection() {
-    var section = null;
-    var heading = null;
-    var intro = null;
-    var diagramList = null;
-    var hasNormalizedArchitectureConsole = false;
-
-    hasNormalizedArchitectureConsole = Boolean(
-      document.getElementById("impact-summary") ||
-      document.getElementById("architecture-diagram") ||
-      document.getElementById("architecture-case") ||
-      document.getElementById("engineering-principles")
-    );
-
-    if (
-      !proofWorkList ||
-      hasNormalizedArchitectureConsole ||
-      proofWorkList.querySelector(".proof-work-diagram-section")
-    ) {
-      return;
-    }
-
-    section = document.createElement("section");
-    section.className = "proof-work-diagram-section";
-
-    heading = document.createElement("h3");
-    heading.className = "proof-work-diagram-heading";
-    heading.textContent = "Enterprise Architecture Examples";
-
-    intro = document.createElement("p");
-    intro.className = "proof-work-diagram-intro";
-    intro.textContent = "Outcome-focused ServiceNow Discovery and CMDB architecture used to improve enterprise infrastructure visibility.";
-
-    diagramList = document.createElement("div");
-    diagramList.className = "proof-work-diagram-list";
-
-    for (var i = 0; i < PROOF_WORK_DIAGRAMS.length; i += 1) {
-      var diagram = PROOF_WORK_DIAGRAMS[i];
-      var block = document.createElement("article");
-      var title = document.createElement("h4");
-      var ascii = document.createElement("pre");
-      var description = null;
-      var focusLabel = null;
-      var focusList = null;
-      var question = null;
-      var practiceTitle = null;
-      var practiceDescription = null;
-      var practiceLabel = null;
-      var practiceList = null;
-
-      block.className = "diagram-block";
-      title.className = "diagram-title";
-      title.textContent = diagram.title;
-
-      ascii.className = "diagram-ascii";
-      ascii.textContent = diagram.ascii;
-
-      block.appendChild(title);
-
-      if (diagram.question) {
-        question = document.createElement("p");
-        question.className = "diagram-focus-label";
-        question.textContent = diagram.question;
-        block.appendChild(question);
-      }
-
-      block.appendChild(ascii);
-
-      if (diagram.description) {
-        description = document.createElement("p");
-        description.className = "diagram-description";
-        description.textContent = diagram.description;
-        block.appendChild(description);
-      }
-
-      if (Array.isArray(diagram.focus) && diagram.focus.length) {
-        focusLabel = document.createElement("p");
-        focusLabel.className = "diagram-focus-label";
-        focusLabel.textContent = diagram.focusLabel || "Architectural Focus:";
-
-        focusList = document.createElement("ul");
-        focusList.className = "diagram-focus-list";
-
-        for (var j = 0; j < diagram.focus.length; j += 1) {
-          var focusItem = document.createElement("li");
-          focusItem.textContent = diagram.focus[j];
-          focusList.appendChild(focusItem);
-        }
-
-        block.appendChild(focusLabel);
-        block.appendChild(focusList);
-      }
-
-      if (diagram.practiceTitle) {
-        practiceTitle = document.createElement("p");
-        practiceTitle.className = "diagram-focus-label";
-        practiceTitle.textContent = diagram.practiceTitle;
-        block.appendChild(practiceTitle);
-      }
-
-      if (diagram.practiceDescription) {
-        practiceDescription = document.createElement("p");
-        practiceDescription.className = "diagram-description";
-        practiceDescription.textContent = diagram.practiceDescription;
-        block.appendChild(practiceDescription);
-      }
-
-      if (Array.isArray(diagram.practiceItems) && diagram.practiceItems.length) {
-        practiceLabel = document.createElement("p");
-        practiceLabel.className = "diagram-focus-label";
-        practiceLabel.textContent = diagram.practiceLabel || "This includes:";
-
-        practiceList = document.createElement("ul");
-        practiceList.className = "diagram-focus-list";
-
-        for (var k = 0; k < diagram.practiceItems.length; k += 1) {
-          var practiceItem = document.createElement("li");
-          practiceItem.textContent = diagram.practiceItems[k];
-          practiceList.appendChild(practiceItem);
-        }
-
-        block.appendChild(practiceLabel);
-        block.appendChild(practiceList);
-      }
-
-      diagramList.appendChild(block);
-    }
-
-    section.appendChild(heading);
-    section.appendChild(intro);
-    section.appendChild(diagramList);
-    proofWorkList.insertBefore(section, proofWorkList.firstChild);
-  }
-
-  function createHireDecisionDivider() {
-    var divider = document.createElement("hr");
-    divider.className = "hire-decision-divider";
-    return divider;
-  }
-
-  function ensureHireChadScheduleSection() {
-    var section = null;
-    var title = null;
-    var description = null;
-    var availability = null;
-
-    if (!hireChadOutput) {
-      return;
-    }
-
-    section = hireChadOutput.querySelector(".hire-schedule-section");
-
-    if (!section) {
-      section = document.createElement("section");
-      section.className = "hire-decision-section hire-schedule-section";
-
-      title = document.createElement("h3");
-      title.textContent = "NEXT STEP";
-
-      description = document.createElement("p");
-      description.textContent = "If you are looking for a ServiceNow CMDB / Discovery specialist who can design and implement reliable infrastructure visibility, let's schedule a conversation.";
-
-      section.appendChild(title);
-      section.appendChild(description);
-      hireChadOutput.appendChild(createHireDecisionDivider());
-      hireChadOutput.appendChild(section);
-    }
-
-    if (!section.querySelector(".hire-availability-line")) {
-      availability = document.createElement("p");
-      availability.className = "hire-availability-line";
-      availability.textContent = "Availability: Open to ServiceNow CMDB / Discovery architecture roles.";
-      section.appendChild(availability);
-    }
-  }
-
-  function ensureHireChadRecruiterMessageSection() {
-    var section = null;
-    var title = null;
-    var description = null;
-    var quote = null;
-    var scheduleSection = null;
-    var insertAfterNode = null;
-
-    if (!hireChadOutput || hireChadOutput.querySelector(".hire-recruiter-message-section")) {
-      return;
-    }
-
-    section = document.createElement("section");
-    section.className = "hire-decision-section hire-recruiter-message-section";
-
-    title = document.createElement("h3");
-    title.textContent = "RECRUITER QUICK MESSAGE";
-
-    description = document.createElement("p");
-    description.textContent = "If you're reaching out about a role, feel free to send something like:";
-
-    quote = document.createElement("p");
-    quote.className = "hire-recruiter-quote";
-    quote.textContent = "> \"Hi Chad - we're looking for help with ServiceNow CMDB / Discovery architecture and would like to discuss a role.\"";
-
-    section.appendChild(title);
-    section.appendChild(description);
-    section.appendChild(quote);
-
-    scheduleSection = hireChadOutput.querySelector(".hire-schedule-section");
-
-    if (!scheduleSection) {
-      hireChadOutput.appendChild(createHireDecisionDivider());
-      hireChadOutput.appendChild(section);
-      return;
-    }
-
-    insertAfterNode = scheduleSection.nextSibling;
-    hireChadOutput.insertBefore(createHireDecisionDivider(), insertAfterNode);
-    hireChadOutput.insertBefore(section, insertAfterNode);
-  }
-
-  function ensureHireChadQuickLinksSection() {
-    var section = null;
-    var title = null;
-    var actions = null;
-    var linkedInButton = null;
-    var resumeButton = null;
-    var scheduleButton = null;
-    var insertionAnchor = null;
-    var insertAfterNode = null;
-
-    if (!hireChadOutput || hireChadOutput.querySelector(".hire-quick-links-section")) {
-      return;
-    }
-
-    section = document.createElement("section");
-    section.className = "hire-decision-section hire-quick-links-section";
-
-    title = document.createElement("h3");
-    title.textContent = "QUICK LINKS";
-
-    actions = document.createElement("div");
-    actions.className = "hire-quick-links-actions";
-
-    linkedInButton = document.createElement("a");
-    linkedInButton.className = "cta-button";
-    linkedInButton.href = "https://linkedin.com/in/chadmccormack";
-    linkedInButton.target = "_blank";
-    linkedInButton.rel = "noopener noreferrer";
-    linkedInButton.textContent = "View LinkedIn";
-    linkedInButton.setAttribute("aria-label", "View Chad on LinkedIn");
-    linkedInButton.setAttribute("title", "View LinkedIn");
-
-    resumeButton = document.createElement("a");
-    resumeButton.className = "cta-button";
-    resumeButton.href = "/assets/chad-mccormack-resume.pdf";
-    resumeButton.target = "_blank";
-    resumeButton.rel = "noopener noreferrer";
-    resumeButton.textContent = "Download Resume";
-    resumeButton.setAttribute("aria-label", "Download Chad resume");
-    resumeButton.setAttribute("title", "Download Resume");
-
-    scheduleButton = document.createElement("a");
-    scheduleButton.className = "cta-button";
-    scheduleButton.href = "mailto:chad@chadmccormack.me?subject=ServiceNow%20Opportunity";
-    scheduleButton.textContent = "Schedule a Call";
-    scheduleButton.setAttribute("aria-label", "Schedule a call with Chad");
-    scheduleButton.setAttribute("title", "Schedule a Call");
-
-    actions.appendChild(linkedInButton);
-    actions.appendChild(resumeButton);
-    actions.appendChild(scheduleButton);
-    section.appendChild(title);
-    section.appendChild(actions);
-
-    insertionAnchor = hireChadOutput.querySelector(".hire-recruiter-message-section") || hireChadOutput.querySelector(".hire-schedule-section");
-
-    if (!insertionAnchor) {
-      hireChadOutput.appendChild(createHireDecisionDivider());
-      hireChadOutput.appendChild(section);
-      return;
-    }
-
-    insertAfterNode = insertionAnchor.nextSibling;
-    hireChadOutput.insertBefore(createHireDecisionDivider(), insertAfterNode);
-    hireChadOutput.insertBefore(section, insertAfterNode);
-  }
-
-  function bindHireChadScheduleSection() {
-    var hireLauncher = null;
-
-    if (!hireChadOutput) {
-      return;
-    }
-
-    ensureHireChadScheduleSection();
-    ensureHireChadRecruiterMessageSection();
-    ensureHireChadQuickLinksSection();
-
-    hireLauncher = document.getElementById("hire-chad-launcher");
-    if (hireLauncher) {
-      hireLauncher.addEventListener("click", function () {
-        window.setTimeout(function () {
-          ensureHireChadScheduleSection();
-          ensureHireChadRecruiterMessageSection();
-          ensureHireChadQuickLinksSection();
-        }, 0);
-      });
-    }
-
-    if (!window.MutationObserver) {
-      return;
-    }
-
-    hireChadScheduleObserver = new MutationObserver(function () {
-      ensureHireChadScheduleSection();
-      ensureHireChadRecruiterMessageSection();
-      ensureHireChadQuickLinksSection();
-    });
-
-    hireChadScheduleObserver.observe(hireChadOutput, {
-      childList: true
-    });
-  }
-
   bindMarkdownContent();
-  runWorkstationBootSequence();
   bindRotatingTerminalHints();
   bindWelcomeHint();
   ensureGlobalTerminalRunner();
@@ -1255,7 +765,7 @@
     detailTitle.textContent = data.title;
     detailSubtitle.textContent = "Purpose: " + data.purpose;
     detailDescription.textContent = data.explanation;
-    detailPhilosophy.textContent = "Architectural Focus: " + data.focus.join(" | ");
+    detailPhilosophy.textContent = "Focus Areas: " + data.focus.join(" | ");
   }
 
   function setActiveNode(nodeId) {
