@@ -1,16 +1,16 @@
 (function () {
   var FILES = {
-    "about.txt": "Chad McCormack is a ServiceNow CMDB / Discovery SME focused on enterprise infrastructure visibility and configuration data trust.\n\nFocus areas:\n- Improved CMDB trust through governance and ownership standards\n- Increased Discovery reliability across complex infrastructure estates\n- Better incident impact clarity through service visibility\n\nHe aligns platform engineering and operations around reliable ServiceNow data.",
-    "experience.txt": "Experience highlights:\n- Improved CMDB data quality and reporting trust for enterprise stakeholders\n- Stabilized ServiceNow Discovery through MID Server topology, credential governance, and pattern standards\n- Strengthened CI relationship integrity to improve service visibility and change confidence\n- Standardized operational controls that reduced discovery rework and escalation noise\n\nEnterprise organizations:\nCapital One | <Company Name> | <Company Name>",
-    "projects.txt": "1. CMDB Governance Operating Model\n   Improved data trust by defining CI ownership, reconciliation controls, and quality checkpoints.\n\n2. Discovery Reliability Program\n   Increased enterprise coverage with stable credential strategy, MID Server design, and pattern standards.\n\n3. Service Visibility Foundation\n   Strengthened CI relationships and service topology to improve incident impact analysis and change confidence.",
-    "thinking.txt": "Operating principles:\n- Outcome-first architecture with measurable operational impact\n- Governance that improves delivery speed and audit confidence\n- Clear ownership, reconciliation standards, and data quality controls",
-    "contact.txt": "email: <Email Address>\nlinkedin: <LinkedIn URL>\ngithub: <GitHub URL>",
+    "about.txt": "Profile content is markdown-driven.\nRun `hire`, `career`, or `architecture`.",
+    "experience.txt": "Run `career` for timeline content from career-timeline.md.",
+    "projects.txt": "Run `proof` for architecture-projects.md.",
+    "thinking.txt": "Run `architecture` for cmdb-discovery-expertise.md.",
+    "contact.txt": "email: chad@bitscon.net\nlinkedin: https://www.linkedin.com/in/chadmccormack/",
     "motto.txt": "\"I do what I cannot, to learn what I cannot do!\"",
-    "resume.pdf": "Binary file detected.\nUse 'open resume' instead.",
-    "projects/billy-ai-runtime": "billy-ai-runtime:\nDistributed runtime that orchestrates AI-driven infra workflows with guardrails, observability, and recovery paths.",
-    "projects/automation-lab": "automation-lab:\nHands-on infrastructure automation experiments across provisioning, orchestration, and self-healing operations.",
-    "projects/infrastructure-architectures": "infrastructure-architectures:\nReference blueprints for scalable platform foundations, environment parity, and resilient system boundaries.",
-    "projects/ai-assisted-workflows": "ai-assisted-workflows:\nPractical AI copilots and agents embedded in engineering delivery pipelines to reduce toil and increase velocity."
+    "resume.pdf": "Binary file detected.\nUse `resume` to open the PDF window.",
+    "projects/billy-ai-runtime": "Automation runtime notes available in project docs.",
+    "projects/automation-lab": "Use `automation` to open the Automation Lab window.",
+    "projects/infrastructure-architectures": "Use `architecture` to load expertise content.",
+    "projects/ai-assisted-workflows": "AI-assisted workflow notes are maintained outside the terminal."
   };
 
   var FILE_ORDER = [
@@ -28,22 +28,27 @@
   var OPEN_TARGETS = {
     linkedin: {
       label: "LinkedIn",
-      url: "https://linkedin.com/in/chad-placeholder"
-    },
-    github: {
-      label: "GitHub",
-      url: "https://github.com/chad-placeholder"
+      url: "https://www.linkedin.com/in/chadmccormack/"
     },
     resume: {
       label: "Resume (PDF)",
       url: "/assets/chad-mccormack-resume.pdf"
+    },
+    email: {
+      label: "Email",
+      url: "mailto:chad@bitscon.net"
     }
   };
   var APP_LAUNCHERS = {
-    career: "career-log-launcher",
-    mindmap: "systems-map-launcher",
-    proof: "proof-of-work-launcher",
     automation: "automation-lab-launcher"
+  };
+  var MARKDOWN_FILE_BY_KEY = {
+    proofOfWork: "architecture-projects.md",
+    architecture: "cmdb-discovery-expertise.md",
+    hireChad: "resume.md",
+    demo: "enterprise-impact.md",
+    interviewPrep: "interview-topics.md",
+    career: "career-timeline.md"
   };
 
   function text(payload) {
@@ -97,31 +102,54 @@
     return null;
   }
 
+  function getMarkdownProvider() {
+    if (!window.PortfolioMarkdown || typeof window.PortfolioMarkdown !== "object") {
+      return null;
+    }
+
+    return window.PortfolioMarkdown;
+  }
+
+  function getMarkdownFileName(key) {
+    return MARKDOWN_FILE_BY_KEY[key] || (key + ".md");
+  }
+
+  function runMarkdownCommand(commandName, key) {
+    var provider = getMarkdownProvider();
+    var cachedHtml = null;
+
+    if (provider && typeof provider.getRenderedMarkdown === "function") {
+      cachedHtml = provider.getRenderedMarkdown(key);
+    }
+
+    if (cachedHtml) {
+      return html(cachedHtml);
+    }
+
+    if (provider && typeof provider.prefetchMarkdown === "function") {
+      provider.prefetchMarkdown(key);
+    }
+
+    return text(
+      "Loading " + getMarkdownFileName(key) + "...\n" +
+      "Run `" + commandName + "` again in a moment."
+    );
+  }
+
   window.TerminalCommands = {
     help: {
       run: function () {
         return text(
           "Available commands:\n\n" +
-            "help\n" +
-            "ls\n" +
-            "whoami\n" +
-            "cat <file>\n" +
-            "clear\n" +
-            "theme\n" +
-            "pwd\n" +
-            "date\n" +
-            "banner\n" +
-            "open\n" +
-            "resume\n" +
-            "career\n" +
-            "mindmap\n" +
-            "proof\n" +
-            "demo  - guided overview of Chad's architecture expertise\n" +
-            "automation\n" +
-            "contact\n" +
-            "hire-chad\n" +
-            "lab\n" +
-            "map"
+          "help         show command list\n" +
+          "hire         view resume and contact info\n" +
+          "proof        architecture case studies\n" +
+          "architecture CMDB and Discovery expertise\n" +
+          "impact       enterprise outcomes\n" +
+          "career       experience timeline\n" +
+          "interview    discussion topics\n\n" +
+          "Aliases: demo, hire-chad, mindmap, projects, experience\n" +
+          "Utilities: ls, cat <file>, open <linkedin|resume|email>, clear, theme, pwd, date"
         );
       }
     },
@@ -136,8 +164,8 @@
       run: function () {
         return text(
           "Chad McCormack\n" +
-            "ServiceNow CMDB / Discovery SME\n\n" +
-            "\"I do what I cannot, to learn what I cannot do!\""
+          "Information Systems Engineer\n" +
+          "ServiceNow CMDB • Discovery • CSDM"
         );
       }
     },
@@ -202,7 +230,8 @@
       run: function () {
         return text(
           "CHAD MCCORMACK\n" +
-            "ServiceNow CMDB / Discovery SME"
+          "Information Systems Engineer\n" +
+          "ServiceNow CMDB • Discovery • CSDM"
         );
       }
     },
@@ -212,7 +241,7 @@
         var target = (args[0] || "").toLowerCase();
 
         if (!target) {
-          return text("usage: open <linkedin|github|resume>");
+          return text("usage: open <linkedin|resume|email>");
         }
 
         if (!Object.prototype.hasOwnProperty.call(OPEN_TARGETS, target)) {
@@ -223,77 +252,82 @@
 
         return html(
           "Opening " + escapeHtml(item.label) + "...<br>" +
-            "<a href=\"" + escapeHtml(item.url) + "\" target=\"_blank\" rel=\"noopener noreferrer\">" +
-            escapeHtml(item.url) +
-            "</a>"
+          "<a href=\"" + escapeHtml(item.url) + "\" target=\"_blank\" rel=\"noopener noreferrer\">" +
+          escapeHtml(item.url) +
+          "</a>"
         );
       }
     },
 
-    resume: {
+    architecture: {
       run: function () {
-        return text(
-          "Chad McCormack\n" +
-            "ServiceNow CMDB / Discovery SME\n\n" +
-            "Summary\n" +
-            "- Improved enterprise infrastructure visibility for operations teams\n" +
-            "- Strengthened CMDB governance, reconciliation, and data quality controls\n" +
-            "- Increased Discovery reliability across complex environments\n\n" +
-            "Navigation\n\n" +
-            "career      open Career Log\n" +
-            "mindmap     open Mind Map\n" +
-            "proof       open Proof of Work\n" +
-            "automation  open Automation Lab\n" +
-            "contact     view Contact"
-        );
-      }
-    },
-
-    demo: {
-      run: function () {
-        return text(
-          "Initializing architecture overview...\n\n" +
-            "Chad McCormack\n" +
-            "Information Systems Engineer\n" +
-            "ServiceNow CMDB • Discovery • CSDM\n\n" +
-            "Problem Chad Solves\n" +
-            "-------------------\n" +
-            "Enterprise CMDB data often becomes unreliable due to discovery failures,\n" +
-            "credential issues, and inconsistent CI classification.\n\n" +
-            "Approach\n" +
-            "--------\n" +
-            "• Design scalable ServiceNow Discovery architectures\n" +
-            "• Align infrastructure models to CSDM\n" +
-            "• Improve CMDB data trust and service visibility\n\n" +
-            "Results\n" +
-            "-------\n" +
-            "• More reliable CMDB population\n" +
-            "• Better service mapping accuracy\n" +
-            "• Improved operational visibility\n\n" +
-            "Next Commands\n" +
-            "-------------\n" +
-            "architecture   - view architecture example\n" +
-            "hire-chad      - open hiring info\n" +
-            "resume         - download resume"
-        );
-      }
-    },
-
-    career: {
-      run: function () {
-        return openDesktopWindow("career");
-      }
-    },
-
-    mindmap: {
-      run: function () {
-        return openDesktopWindow("mindmap");
+        return runMarkdownCommand("architecture", "architecture");
       }
     },
 
     proof: {
       run: function () {
-        return openDesktopWindow("proof");
+        return runMarkdownCommand("proof", "proofOfWork");
+      }
+    },
+
+    hire: {
+      run: function () {
+        return runMarkdownCommand("hire", "hireChad");
+      }
+    },
+
+    "hire-chad": {
+      run: function () {
+        return runMarkdownCommand("hire-chad", "hireChad");
+      }
+    },
+
+    impact: {
+      run: function () {
+        return runMarkdownCommand("impact", "demo");
+      }
+    },
+
+    demo: {
+      run: function () {
+        return runMarkdownCommand("demo", "demo");
+      }
+    },
+
+    interview: {
+      run: function () {
+        return runMarkdownCommand("interview", "interviewPrep");
+      }
+    },
+
+    career: {
+      run: function () {
+        return runMarkdownCommand("career", "career");
+      }
+    },
+
+    mindmap: {
+      run: function () {
+        return runMarkdownCommand("mindmap", "architecture");
+      }
+    },
+
+    map: {
+      run: function () {
+        return runMarkdownCommand("map", "architecture");
+      }
+    },
+
+    projects: {
+      run: function () {
+        return runMarkdownCommand("projects", "proofOfWork");
+      }
+    },
+
+    experience: {
+      run: function () {
+        return runMarkdownCommand("experience", "career");
       }
     },
 
@@ -303,76 +337,23 @@
       }
     },
 
+    lab: {
+      run: function () {
+        return openDesktopWindow("automation");
+      }
+    },
+
     contact: {
       run: function () {
         return text(
           "Contact\n\n" +
-            "Email: <Email Address>\n" +
-            "LinkedIn: <LinkedIn URL>\n" +
-            "References: <Reference Name> (available upon request)."
-        );
-      }
-    },
-
-    "hire-chad": {
-      run: function () {
-        return text(
-          "---\n\n" +
-            "sudo hire-chad\n\n" +
-            "Initializing candidate analysis...\n\n" +
-            "✓ Enterprise CMDB architecture\n" +
-            "✓ Discovery reliability\n" +
-            "✓ CMDB governance and data quality\n" +
-            "✓ Service visibility for operations\n\n" +
-            "Result:\n\n" +
-            "ServiceNow CMDB / Discovery SME who improves data trust and incident readiness.\n\n" +
-            "Recommendation:\n\n" +
-            "Hire Chad McCormack.\n" +
-            "Email me to schedule a 15-minute intro."
-        );
-      }
-    },
-
-    lab: {
-      run: function () {
-        return text(
-          "automation-lab/ — Automation Lab\n\n" +
-            "discovery-health-checks\n" +
-            "cmdb-quality-guardrails\n" +
-            "credential-lifecycle-controls\n" +
-            "service-visibility-reports\n\n" +
-            "Type:\n\n" +
-            "cat projects/automation-lab"
-        );
-      }
-    },
-
-    map: {
-      run: function () {
-        return text(
-          "      Users\n" +
-            "        │\n" +
-            " ┌──────┴──────┐\n" +
-            " │  Interfaces │\n" +
-            " └──────┬──────┘\n" +
-            "        │\n" +
-            " ┌──────┴──────┐\n" +
-            " │ Automation  │\n" +
-            " └──────┬──────┘\n" +
-            "        │\n" +
-            " ┌──────┴──────┐\n" +
-            " │Infrastructure│\n" +
-            " └──────┬──────┘\n" +
-            "        │\n" +
-            "      Systems\n\n" +
-            "\"Every system should make the next engineer's job easier.\""
+          "Email: chad@bitscon.net\n" +
+          "LinkedIn: https://www.linkedin.com/in/chadmccormack/\n" +
+          "Website: chadmccormack.me"
         );
       }
     }
   };
 
-  window.TerminalCommands.cv = window.TerminalCommands.resume;
-  window.TerminalCommands.experience = window.TerminalCommands.career;
-  window.TerminalCommands.architecture = window.TerminalCommands.mindmap;
-  window.TerminalCommands.projects = window.TerminalCommands.proof;
+  window.TerminalCommands["interview-prep"] = window.TerminalCommands.interview;
 })();

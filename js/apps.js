@@ -378,6 +378,35 @@
     return markdownLoadCache[key];
   }
 
+  function getCachedRenderedMarkdownByKey(key) {
+    if (!Object.prototype.hasOwnProperty.call(markdownHtmlCache, key)) {
+      return "";
+    }
+
+    return markdownHtmlCache[key] || "";
+  }
+
+  function prefetchMarkdownByKey(key) {
+    return loadRenderedMarkdownByKey(key).catch(function (error) {
+      console.error(error);
+      return "";
+    });
+  }
+
+  function registerMarkdownBridge() {
+    window.PortfolioMarkdown = {
+      getRenderedMarkdown: function (key) {
+        return getCachedRenderedMarkdownByKey(key);
+      },
+      prefetchMarkdown: function (key) {
+        return prefetchMarkdownByKey(key);
+      },
+      getMarkdownFileName: function (key) {
+        return MARKDOWN_FILE_BY_KEY[key] || "";
+      }
+    };
+  }
+
   async function renderMarkdownIntoElement(targetElement, key) {
     if (!targetElement) {
       return;
@@ -503,10 +532,43 @@
     var commands = window.TerminalCommands;
     var titleLineOne = "Information Systems Engineer";
     var titleLineTwo = "ServiceNow CMDB • Discovery • CSDM";
+    var setTerminalMarkdownCommand = null;
+    var getTerminalMarkdownResult = null;
 
     if (!commands || typeof commands !== "object") {
       return;
     }
+
+    getTerminalMarkdownResult = function (commandName, key) {
+      var cached = getCachedRenderedMarkdownByKey(key);
+      var sourceFile = MARKDOWN_FILE_BY_KEY[key] || (key + ".md");
+
+      if (cached) {
+        return {
+          type: "html",
+          payload: cached
+        };
+      }
+
+      prefetchMarkdownByKey(key);
+
+      return {
+        type: "text",
+        payload:
+          "Loading " + sourceFile + "...\n" +
+          "Run `" + commandName + "` again in a moment."
+      };
+    };
+
+    setTerminalMarkdownCommand = function (commandName, key) {
+      if (!commands[commandName]) {
+        commands[commandName] = {};
+      }
+
+      commands[commandName].run = function () {
+        return getTerminalMarkdownResult(commandName, key);
+      };
+    };
 
     if (commands.banner) {
       commands.banner.run = function () {
@@ -524,58 +586,39 @@
           payload:
             "Chad McCormack\n" +
             titleLineOne + "\n" +
-            titleLineTwo + "\n\n" +
-            "\"I do what I cannot, to learn what I cannot do!\""
+            titleLineTwo
         };
       };
     }
 
-    if (commands.resume) {
-      commands.resume.run = function () {
+    setTerminalMarkdownCommand("proof", "proofOfWork");
+    setTerminalMarkdownCommand("architecture", "architecture");
+    setTerminalMarkdownCommand("hire-chad", "hireChad");
+    setTerminalMarkdownCommand("hire", "hireChad");
+    setTerminalMarkdownCommand("impact", "demo");
+    setTerminalMarkdownCommand("demo", "demo");
+    setTerminalMarkdownCommand("interview", "interviewPrep");
+    setTerminalMarkdownCommand("career", "career");
+    setTerminalMarkdownCommand("mindmap", "architecture");
+    setTerminalMarkdownCommand("projects", "proofOfWork");
+    setTerminalMarkdownCommand("experience", "career");
+    setTerminalMarkdownCommand("map", "architecture");
+
+    if (commands.help) {
+      commands.help.run = function () {
         return {
           type: "text",
           payload:
-            "Chad McCormack\n" +
-            titleLineOne + "\n" +
-            titleLineTwo + "\n\n" +
-            "Summary\n" +
-            "- Improved enterprise infrastructure visibility for operations teams\n" +
-            "- Strengthened CMDB governance, reconciliation, and data quality controls\n" +
-            "- Increased Discovery reliability across complex environments\n\n" +
-            "Navigation\n\n" +
-            "career      open Career Log\n" +
-            "mindmap     open Mind Map\n" +
-            "proof       open Proof of Work\n" +
-            "automation  open Automation Lab\n" +
-            "contact     view Contact"
+            "Available commands:\n\n" +
+            "help         show command list\n" +
+            "hire         view resume and contact info\n" +
+            "proof        architecture case studies\n" +
+            "architecture CMDB and Discovery expertise\n" +
+            "impact       enterprise outcomes\n" +
+            "career       experience timeline\n" +
+            "interview    discussion topics"
         };
       };
-    }
-
-    if (commands.demo) {
-      commands.demo.run = function () {
-        var cached = markdownHtmlCache.demo;
-
-        if (cached) {
-          return {
-            type: "html",
-            payload: cached
-          };
-        }
-
-        loadRenderedMarkdownByKey("demo").catch(function (error) {
-          console.error(error);
-        });
-
-        return {
-          type: "text",
-          payload: "Loading enterprise-impact.md...\nRun `demo` again in a moment."
-        };
-      };
-    }
-
-    if (!commands.hire && commands["hire-chad"]) {
-      commands.hire = commands["hire-chad"];
     }
   }
 
@@ -769,6 +812,7 @@
   }
 
   bindMarkdownContent();
+  registerMarkdownBridge();
   bindRotatingTerminalHints();
   bindWelcomeHint();
   ensureGlobalTerminalRunner();
