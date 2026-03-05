@@ -97,86 +97,11 @@
   }
 
   function runWelcomeHint() {
-    var lines = [
-      { text: "Try these commands:" },
-      { text: "" },
-      { text: "proof", cmd: "proof" },
-      { text: "architecture", cmd: "architecture" },
-      { text: "impact", cmd: "impact" },
-      { text: "career", cmd: "career" },
-      { text: "hire", cmd: "hire" }
-    ];
-    var hint = ensureWelcomeHintContainer();
-    var lineIndex = 0;
-
-    if (!hint || welcomeHintHasRun) {
-      return;
-    }
-
-    welcomeHintHasRun = true;
-    hint.innerHTML = "";
-
-    function typeLine() {
-      var entry = null;
-      var line = null;
-
-      if (lineIndex >= lines.length) {
-        return;
-      }
-
-      entry = lines[lineIndex];
-
-      if (entry.cmd) {
-        line = document.createElement("button");
-        line.type = "button";
-        line.className = "welcome-command";
-        line.textContent = entry.text;
-        line.addEventListener("click", function (event) {
-          var command = event.currentTarget ? event.currentTarget.getAttribute("data-command") : "";
-
-          if (!command || typeof window.runTerminalCommand !== "function") {
-            return;
-          }
-
-          window.runTerminalCommand(command);
-        });
-        line.setAttribute("data-command", entry.cmd);
-      } else {
-        line = document.createElement("div");
-        line.textContent = entry.text;
-      }
-
-      hint.appendChild(line);
-      lineIndex += 1;
-
-      window.setTimeout(typeLine, WELCOME_HINT_LINE_DELAY_MS);
-    }
-
-    welcomeHintTimer = window.setTimeout(function () {
-      welcomeHintTimer = null;
-      typeLine();
-    }, WELCOME_HINT_INITIAL_DELAY_MS);
+    return;
   }
 
   function bindWelcomeHint() {
-    if (!onboardingOverlay || !window.MutationObserver) {
-      return;
-    }
-
-    ensureWelcomeHintContainer();
-
-    welcomeHintObserver = new MutationObserver(function () {
-      if (!onboardingOverlay.classList.contains("visible")) {
-        return;
-      }
-
-      runWelcomeHint();
-    });
-
-    welcomeHintObserver.observe(onboardingOverlay, {
-      attributes: true,
-      attributeFilter: ["class"]
-    });
+    return;
   }
 
   function setEngineerHintText(textValue) {

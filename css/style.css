@@ -501,7 +501,7 @@ body {
   line-height: 1.44;
 }
 
-.onboarding-commands {
+.onboarding-recruiter-message {
   margin-top: 0.58rem;
   border: 1px solid rgba(166, 206, 228, 0.25);
   border-radius: 10px;
@@ -509,22 +509,27 @@ body {
   padding: 0.52rem 0.62rem;
 }
 
-.onboarding-commands p {
+.onboarding-recruiter-message p {
   margin: 0;
   color: rgba(221, 241, 255, 0.9);
   font-size: 0.73rem;
   line-height: 1.38;
+  text-wrap: balance;
 }
 
-.onboarding-commands p + p {
+.onboarding-recruiter-message p + p {
   margin-top: 0.24rem;
 }
 
-.onboarding-note {
-  margin: 0.58rem 0 0;
-  color: rgba(205, 225, 242, 0.82);
-  font-size: 0.71rem;
-  line-height: 1.35;
+.onboarding-recruiter-label {
+  color: rgba(205, 236, 252, 0.9);
+  font-weight: 600;
+}
+
+.onboarding-recruiter-focus {
+  color: rgba(193, 248, 222, 0.96);
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 #welcome-hint {
@@ -3072,8 +3077,7 @@ body[data-theme="matrix"] #terminal::before {
   }
 
   #onboarding-description,
-  .onboarding-commands p,
-  .onboarding-note {
+  .onboarding-recruiter-message p {
     font-size: 0.64rem;
   }
 
@@ -3910,8 +3914,7 @@ body[data-theme="matrix"] #terminal::before {
   }
 
   #onboarding-description,
-  .onboarding-commands p,
-  .onboarding-note {
+  .onboarding-recruiter-message p {
     font-size: 0.56rem;
     line-height: 1.32;
   }
