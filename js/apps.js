@@ -24,6 +24,10 @@
   var interviewPrepLauncher = document.getElementById("interview-prep-launcher");
   var pipVideo = document.getElementById("pip-video");
   var meetChadButton = document.getElementById("meet-chad");
+  var recruiterActivityPanel = document.getElementById("recruiter-activity");
+  var recruiterActivityTitle = recruiterActivityPanel
+    ? recruiterActivityPanel.querySelector(".recruiter-activity-title")
+    : null;
   var recruiterActivityMessage = document.getElementById("recruiter-activity-message");
   var engineerHint = document.getElementById("engineer-hint") || document.querySelector(".engineer-hint");
   var onboardingOverlay = document.getElementById("onboarding-overlay");
@@ -55,6 +59,12 @@
   };
   var markdownHtmlCache = {};
   var markdownLoadCache = {};
+  var RECRUITER_ACTIVITY_TITLE_TEXT = "Recruiter Activity";
+  var RECRUITER_ACTIVITY_STABLE_TEXT = "• A recruiter opened Hire Chad";
+  var RECRUITER_CTA_TITLE_TEXT = "Interested in working together?";
+  var RECRUITER_CTA_DETAILS_HTML =
+    "Open <strong>Hire Chad</strong> to view resume, LinkedIn, and contact options.";
+  var RECRUITER_CTA_ACTION_TEXT = "Open Hire Chad";
 
   function ensureWelcomeHintContainer() {
     var hint = null;
@@ -570,18 +580,11 @@
   }
 
   function normalizeRecruiterActivityText(value) {
-    var legacyBrand = "Chad" + "OS";
-    var normalized = value;
-
-    if (typeof value !== "string") {
-      return value;
+    if (typeof value !== "string" || !value.trim()) {
+      return RECRUITER_ACTIVITY_STABLE_TEXT;
     }
 
-    normalized = normalized.split(legacyBrand).join("Chad McCormack");
-    normalized = normalized.replace(/ServiceNow architect/gi, "Information Systems Engineer");
-    normalized = normalized.replace(/Enterprise Architect/gi, "Information Systems Engineer");
-    normalized = normalized.replace(/Architecture Architect/gi, "Information Systems Engineer");
-    return normalized;
+    return RECRUITER_ACTIVITY_STABLE_TEXT;
   }
 
   function bindRecruiterActivityTextNormalizer() {
@@ -596,9 +599,15 @@
       var currentText = recruiterActivityMessage.textContent;
       var normalizedText = normalizeRecruiterActivityText(currentText);
 
+      if (recruiterActivityTitle && recruiterActivityTitle.textContent !== RECRUITER_ACTIVITY_TITLE_TEXT) {
+        recruiterActivityTitle.textContent = RECRUITER_ACTIVITY_TITLE_TEXT;
+      }
+
       if (normalizedText !== currentText) {
         recruiterActivityMessage.textContent = normalizedText;
       }
+
+      recruiterActivityMessage.classList.remove("is-updating");
     };
 
     applyNormalizedText();
@@ -618,10 +627,122 @@
     });
   }
 
+  function applyRecruiterCtaText(banner) {
+    var title = null;
+    var subtitle = null;
+    var details = null;
+    var actionButton = null;
+
+    if (!banner) {
+      return;
+    }
+
+    title = banner.querySelector(".recruiter-cta-title");
+    subtitle = banner.querySelector(".recruiter-cta-subtitle");
+    details = banner.querySelector(".recruiter-cta-details");
+    actionButton = banner.querySelector(".recruiter-cta-action");
+
+    if (title && title.textContent !== RECRUITER_CTA_TITLE_TEXT) {
+      title.textContent = RECRUITER_CTA_TITLE_TEXT;
+    }
+
+    if (subtitle) {
+      if (subtitle.textContent !== "") {
+        subtitle.textContent = "";
+      }
+
+      if (!subtitle.hasAttribute("hidden")) {
+        subtitle.setAttribute("hidden", "");
+      }
+    }
+
+    if (details && details.innerHTML !== RECRUITER_CTA_DETAILS_HTML) {
+      details.innerHTML = RECRUITER_CTA_DETAILS_HTML;
+    }
+
+    if (actionButton && actionButton.textContent !== RECRUITER_CTA_ACTION_TEXT) {
+      actionButton.textContent = RECRUITER_CTA_ACTION_TEXT;
+    }
+  }
+
+  function bindRecruiterCtaTextPolish() {
+    var observer = null;
+    var bannerObserver = null;
+    var bindBannerObserver = null;
+
+    bindBannerObserver = function () {
+      var banner = document.getElementById("recruiter-cta-banner");
+
+      if (!banner) {
+        return;
+      }
+
+      applyRecruiterCtaText(banner);
+
+      if (!window.MutationObserver) {
+        return;
+      }
+
+      if (bannerObserver) {
+        bannerObserver.disconnect();
+      }
+
+      bannerObserver = new MutationObserver(function () {
+        applyRecruiterCtaText(banner);
+      });
+
+      bannerObserver.observe(banner, {
+        childList: true,
+        characterData: true,
+        subtree: true
+      });
+    };
+
+    bindBannerObserver();
+
+    if (!window.MutationObserver || !document.body) {
+      return;
+    }
+
+    observer = new MutationObserver(function (mutations) {
+      for (var i = 0; i < mutations.length; i += 1) {
+        var addedNodes = mutations[i].addedNodes;
+
+        for (var j = 0; j < addedNodes.length; j += 1) {
+          var node = addedNodes[j];
+
+          if (!node || node.nodeType !== 1) {
+            continue;
+          }
+
+          if (node.id === "recruiter-cta-banner") {
+            bindBannerObserver();
+            return;
+          }
+
+          if (node.querySelector && node.querySelector("#recruiter-cta-banner")) {
+            bindBannerObserver();
+            return;
+          }
+        }
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  }
+
   function bindMeetChadButton() {
     var openIntroVideo = null;
 
     if (!pipVideo) {
+      return;
+    }
+
+    if (pipVideo.classList.contains("video-disabled")) {
+      pipVideo.setAttribute("aria-disabled", "true");
       return;
     }
 
@@ -653,6 +774,7 @@
   ensureGlobalTerminalRunner();
   normalizeTerminalTitles();
   bindRecruiterActivityTextNormalizer();
+  bindRecruiterCtaTextPolish();
   bindMeetChadButton();
 
   if (

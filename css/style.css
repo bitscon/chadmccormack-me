@@ -643,6 +643,14 @@ body {
   outline-offset: 1px;
 }
 
+#pip-video.video-disabled {
+  cursor: default;
+}
+
+#pip-video.video-disabled #meet-chad {
+  display: none;
+}
+
 /* Legacy selector retained for compatibility if older markup is restored. */
 #pip-hover {
   position: absolute;
@@ -796,7 +804,7 @@ body {
 #recruiter-cta-banner {
   position: absolute;
   right: 1rem;
-  bottom: 6.1rem;
+  bottom: 1rem;
   z-index: 5;
   width: min(320px, 34vw);
   padding: 0.56rem 0.72rem 0.64rem;
@@ -876,6 +884,10 @@ body {
   line-height: 1.35;
 }
 
+.recruiter-cta-details strong {
+  color: rgba(236, 248, 255, 0.96);
+}
+
 .recruiter-cta-action {
   appearance: none;
   margin-top: 0.46rem;
@@ -907,7 +919,7 @@ body {
 #system-monitor {
   position: absolute;
   right: 1rem;
-  bottom: 1rem;
+  bottom: 8.75rem;
   z-index: 3;
   width: min(294px, 33vw);
   padding: 0.6rem 0.7rem;
@@ -1443,6 +1455,7 @@ body[data-theme="matrix"] #terminal::before {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-height: 40px;
   padding: 8px 14px;
   border: 1px solid rgba(0, 255, 170, 0.5);
   border-radius: 8px;
@@ -1472,6 +1485,10 @@ body[data-theme="matrix"] #terminal::before {
 @media (max-width: 768px) {
   .hire-actions {
     flex-direction: column;
+  }
+
+  .hire-btn {
+    width: 100%;
   }
 }
 
@@ -2894,9 +2911,10 @@ body[data-theme="matrix"] #terminal::before {
   }
 
   .recruiter-activity {
-    left: 0.62rem;
-    bottom: 4.55rem;
-    width: min(220px, 52vw);
+    right: 0.62rem;
+    left: auto;
+    bottom: 12rem;
+    width: min(230px, 56vw);
     padding: 0.38rem 0.48rem;
   }
 
@@ -2918,7 +2936,7 @@ body[data-theme="matrix"] #terminal::before {
 
   #recruiter-cta-banner {
     right: 0.62rem;
-    bottom: 8rem;
+    bottom: calc(var(--dock-h, 0px) + env(safe-area-inset-bottom, 0px) + 0.62rem);
     width: min(230px, 56vw);
     border-radius: 10px;
     padding: 0.48rem 0.58rem 0.56rem;
@@ -3000,8 +3018,8 @@ body[data-theme="matrix"] #terminal::before {
 
   #system-monitor {
     right: 0.62rem;
-    bottom: 4rem;
-    width: min(198px, 50vw);
+    bottom: calc(var(--dock-h, 0px) + env(safe-area-inset-bottom, 0px) + 6.2rem);
+    width: min(230px, 56vw);
     padding: 0.42rem 0.5rem;
   }
 
@@ -3719,8 +3737,9 @@ body[data-theme="matrix"] #terminal::before {
   }
 
   .recruiter-activity {
-    left: 0.46rem;
-    bottom: calc(var(--dock-h, 0px) + env(safe-area-inset-bottom, 0px) + 4.1rem);
+    right: 0.46rem;
+    left: auto;
+    bottom: calc(var(--dock-h, 0px) + env(safe-area-inset-bottom, 0px) + 11.2rem);
     width: min(210px, 64vw);
     padding: 0.3rem 0.4rem;
   }
@@ -3744,7 +3763,7 @@ body[data-theme="matrix"] #terminal::before {
 
   #recruiter-cta-banner {
     right: 0.46rem;
-    bottom: calc(var(--dock-h) + env(safe-area-inset-bottom, 0px) + 3.9rem);
+    bottom: calc(var(--dock-h, 0px) + env(safe-area-inset-bottom, 0px) + 0.5rem);
     width: min(214px, 62vw);
     border-radius: 9px;
     padding: 0.42rem 0.48rem 0.48rem;
@@ -3830,9 +3849,9 @@ body[data-theme="matrix"] #terminal::before {
   }
 
   #system-monitor {
-    right: 0.5rem;
-    bottom: calc(var(--dock-h) + env(safe-area-inset-bottom, 0px) + 0.42rem);
-    width: min(170px, 48vw);
+    right: 0.46rem;
+    bottom: calc(var(--dock-h, 0px) + env(safe-area-inset-bottom, 0px) + 6.1rem);
+    width: min(214px, 62vw);
     padding: 0.3rem 0.36rem;
     border-radius: 10px;
   }
