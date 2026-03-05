@@ -59,7 +59,7 @@
     "Try typing: resume",
     "Try typing: hire-chad"
   ];
-  var MARKDOWN_BASE_PATH = "/assets/data/role/servicenow/";
+  var MARKDOWN_BASE_PATH = "assets/data/role/servicenow/";
   var MARKDOWN_FILE_BY_KEY = {
     proofOfWork: "architecture-projects.md",
     architecture: "cmdb-discovery-expertise.md",
@@ -418,13 +418,35 @@
   }
 
   async function loadMarkdown(path) {
-    var response = await fetch(path);
+    var candidates = [path];
+    var response = null;
+    var i = 0;
+    var candidate = "";
+    var lastError = null;
 
-    if (!response.ok) {
-      throw new Error("Unable to load markdown: " + path + " (" + response.status + ")");
+    if (path.charAt(0) === "/") {
+      candidates.push(path.slice(1));
+    } else {
+      candidates.push("/" + path);
     }
 
-    return response.text();
+    for (i = 0; i < candidates.length; i += 1) {
+      candidate = candidates[i];
+
+      try {
+        response = await fetch(candidate);
+
+        if (response.ok) {
+          return response.text();
+        }
+
+        lastError = new Error("Unable to load markdown: " + candidate + " (" + response.status + ")");
+      } catch (error) {
+        lastError = error;
+      }
+    }
+
+    throw lastError || new Error("Unable to load markdown: " + path);
   }
 
   function renderMarkdown(md) {
