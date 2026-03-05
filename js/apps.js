@@ -656,25 +656,78 @@
     var section = null;
     var title = null;
     var description = null;
+    var availability = null;
 
-    if (!hireChadOutput || hireChadOutput.querySelector(".hire-schedule-section")) {
+    if (!hireChadOutput) {
+      return;
+    }
+
+    section = hireChadOutput.querySelector(".hire-schedule-section");
+
+    if (!section) {
+      section = document.createElement("section");
+      section.className = "hire-decision-section hire-schedule-section";
+
+      title = document.createElement("h3");
+      title.textContent = "NEXT STEP";
+
+      description = document.createElement("p");
+      description.textContent = "If you are looking for a ServiceNow CMDB / Discovery specialist who can design and implement reliable infrastructure visibility, let's schedule a conversation.";
+
+      section.appendChild(title);
+      section.appendChild(description);
+      hireChadOutput.appendChild(createHireDecisionDivider());
+      hireChadOutput.appendChild(section);
+    }
+
+    if (!section.querySelector(".hire-availability-line")) {
+      availability = document.createElement("p");
+      availability.className = "hire-availability-line";
+      availability.textContent = "Availability: Open to ServiceNow CMDB / Discovery architecture roles.";
+      section.appendChild(availability);
+    }
+  }
+
+  function ensureHireChadRecruiterMessageSection() {
+    var section = null;
+    var title = null;
+    var description = null;
+    var quote = null;
+    var scheduleSection = null;
+    var insertAfterNode = null;
+
+    if (!hireChadOutput || hireChadOutput.querySelector(".hire-recruiter-message-section")) {
       return;
     }
 
     section = document.createElement("section");
-    section.className = "hire-decision-section hire-schedule-section";
+    section.className = "hire-decision-section hire-recruiter-message-section";
 
     title = document.createElement("h3");
-    title.textContent = "NEXT STEP";
+    title.textContent = "RECRUITER QUICK MESSAGE";
 
     description = document.createElement("p");
-    description.textContent = "If you are looking for a ServiceNow CMDB / Discovery specialist who can design and implement reliable infrastructure visibility, let's schedule a conversation.";
+    description.textContent = "If you're reaching out about a role, feel free to send something like:";
+
+    quote = document.createElement("p");
+    quote.className = "hire-recruiter-quote";
+    quote.textContent = "> \"Hi Chad - we're looking for help with ServiceNow CMDB / Discovery architecture and would like to discuss a role.\"";
 
     section.appendChild(title);
     section.appendChild(description);
+    section.appendChild(quote);
 
-    hireChadOutput.appendChild(createHireDecisionDivider());
-    hireChadOutput.appendChild(section);
+    scheduleSection = hireChadOutput.querySelector(".hire-schedule-section");
+
+    if (!scheduleSection) {
+      hireChadOutput.appendChild(createHireDecisionDivider());
+      hireChadOutput.appendChild(section);
+      return;
+    }
+
+    insertAfterNode = scheduleSection.nextSibling;
+    hireChadOutput.insertBefore(createHireDecisionDivider(), insertAfterNode);
+    hireChadOutput.insertBefore(section, insertAfterNode);
   }
 
   function ensureHireChadQuickLinksSection() {
@@ -684,8 +737,8 @@
     var linkedInButton = null;
     var resumeButton = null;
     var scheduleButton = null;
-    var scheduleSection = null;
-    var dividerBeforeSchedule = null;
+    var insertionAnchor = null;
+    var insertAfterNode = null;
 
     if (!hireChadOutput || hireChadOutput.querySelector(".hire-quick-links-section")) {
       return;
@@ -695,7 +748,7 @@
     section.className = "hire-decision-section hire-quick-links-section";
 
     title = document.createElement("h3");
-    title.textContent = "Quick Links";
+    title.textContent = "QUICK LINKS";
 
     actions = document.createElement("div");
     actions.className = "hire-quick-links-actions";
@@ -731,25 +784,17 @@
     section.appendChild(title);
     section.appendChild(actions);
 
-    scheduleSection = hireChadOutput.querySelector(".hire-schedule-section");
+    insertionAnchor = hireChadOutput.querySelector(".hire-recruiter-message-section") || hireChadOutput.querySelector(".hire-schedule-section");
 
-    if (!scheduleSection) {
+    if (!insertionAnchor) {
       hireChadOutput.appendChild(createHireDecisionDivider());
       hireChadOutput.appendChild(section);
       return;
     }
 
-    dividerBeforeSchedule = scheduleSection.previousElementSibling;
-
-    if (dividerBeforeSchedule && dividerBeforeSchedule.classList.contains("hire-decision-divider")) {
-      hireChadOutput.insertBefore(createHireDecisionDivider(), dividerBeforeSchedule);
-      hireChadOutput.insertBefore(section, dividerBeforeSchedule);
-      return;
-    }
-
-    hireChadOutput.insertBefore(createHireDecisionDivider(), scheduleSection);
-    hireChadOutput.insertBefore(section, scheduleSection);
-    hireChadOutput.insertBefore(createHireDecisionDivider(), scheduleSection);
+    insertAfterNode = insertionAnchor.nextSibling;
+    hireChadOutput.insertBefore(createHireDecisionDivider(), insertAfterNode);
+    hireChadOutput.insertBefore(section, insertAfterNode);
   }
 
   function bindHireChadScheduleSection() {
@@ -760,6 +805,7 @@
     }
 
     ensureHireChadScheduleSection();
+    ensureHireChadRecruiterMessageSection();
     ensureHireChadQuickLinksSection();
 
     hireLauncher = document.getElementById("hire-chad-launcher");
@@ -767,6 +813,7 @@
       hireLauncher.addEventListener("click", function () {
         window.setTimeout(function () {
           ensureHireChadScheduleSection();
+          ensureHireChadRecruiterMessageSection();
           ensureHireChadQuickLinksSection();
         }, 0);
       });
@@ -778,6 +825,7 @@
 
     hireChadScheduleObserver = new MutationObserver(function () {
       ensureHireChadScheduleSection();
+      ensureHireChadRecruiterMessageSection();
       ensureHireChadQuickLinksSection();
     });
 
