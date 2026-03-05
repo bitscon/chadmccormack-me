@@ -1433,6 +1433,48 @@ body[data-theme="matrix"] #terminal::before {
   padding: 0.8rem 0.86rem;
 }
 
+.hire-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.hire-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border: 1px solid rgba(0, 255, 170, 0.5);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #9fffd2;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.72rem;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.hire-btn:hover {
+  background: rgba(0, 0, 0, 0.85);
+  border-color: rgba(151, 239, 205, 0.78);
+}
+
+.hire-btn:focus {
+  outline: none;
+}
+
+.hire-btn:focus-visible {
+  box-shadow: 0 0 0 2px rgba(225, 251, 241, 0.9);
+}
+
+@media (max-width: 768px) {
+  .hire-actions {
+    flex-direction: column;
+  }
+}
+
 .automation-lab-body {
   gap: 0.72rem;
 }
