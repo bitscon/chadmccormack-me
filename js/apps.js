@@ -533,6 +533,7 @@
     var commands = window.TerminalCommands;
     var titleLineOne = "Information Systems Engineer";
     var titleLineTwo = "ServiceNow CMDB • Discovery • CSDM";
+    var bannerDivider = "--------------------------------------------------";
     var setTerminalMarkdownCommand = null;
     var getTerminalMarkdownResult = null;
     var recruiterActionsHtml = "";
@@ -586,7 +587,18 @@
       commands.banner.run = function () {
         return {
           type: "text",
-          payload: "CHAD MCCORMACK\n" + titleLineOne + "\n" + titleLineTwo
+          payload:
+            "Chad McCormack Engineering Portfolio\n" +
+            "Interactive Architecture Console\n\n" +
+            bannerDivider + "\n\n" +
+            "Specialization\n" +
+            titleLineTwo + "\n\n" +
+            bannerDivider + "\n\n" +
+            "Flagship Project\n" +
+            "Enterprise CMDB & Discovery Transformation\n" +
+            "Dun & Bradstreet\n\n" +
+            bannerDivider + "\n\n" +
+            "Type \"help\" to explore architecture work, enterprise outcomes, and resume information."
         };
       };
     }
@@ -836,22 +848,28 @@
     var output = document.getElementById("output");
     var observer = null;
     var removedLegacyGreeting = false;
+    var bannerDivider = "--------------------------------------------------";
     var greetingLines = [
-      { text: "Welcome.", className: "terminal-greeting-anchor terminal-greeting-line" },
+      { text: "Chad McCormack Engineering Portfolio", className: "terminal-greeting-anchor terminal-banner-title" },
+      { text: "Interactive Architecture Console", className: "terminal-banner-subtitle" },
       { text: "" },
-      { text: "You are viewing the engineering portfolio of", className: "terminal-greeting-line" },
+      { text: bannerDivider, className: "terminal-banner-divider" },
       { text: "" },
-      { text: "Chad McCormack", className: "terminal-greeting-identity" },
-      { text: "Information Systems Engineer", className: "terminal-greeting-identity" },
-      { text: "ServiceNow CMDB • Discovery • CSDM", className: "terminal-greeting-identity" },
+      { text: "Specialization", className: "terminal-banner-label" },
+      { text: "ServiceNow CMDB • Discovery • CSDM", className: "terminal-banner-highlight" },
+      { text: "" },
+      { text: bannerDivider, className: "terminal-banner-divider" },
+      { text: "" },
+      { text: "Flagship Project", className: "terminal-banner-label" },
+      { text: "Enterprise CMDB & Discovery Transformation", className: "terminal-banner-highlight" },
+      { text: "Dun & Bradstreet", className: "terminal-banner-highlight" },
+      { text: "" },
+      { text: bannerDivider, className: "terminal-banner-divider" },
       { text: "" },
       {
         text: "Type \"help\" to explore architecture work, enterprise outcomes, and resume information.",
-        className: "terminal-greeting-line"
-      },
-      { text: "" },
-      { text: "Recruiters typically start with:", className: "terminal-greeting-line" },
-      { text: "proof", className: "terminal-greeting-command" }
+        className: "terminal-banner-guidance"
+      }
     ];
 
     if (!output) {

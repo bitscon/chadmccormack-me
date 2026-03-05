@@ -2688,21 +2688,36 @@ body[data-theme="matrix"] #terminal::before {
   animation: line-in 120ms ease-out both;
 }
 
-.output-line.terminal-greeting-line {
+.output-line.terminal-banner-title {
+  color: rgba(233, 250, 255, 0.98);
+  text-shadow: none;
+  font-weight: 700;
+}
+
+.output-line.terminal-banner-subtitle {
+  color: rgba(215, 236, 248, 0.92);
+  text-shadow: none;
+}
+
+.output-line.terminal-banner-divider {
+  color: rgba(175, 212, 228, 0.68);
+  text-shadow: none;
+}
+
+.output-line.terminal-banner-label {
   color: rgba(215, 236, 248, 0.9);
   text-shadow: none;
 }
 
-.output-line.terminal-greeting-identity {
+.output-line.terminal-banner-highlight {
   color: rgba(233, 250, 255, 0.97);
   text-shadow: none;
   font-weight: 600;
 }
 
-.output-line.terminal-greeting-command {
-  color: rgba(170, 247, 217, 0.96);
+.output-line.terminal-banner-guidance {
+  color: rgba(190, 240, 218, 0.93);
   text-shadow: none;
-  font-weight: 700;
 }
 
 .output-line.command-echo {
