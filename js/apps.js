@@ -416,8 +416,20 @@
     var heading = null;
     var intro = null;
     var diagramList = null;
+    var hasNormalizedArchitectureConsole = false;
 
-    if (!proofWorkList || proofWorkList.querySelector(".proof-work-diagram-section")) {
+    hasNormalizedArchitectureConsole = Boolean(
+      document.getElementById("impact-summary") ||
+      document.getElementById("architecture-diagram") ||
+      document.getElementById("architecture-case") ||
+      document.getElementById("engineering-principles")
+    );
+
+    if (
+      !proofWorkList ||
+      hasNormalizedArchitectureConsole ||
+      proofWorkList.querySelector(".proof-work-diagram-section")
+    ) {
       return;
     }
 

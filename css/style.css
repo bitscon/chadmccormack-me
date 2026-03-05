@@ -2329,6 +2329,117 @@ body[data-theme="matrix"] #terminal::before {
   color: rgba(206, 255, 226, 0.88);
 }
 
+#proof-of-work-window .proof-work-intro {
+  border-color: rgba(120, 191, 220, 0.42);
+  background: linear-gradient(180deg, rgba(3, 14, 18, 0.78), rgba(2, 9, 12, 0.6));
+}
+
+#proof-of-work-window .proof-work-list {
+  gap: 0.62rem;
+}
+
+#proof-of-work-window .proof-work-diagram-section.architecture-console {
+  border-color: rgba(149, 212, 236, 0.4);
+  background: linear-gradient(180deg, rgba(2, 11, 15, 0.88), rgba(1, 7, 9, 0.66));
+  box-shadow: 0 0 0 1px rgba(105, 180, 212, 0.14), inset 0 1px 0 rgba(176, 229, 249, 0.12);
+  gap: 0.58rem;
+  font-family: "Cascadia Mono", "Fira Code", "IBM Plex Mono", "Source Code Pro", monospace;
+}
+
+#proof-of-work-window .architecture-console-panel {
+  border: 1px solid rgba(113, 180, 208, 0.3);
+  border-radius: 9px;
+  background: rgba(2, 12, 16, 0.66);
+  padding: 0.52rem 0.58rem;
+}
+
+#proof-of-work-window .impact-summary-panel {
+  border: 1px solid rgba(0, 255, 170, 0.25);
+  background: rgba(0, 20, 15, 0.25);
+  padding: 12px;
+  margin-bottom: 18px;
+  box-shadow: 0 0 16px rgba(82, 173, 120, 0.12);
+}
+
+#proof-of-work-window .architecture-console-prompt {
+  margin: 0 0 0.26rem;
+  color: rgba(187, 236, 255, 0.86);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+#proof-of-work-window .architecture-impact-list {
+  margin: 0.32rem 0 0;
+  padding-left: 1.02rem;
+  color: rgba(204, 249, 223, 0.95);
+  font-size: 0.73rem;
+  line-height: 1.38;
+}
+
+#proof-of-work-window .architecture-impact-list li + li {
+  margin-top: 0.22rem;
+}
+
+#proof-of-work-window .architecture-title-panel .proof-work-diagram-heading {
+  margin-bottom: 0.24rem;
+}
+
+#proof-of-work-window .architecture-console-ascii {
+  margin: 0;
+  border-color: rgba(128, 198, 228, 0.38);
+  background: rgba(1, 8, 12, 0.82);
+}
+
+#proof-of-work-window .architecture-case-study .diagram-title {
+  margin-bottom: 0.36rem;
+}
+
+#proof-of-work-window .architecture-case-block + .architecture-case-block {
+  margin-top: 0.42rem;
+  padding-top: 0.4rem;
+  border-top: 1px solid rgba(135, 191, 219, 0.24);
+}
+
+#proof-of-work-window .architecture-case-study .diagram-focus-list {
+  margin-top: 0.2rem;
+}
+
+#proof-of-work-window .architecture-principles-list {
+  margin: 0.28rem 0 0;
+  padding-left: 1.04rem;
+  color: rgba(203, 241, 255, 0.9);
+  font-size: 0.71rem;
+  line-height: 1.4;
+}
+
+#proof-of-work-window .architecture-principles-list li + li {
+  margin-top: 0.2rem;
+}
+
+#proof-of-work-window .proof-work-subheading {
+  margin: 0.08rem 0 0;
+  padding: 0.3rem 0.44rem;
+  border-top: 1px solid rgba(130, 194, 224, 0.25);
+  color: rgba(171, 225, 246, 0.84);
+  font-size: 0.67rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+#proof-of-work-window .proof-work-card {
+  border-color: rgba(130, 194, 224, 0.3);
+  background: linear-gradient(180deg, rgba(2, 11, 15, 0.72), rgba(1, 8, 11, 0.62));
+}
+
+#proof-of-work-window .proof-work-card h3 {
+  color: rgba(219, 252, 233, 0.96);
+}
+
+#proof-of-work-window .proof-work-meta strong {
+  color: rgba(203, 246, 255, 0.95);
+}
+
 #output {
   flex: 1;
   min-height: 0;
@@ -2959,12 +3070,26 @@ body[data-theme="matrix"] #terminal::before {
     font-size: 0.65rem;
   }
 
+  #proof-of-work-window .architecture-impact-list,
+  #proof-of-work-window .architecture-principles-list {
+    font-size: 0.65rem;
+  }
+
+  #proof-of-work-window .architecture-console-prompt,
+  #proof-of-work-window .proof-work-subheading {
+    font-size: 0.61rem;
+  }
+
   .diagram-title {
     font-size: 0.69rem;
   }
 
   .diagram-ascii {
     font-size: 0.62rem;
+  }
+
+  #proof-of-work-window .architecture-console-panel {
+    padding: 0.48rem 0.52rem;
   }
 
   .proof-work-card h3 {
@@ -3286,6 +3411,17 @@ body[data-theme="matrix"] #terminal::before {
     line-height: 1.34;
   }
 
+  #proof-of-work-window .architecture-impact-list,
+  #proof-of-work-window .architecture-principles-list {
+    font-size: 0.56rem;
+    line-height: 1.34;
+  }
+
+  #proof-of-work-window .architecture-console-prompt,
+  #proof-of-work-window .proof-work-subheading {
+    font-size: 0.53rem;
+  }
+
   .diagram-title {
     font-size: 0.59rem;
   }
@@ -3302,6 +3438,10 @@ body[data-theme="matrix"] #terminal::before {
   .proof-work-card p {
     font-size: 0.58rem;
     line-height: 1.34;
+  }
+
+  #proof-of-work-window .architecture-console-panel {
+    padding: 0.42rem 0.44rem;
   }
 
   #resume-download {

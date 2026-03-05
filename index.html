@@ -29,10 +29,10 @@
       </div>
 
       <div class="launcher-entry">
-        <button id="proof-of-work-launcher" class="launcher-button" type="button" aria-label="Open Proof of Work" title="Proof of Work">
+        <button id="proof-of-work-launcher" class="launcher-button" type="button" aria-label="Open Architecture" title="Architecture">
           <span class="launcher-icon" aria-hidden="true">pw</span>
         </button>
-        <span class="launcher-label">Proof of Work</span>
+        <span class="launcher-label">Architecture</span>
       </div>
 
       <div class="launcher-entry">
@@ -272,18 +272,96 @@ Try opening the Terminal and typing: help</p>
         </div>
       </section>
 
-      <section id="proof-of-work-window" class="chados-window" data-app="proof-of-work" aria-label="Proof of work window" aria-hidden="true">
+      <section id="proof-of-work-window" class="chados-window" data-app="proof-of-work" aria-label="Architecture window" aria-hidden="true">
         <header class="window-titlebar">
-          <p class="window-title">proof-of-work/ — explorer</p>
+          <p class="window-title">architecture/ - explorer</p>
           <div class="window-controls">
-            <button class="window-control window-close" type="button" data-window-action="close" aria-label="Close proof of work window" title="Close">✕</button>
+            <button class="window-control window-close" type="button" data-window-action="close" aria-label="Close architecture window" title="Close">✕</button>
           </div>
         </header>
 
         <div class="app-window-body proof-work-body">
-          <p class="proof-work-intro">Enterprise architecture and governance work focused on ServiceNow CMDB, Discovery reliability, and infrastructure visibility outcomes.</p>
+          <p class="proof-work-intro">Console view of ServiceNow Discovery, CMDB governance, and infrastructure visibility outcomes for recruiter review.</p>
 
           <div class="proof-work-list">
+            <section class="proof-work-diagram-section architecture-console" aria-label="Discovery architecture impact summary and case study">
+              <section id="impact-summary" class="architecture-console-panel impact-summary-panel" aria-label="Impact summary">
+                <p class="architecture-console-prompt">$ show impact</p>
+                <h3 class="proof-work-diagram-heading">DISCOVERY ARCHITECTURE IMPACT</h3>
+                <ul class="architecture-impact-list">
+                  <li>Increased discovery coverage from ~40% -&gt; 90%</li>
+                  <li>Reduced unidentified CIs by ~60%</li>
+                  <li>Stabilized credential strategy across enterprise environments</li>
+                  <li>Improved CMDB reliability for service mapping</li>
+                </ul>
+              </section>
+
+              <section class="architecture-console-panel architecture-title-panel" aria-label="Architecture pipeline overview">
+                <p class="architecture-console-prompt">$ show architecture</p>
+                <h3 class="proof-work-diagram-heading">ServiceNow Discovery &rarr; CMDB Population Pipeline</h3>
+                <p class="proof-work-diagram-intro">Enterprise architecture used to improve infrastructure visibility and CMDB data reliability.</p>
+              </section>
+
+              <section id="architecture-diagram" class="architecture-console-panel architecture-diagram-panel" aria-label="ASCII architecture diagram">
+                <pre class="diagram-ascii architecture-console-ascii">+-----------------------------------------------+
+| Infrastructure Estate                         |
+|         |                                     |
+| Discovery Scan (MID Servers)                 |
+|         |                                     |
+| Credential Strategy                           |
+|         |                                     |
+| Pattern-Based Identification                  |
+|         |                                     |
+| CI Classification (CSDM aligned)             |
+|         |                                     |
+| CMDB Population                               |
++-----------------------------------------------+</pre>
+              </section>
+
+              <article id="architecture-case" class="architecture-console-panel architecture-case-study" aria-label="Case study">
+                <p class="architecture-console-prompt">$ show discovery</p>
+                <h4 class="diagram-title">CASE STUDY: Discovery Reliability Program</h4>
+
+                <section class="architecture-case-block">
+                  <p class="diagram-focus-label">PROBLEM</p>
+                  <p class="diagram-description">Discovery reliability was inconsistent due to fragmented credential strategies and network segmentation.</p>
+                </section>
+
+                <section class="architecture-case-block">
+                  <p class="diagram-focus-label">SOLUTION</p>
+                  <p class="diagram-description">Designed standardized discovery architecture including:</p>
+                  <ul class="diagram-focus-list">
+                    <li>credential strategy</li>
+                    <li>pattern-based CI identification</li>
+                    <li>classification aligned to CSDM</li>
+                    <li>scalable discovery scanning</li>
+                  </ul>
+                </section>
+
+                <section class="architecture-case-block">
+                  <p class="diagram-focus-label">OUTCOME</p>
+                  <ul class="diagram-focus-list">
+                    <li>increased discovery reliability</li>
+                    <li>reduced unidentified CIs</li>
+                    <li>improved CMDB trust</li>
+                    <li>enabled more accurate service mapping</li>
+                  </ul>
+                </section>
+              </article>
+
+              <section id="engineering-principles" class="architecture-console-panel architecture-principles" aria-label="Engineering principles">
+                <h4 class="diagram-title">Engineering Principles</h4>
+                <ul class="architecture-principles-list">
+                  <li>Infrastructure visibility drives operational reliability</li>
+                  <li>Discovery accuracy determines CMDB trust</li>
+                  <li>Automation reduces configuration drift</li>
+                  <li>CMDB architecture must align with CSDM</li>
+                </ul>
+              </section>
+            </section>
+
+            <p class="proof-work-subheading">Additional Architecture Workstreams</p>
+
             <article class="proof-work-card">
               <h3>CMDB Data Governance Model</h3>
               <p>Designed governance patterns to improve configuration data accuracy, support operational decision making, and increase trust in CMDB reporting.</p>
