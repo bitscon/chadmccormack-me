@@ -171,7 +171,7 @@ AI agents: 3 online</pre>
               <button class="systems-map-layer" type="button" data-layer="infrastructure">Infrastructure</button>
               <button class="systems-map-layer" type="button" data-layer="governance">Governance</button>
             </div>
-            <pre id="systems-map-content" aria-live="polite"></pre>
+            <div id="systems-map-content" class="window-content markdown-content" aria-live="polite"></div>
           </div>
         </div>
       </section>
@@ -190,7 +190,7 @@ AI agents: 3 online</pre>
             <input id="career-log-filter" type="text" inputmode="text" spellcheck="false" placeholder="filter logs (platform, automation, sre, cloud…)">
             <button id="career-log-clear" type="button">Clear</button>
           </div>
-          <div id="career-log-content" role="log" aria-live="polite" aria-atomic="false"></div>
+          <div id="career-log-content" class="window-content markdown-content" role="log" aria-live="polite" aria-atomic="false"></div>
         </div>
       </section>
 
@@ -203,61 +203,7 @@ AI agents: 3 online</pre>
         </header>
 
         <div class="app-window-body hire-chad-body">
-          <article id="hire-chad-output" aria-label="Recruiter decision page">
-            <header class="hire-decision-header">
-              <h2>Hire Chad</h2>
-              <p>Information Systems Engineer</p>
-              <p>ServiceNow CMDB • Discovery • CSDM</p>
-            </header>
-
-            <section class="hire-decision-section">
-              <h3>WHY HIRE CHAD</h3>
-              <p>Chad McCormack is an Information Systems Engineer specializing in ServiceNow CMDB and Discovery architecture.</p>
-              <p>He focuses on designing reliable infrastructure visibility for large enterprise environments and aligning service models with the Common Service Data Model (CSDM).</p>
-            </section>
-
-            <section class="hire-decision-section">
-              <h3>WHEN ORGANIZATIONS BRING CHAD IN</h3>
-              <ul>
-                <li>fix unreliable CMDB data</li>
-                <li>scale ServiceNow Discovery across complex infrastructure</li>
-                <li>design sustainable CSDM-based service models</li>
-                <li>improve operational visibility for IT operations teams</li>
-              </ul>
-            </section>
-
-            <section class="hire-decision-section">
-              <h3>WHAT CHAD BRINGS TO AN ENTERPRISE TEAM</h3>
-              <ul>
-                <li>CMDB architecture design</li>
-                <li>enterprise Discovery strategy</li>
-                <li>CSDM service modeling</li>
-                <li>CMDB data quality improvement</li>
-                <li>ServiceNow platform architecture guidance</li>
-              </ul>
-            </section>
-
-            <section class="hire-decision-section hire-schedule-section">
-              <h3>NEXT STEP</h3>
-              <p>If you are looking for a ServiceNow CMDB / Discovery specialist who can design and implement reliable infrastructure visibility, let's schedule a conversation.</p>
-              <p class="hire-availability-line">Availability: Open to ServiceNow CMDB / Discovery architecture roles.</p>
-            </section>
-
-            <section class="hire-decision-section hire-recruiter-message-section">
-              <h3>RECRUITER QUICK MESSAGE</h3>
-              <p>If you're reaching out about a role, feel free to send something like:</p>
-              <p class="hire-recruiter-quote">&gt; "Hi Chad - we're looking for help with ServiceNow CMDB / Discovery architecture and would like to discuss a role."</p>
-            </section>
-
-            <section class="hire-decision-section hire-quick-links-section">
-              <h3>QUICK LINKS</h3>
-              <div class="hire-quick-links-actions">
-                <a class="cta-button" href="https://linkedin.com/in/chadmccormack" target="_blank" rel="noopener noreferrer" aria-label="View Chad on LinkedIn" title="View LinkedIn">View LinkedIn</a>
-                <a class="cta-button" href="/assets/chad-mccormack-resume.pdf" target="_blank" rel="noopener noreferrer" aria-label="Download Chad resume" title="Download Resume">Download Resume</a>
-                <a class="cta-button" href="mailto:chad@chadmccormack.me?subject=ServiceNow%20Opportunity" aria-label="Schedule a call with Chad" title="Schedule a Call">Schedule a Call</a>
-              </div>
-            </section>
-          </article>
+          <article id="hire-chad-output" class="window-content markdown-content" aria-label="Recruiter decision page"></article>
         </div>
       </section>
 
@@ -305,115 +251,7 @@ AI agents: 3 online</pre>
         </header>
 
         <div class="app-window-body proof-work-body">
-          <p class="proof-work-intro">Console view of ServiceNow Discovery, CMDB governance, and infrastructure visibility outcomes for recruiter review.</p>
-
-          <div class="proof-work-list">
-            <section class="proof-work-diagram-section architecture-console" aria-label="Discovery architecture impact summary and case study">
-              <section id="impact-summary" class="architecture-console-panel impact-summary-panel" aria-label="Impact summary">
-                <p class="architecture-console-prompt">$ show impact</p>
-                <h3 class="proof-work-diagram-heading">DISCOVERY ARCHITECTURE IMPACT</h3>
-                <ul class="architecture-impact-list">
-                  <li>Increased discovery coverage from ~40% -&gt; 90%</li>
-                  <li>Reduced unidentified CIs by ~60%</li>
-                  <li>Stabilized credential strategy across enterprise environments</li>
-                  <li>Improved CMDB reliability for service mapping</li>
-                </ul>
-              </section>
-
-              <section class="architecture-console-panel architecture-title-panel" aria-label="Architecture pipeline overview">
-                <p class="architecture-console-prompt">$ show architecture</p>
-                <h3 class="proof-work-diagram-heading">ServiceNow Discovery &rarr; CMDB Population Pipeline</h3>
-                <p class="proof-work-diagram-intro">Enterprise architecture used to improve infrastructure visibility and CMDB data reliability.</p>
-              </section>
-
-              <section id="architecture-diagram" class="architecture-console-panel architecture-diagram-panel" aria-label="ASCII architecture diagram">
-                <pre class="diagram-ascii architecture-console-ascii">+-----------------------------------------------+
-| Infrastructure Estate                         |
-|         |                                     |
-| Discovery Scan (MID Servers)                 |
-|         |                                     |
-| Credential Strategy                           |
-|         |                                     |
-| Pattern-Based Identification                  |
-|         |                                     |
-| CI Classification (CSDM aligned)             |
-|         |                                     |
-| CMDB Population                               |
-+-----------------------------------------------+</pre>
-              </section>
-
-              <article id="architecture-case" class="architecture-console-panel architecture-case-study" aria-label="Case study">
-                <p class="architecture-console-prompt">$ show discovery</p>
-                <h4 class="diagram-title">CASE STUDY: Discovery Reliability Program</h4>
-
-                <section class="architecture-case-block">
-                  <p class="diagram-focus-label">PROBLEM</p>
-                  <p class="diagram-description">Discovery reliability was inconsistent due to fragmented credential strategies and network segmentation.</p>
-                </section>
-
-                <section class="architecture-case-block">
-                  <p class="diagram-focus-label">SOLUTION</p>
-                  <p class="diagram-description">Designed standardized discovery architecture including:</p>
-                  <ul class="diagram-focus-list">
-                    <li>credential strategy</li>
-                    <li>pattern-based CI identification</li>
-                    <li>classification aligned to CSDM</li>
-                    <li>scalable discovery scanning</li>
-                  </ul>
-                </section>
-
-                <section class="architecture-case-block">
-                  <p class="diagram-focus-label">OUTCOME</p>
-                  <ul class="diagram-focus-list">
-                    <li>increased discovery reliability</li>
-                    <li>reduced unidentified CIs</li>
-                    <li>improved CMDB trust</li>
-                    <li>enabled more accurate service mapping</li>
-                  </ul>
-                </section>
-              </article>
-
-              <section id="engineering-principles" class="architecture-console-panel architecture-principles" aria-label="Engineering principles">
-                <h4 class="diagram-title">Engineering Principles</h4>
-                <ul class="architecture-principles-list">
-                  <li>Infrastructure visibility drives operational reliability</li>
-                  <li>Discovery accuracy determines CMDB trust</li>
-                  <li>Automation reduces configuration drift</li>
-                  <li>CMDB architecture must align with CSDM</li>
-                </ul>
-              </section>
-            </section>
-
-            <p class="proof-work-subheading">Additional Architecture Workstreams</p>
-
-            <article class="proof-work-card">
-              <h3>CMDB Data Governance Model</h3>
-              <p>Designed governance patterns to improve configuration data accuracy, support operational decision making, and increase trust in CMDB reporting.</p>
-              <p class="proof-work-meta"><strong>Architectural Focus:</strong> CI lifecycle ownership, reconciliation strategy, normalized infrastructure data</p>
-              <p class="proof-work-meta"><strong>Enterprise Outcome:</strong> Higher CMDB trust and cleaner reporting for operations and leadership.</p>
-            </article>
-
-            <article class="proof-work-card">
-              <h3>Discovery Reliability Architecture</h3>
-              <p>Stabilized ServiceNow Discovery through pattern tuning, credential strategy improvements, and infrastructure classification governance.</p>
-              <p class="proof-work-meta"><strong>Architectural Focus:</strong> MID Server topology, credential workflows, discovery coverage strategy</p>
-              <p class="proof-work-meta"><strong>Enterprise Outcome:</strong> More dependable discovery runs and stronger infrastructure visibility.</p>
-            </article>
-
-            <article class="proof-work-card">
-              <h3>Service Visibility Foundation</h3>
-              <p>Enabled service visibility by improving CI relationships and infrastructure topology modeling across enterprise environments.</p>
-              <p class="proof-work-meta"><strong>Architectural Focus:</strong> relationship integrity, topology mapping, service context for operations</p>
-              <p class="proof-work-meta"><strong>Enterprise Outcome:</strong> Faster impact analysis during incidents and better change confidence.</p>
-            </article>
-
-            <article class="proof-work-card">
-              <h3>Operational Governance Patterns</h3>
-              <p>Built enterprise governance patterns that balance data ownership, auditability, and delivery speed for platform teams.</p>
-              <p class="proof-work-meta"><strong>Architectural Focus:</strong> ownership models, normalization controls, operational guardrails</p>
-              <p class="proof-work-meta"><strong>Enterprise Outcome:</strong> Sustainable CMDB operations with improved cross-team trust.</p>
-            </article>
-          </div>
+          <div id="proof-of-work-content" class="proof-work-list window-content markdown-content"></div>
         </div>
       </section>
 
@@ -544,55 +382,7 @@ AI agents: 3 online</pre>
         </header>
 
         <div class="app-window-body interview-prep-body">
-          <div class="interview-prep-notes">
-            <section class="interview-prep-section">
-              <h3>ServiceNow Interview Preparation</h3>
-              <p>These are common architecture questions I often discuss when explaining CMDB, Discovery, and service visibility.</p>
-            </section>
-
-            <section class="interview-prep-section">
-              <h3>Question 1</h3>
-              <p class="interview-prep-question">How do you maintain CMDB data quality?</p>
-              <p class="interview-prep-answer-label">Answer</p>
-              <p>CMDB data quality depends on a combination of Discovery reliability, identification rules, reconciliation strategy, and normalization.</p>
-              <p class="interview-prep-list-label">Key focus areas:</p>
-              <ul>
-                <li>CI identification rules</li>
-                <li>reconciliation rules</li>
-                <li>normalization</li>
-                <li>CI ownership and lifecycle</li>
-              </ul>
-            </section>
-
-            <section class="interview-prep-section">
-              <h3>Question 2</h3>
-              <p class="interview-prep-question">How do you troubleshoot Discovery failures?</p>
-              <p class="interview-prep-answer-label">Answer</p>
-              <p>Discovery troubleshooting typically follows this order:</p>
-              <ol>
-                <li>Network connectivity</li>
-                <li>Credentials</li>
-                <li>MID Server health</li>
-                <li>Discovery patterns</li>
-                <li>CI classification</li>
-              </ol>
-              <p>This approach isolates the layer where Discovery is failing.</p>
-            </section>
-
-            <section class="interview-prep-section">
-              <h3>Question 3</h3>
-              <p class="interview-prep-question">How do you implement CSDM successfully?</p>
-              <p class="interview-prep-answer-label">Answer</p>
-              <p>Successful CSDM implementation focuses on aligning the service model with how the organization delivers products.</p>
-              <p class="interview-prep-list-label">This includes:</p>
-              <ul>
-                <li>defining service boundaries</li>
-                <li>aligning CI classes to CSDM layers</li>
-                <li>connecting infrastructure to applications</li>
-                <li>linking services to business capabilities</li>
-              </ul>
-            </section>
-          </div>
+          <div id="interview-prep-content" class="interview-prep-notes window-content markdown-content"></div>
         </div>
       </section>
     </div>

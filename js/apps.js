@@ -9,7 +9,19 @@
   var detailSubtitle = document.getElementById("mind-map-detail-subtitle");
   var detailDescription = document.getElementById("mind-map-detail-description");
   var detailPhilosophy = document.getElementById("mind-map-detail-philosophy");
+  var systemsMapContent = document.getElementById("systems-map-content");
+  var careerLogWindow = document.getElementById("career-log-window");
+  var careerLogContent = document.getElementById("career-log-content");
+  var proofOfWorkContent = document.getElementById("proof-of-work-content") || proofWorkList;
+  var hireChadWindow = document.getElementById("hire-chad-window");
+  var interviewPrepWindow = document.getElementById("interview-prep-window");
+  var interviewPrepContent = document.getElementById("interview-prep-content");
   var hireChadOutput = document.getElementById("hire-chad-output");
+  var hireChadLauncher = document.getElementById("hire-chad-launcher");
+  var systemsMapLauncher = document.getElementById("systems-map-launcher");
+  var careerLogLauncher = document.getElementById("career-log-launcher");
+  var proofOfWorkLauncher = document.getElementById("proof-of-work-launcher");
+  var interviewPrepLauncher = document.getElementById("interview-prep-launcher");
   var pipVideo = document.getElementById("pip-video");
   var meetChadButton = document.getElementById("meet-chad");
   var bootScreen = document.getElementById("boot-screen");
@@ -47,6 +59,17 @@
     "Try typing: resume",
     "Try typing: hire-chad"
   ];
+  var MARKDOWN_BASE_PATH = "/assets/data/role/servicenow/";
+  var MARKDOWN_FILE_BY_KEY = {
+    proofOfWork: "architecture-projects.md",
+    architecture: "cmdb-discovery-expertise.md",
+    hireChad: "resume.md",
+    demo: "enterprise-impact.md",
+    interviewPrep: "interview-topics.md",
+    career: "career-timeline.md"
+  };
+  var markdownHtmlCache = {};
+  var markdownLoadCache = {};
 
   var PROOF_WORK_DIAGRAMS = [
     {
@@ -385,6 +408,241 @@
     };
   }
 
+  function escapeMarkdownHtml(value) {
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  async function loadMarkdown(path) {
+    var response = await fetch(path);
+
+    if (!response.ok) {
+      throw new Error("Unable to load markdown: " + path + " (" + response.status + ")");
+    }
+
+    return response.text();
+  }
+
+  function renderMarkdown(md) {
+    var lines = String(md || "").replace(/\r\n/g, "\n").split("\n");
+    var html = [];
+    var inList = false;
+
+    function closeList() {
+      if (!inList) {
+        return;
+      }
+
+      html.push("</ul>");
+      inList = false;
+    }
+
+    for (var i = 0; i < lines.length; i += 1) {
+      var line = lines[i];
+      var h3Match = line.match(/^###\s+(.*)$/);
+      var h2Match = line.match(/^##\s+(.*)$/);
+      var h1Match = line.match(/^#\s+(.*)$/);
+      var listMatch = line.match(/^\s*\-\s+(.*)$/);
+
+      if (h3Match) {
+        closeList();
+        html.push("<h3>" + escapeMarkdownHtml(h3Match[1]) + "</h3>");
+        continue;
+      }
+
+      if (h2Match) {
+        closeList();
+        html.push("<h2>" + escapeMarkdownHtml(h2Match[1]) + "</h2>");
+        continue;
+      }
+
+      if (h1Match) {
+        closeList();
+        html.push("<h1>" + escapeMarkdownHtml(h1Match[1]) + "</h1>");
+        continue;
+      }
+
+      if (listMatch) {
+        if (!inList) {
+          html.push("<ul>");
+          inList = true;
+        }
+
+        html.push("<li>" + escapeMarkdownHtml(listMatch[1]) + "</li>");
+        continue;
+      }
+
+      closeList();
+
+      if (!line.trim()) {
+        html.push("<br>");
+        continue;
+      }
+
+      html.push(escapeMarkdownHtml(line) + "<br>");
+    }
+
+    closeList();
+    return html.join("");
+  }
+
+  function getMarkdownPath(key) {
+    var fileName = MARKDOWN_FILE_BY_KEY[key];
+
+    if (!fileName) {
+      throw new Error("Unknown markdown key: " + key);
+    }
+
+    return MARKDOWN_BASE_PATH + fileName;
+  }
+
+  async function loadRenderedMarkdownByKey(key) {
+    if (markdownHtmlCache[key]) {
+      return markdownHtmlCache[key];
+    }
+
+    if (markdownLoadCache[key]) {
+      return markdownLoadCache[key];
+    }
+
+    markdownLoadCache[key] = loadMarkdown(getMarkdownPath(key))
+      .then(function (markdownText) {
+        var html = renderMarkdown(markdownText);
+        markdownHtmlCache[key] = html;
+        return html;
+      })
+      .finally(function () {
+        delete markdownLoadCache[key];
+      });
+
+    return markdownLoadCache[key];
+  }
+
+  async function renderMarkdownIntoElement(targetElement, key) {
+    if (!targetElement) {
+      return;
+    }
+
+    try {
+      targetElement.innerHTML = await loadRenderedMarkdownByKey(key);
+    } catch (error) {
+      targetElement.innerHTML =
+        "<p>Unable to load <strong>" +
+        escapeMarkdownHtml(MARKDOWN_FILE_BY_KEY[key] || key) +
+        "</strong>.</p>";
+      console.error(error);
+    }
+  }
+
+  function bindMarkdownLauncher(launcher, loader) {
+    if (!launcher) {
+      return;
+    }
+
+    launcher.addEventListener("click", function () {
+      window.setTimeout(function () {
+        loader();
+      }, 0);
+    });
+  }
+
+  function bindMarkdownWindowOpen(windowElement, loader) {
+    var isOpen = false;
+
+    if (!windowElement || !window.MutationObserver) {
+      return;
+    }
+
+    isOpen = windowElement.classList.contains("open");
+
+    new MutationObserver(function () {
+      var nextIsOpen = windowElement.classList.contains("open");
+
+      if (nextIsOpen && !isOpen) {
+        loader();
+      }
+
+      isOpen = nextIsOpen;
+    }).observe(windowElement, {
+      attributes: true,
+      attributeFilter: ["class"]
+    });
+  }
+
+  function enableArchitectureMarkdownMode() {
+    if (!mindMapWindow) {
+      return;
+    }
+
+    mindMapWindow.classList.add("markdown-mode");
+  }
+
+  function enableCareerMarkdownMode() {
+    var careerFilter = document.getElementById("career-log-filter");
+    var careerClear = document.getElementById("career-log-clear");
+
+    if (careerLogWindow) {
+      careerLogWindow.classList.add("markdown-mode");
+    }
+
+    if (careerFilter) {
+      careerFilter.readOnly = true;
+    }
+
+    if (careerClear) {
+      careerClear.disabled = true;
+    }
+  }
+
+  async function loadProofOfWorkMarkdown() {
+    await renderMarkdownIntoElement(proofOfWorkContent, "proofOfWork");
+  }
+
+  async function loadArchitectureMarkdown() {
+    enableArchitectureMarkdownMode();
+    await renderMarkdownIntoElement(systemsMapContent, "architecture");
+  }
+
+  async function loadHireChadMarkdown() {
+    await renderMarkdownIntoElement(hireChadOutput, "hireChad");
+  }
+
+  async function loadInterviewPrepMarkdown() {
+    await renderMarkdownIntoElement(interviewPrepContent, "interviewPrep");
+  }
+
+  async function loadCareerMarkdown() {
+    enableCareerMarkdownMode();
+    await renderMarkdownIntoElement(careerLogContent, "career");
+  }
+
+  function bindMarkdownContent() {
+    bindMarkdownLauncher(proofOfWorkLauncher, loadProofOfWorkMarkdown);
+    bindMarkdownLauncher(systemsMapLauncher, loadArchitectureMarkdown);
+    bindMarkdownLauncher(hireChadLauncher, loadHireChadMarkdown);
+    bindMarkdownLauncher(interviewPrepLauncher, loadInterviewPrepMarkdown);
+    bindMarkdownLauncher(careerLogLauncher, loadCareerMarkdown);
+
+    bindMarkdownWindowOpen(proofOfWorkWindow, loadProofOfWorkMarkdown);
+    bindMarkdownWindowOpen(mindMapWindow, loadArchitectureMarkdown);
+    bindMarkdownWindowOpen(hireChadWindow, loadHireChadMarkdown);
+    bindMarkdownWindowOpen(interviewPrepWindow, loadInterviewPrepMarkdown);
+    bindMarkdownWindowOpen(careerLogWindow, loadCareerMarkdown);
+
+    loadProofOfWorkMarkdown();
+    loadArchitectureMarkdown();
+    loadHireChadMarkdown();
+    loadInterviewPrepMarkdown();
+    loadCareerMarkdown();
+    loadRenderedMarkdownByKey("demo").catch(function (error) {
+      console.error(error);
+    });
+  }
+
   function normalizeTerminalTitles() {
     var commands = window.TerminalCommands;
     var titleLineOne = "Information Systems Engineer";
@@ -434,6 +692,28 @@
             "proof       open Proof of Work\n" +
             "automation  open Automation Lab\n" +
             "contact     view Contact"
+        };
+      };
+    }
+
+    if (commands.demo) {
+      commands.demo.run = function () {
+        var cached = markdownHtmlCache.demo;
+
+        if (cached) {
+          return {
+            type: "html",
+            payload: cached
+          };
+        }
+
+        loadRenderedMarkdownByKey("demo").catch(function (error) {
+          console.error(error);
+        });
+
+        return {
+          type: "text",
+          payload: "Loading enterprise-impact.md...\nRun `demo` again in a moment."
         };
       };
     }
@@ -834,9 +1114,8 @@
     });
   }
 
-  buildProofOfWorkArchitectureSection();
+  bindMarkdownContent();
   runWorkstationBootSequence();
-  bindHireChadScheduleSection();
   bindRotatingTerminalHints();
   bindWelcomeHint();
   ensureGlobalTerminalRunner();
