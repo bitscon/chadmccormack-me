@@ -363,6 +363,7 @@ body {
 }
 
 .launcher-entry {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -415,6 +416,41 @@ body {
   color: rgba(236, 247, 255, 0.86);
   letter-spacing: 0.02em;
   text-shadow: 0 0 6px rgba(0, 0, 0, 0.52);
+}
+
+@media (min-width: 641px) and (hover: hover) and (pointer: fine) {
+  .launcher-label {
+    display: none;
+  }
+
+  .launcher-entry::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: calc(100% + 12px);
+    top: 50%;
+    z-index: 5;
+    min-width: max-content;
+    max-width: 280px;
+    padding: 6px 10px;
+    border: 1px solid rgba(0, 255, 170, 0.4);
+    border-radius: 6px;
+    background: rgba(10, 12, 18, 0.95);
+    color: #9fffd2;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 0.7rem;
+    line-height: 1.25;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-50%) translateX(-4px);
+    transition: opacity 140ms ease, transform 140ms ease;
+  }
+
+  .launcher-entry:hover::after,
+  .launcher-entry:focus-within::after {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
 }
 
 #desktop-popup {
