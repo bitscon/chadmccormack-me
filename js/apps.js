@@ -555,7 +555,6 @@
     var section = null;
     var title = null;
     var description = null;
-    var button = null;
 
     if (!hireChadOutput || hireChadOutput.querySelector(".hire-schedule-section")) {
       return;
@@ -565,21 +564,13 @@
     section.className = "hire-decision-section hire-schedule-section";
 
     title = document.createElement("h3");
-    title.textContent = "Schedule a Call";
+    title.textContent = "NEXT STEP";
 
     description = document.createElement("p");
-    description.textContent = "If you'd like to discuss ServiceNow CMDB architecture, Discovery strategy, or enterprise service modeling, I would be happy to connect.";
-
-    button = document.createElement("a");
-    button.className = "cta-button";
-    button.href = "mailto:chad@chadmccormack.me?subject=ServiceNow%20Opportunity";
-    button.textContent = "Schedule a Call";
-    button.setAttribute("aria-label", "Schedule a call with Chad");
-    button.setAttribute("title", "Schedule a Call");
+    description.textContent = "If you are looking for a ServiceNow CMDB / Discovery specialist who can design and implement reliable infrastructure visibility, let's schedule a conversation.";
 
     section.appendChild(title);
     section.appendChild(description);
-    section.appendChild(button);
 
     hireChadOutput.appendChild(createHireDecisionDivider());
     hireChadOutput.appendChild(section);
@@ -591,6 +582,7 @@
     var actions = null;
     var linkedInButton = null;
     var resumeButton = null;
+    var scheduleButton = null;
     var scheduleSection = null;
     var dividerBeforeSchedule = null;
 
@@ -625,8 +617,16 @@
     resumeButton.setAttribute("aria-label", "Download Chad resume");
     resumeButton.setAttribute("title", "Download Resume");
 
+    scheduleButton = document.createElement("a");
+    scheduleButton.className = "cta-button";
+    scheduleButton.href = "mailto:chad@chadmccormack.me?subject=ServiceNow%20Opportunity";
+    scheduleButton.textContent = "Schedule a Call";
+    scheduleButton.setAttribute("aria-label", "Schedule a call with Chad");
+    scheduleButton.setAttribute("title", "Schedule a Call");
+
     actions.appendChild(linkedInButton);
     actions.appendChild(resumeButton);
+    actions.appendChild(scheduleButton);
     section.appendChild(title);
     section.appendChild(actions);
 

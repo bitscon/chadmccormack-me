@@ -2108,13 +2108,15 @@ body[data-theme="matrix"] #terminal::before {
 
 .hire-quick-links-actions {
   display: flex;
-  align-items: center;
+  align-items: stretch;
+  flex-wrap: wrap;
   gap: 0.44rem;
   margin-top: 0.38rem;
 }
 
 .hire-quick-links-actions .cta-button {
-  flex: 1 1 0;
+  flex: 1 1 calc(33.333% - 0.44rem);
+  min-width: 132px;
   margin-top: 0;
 }
 
