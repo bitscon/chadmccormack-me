@@ -123,11 +123,14 @@ body {
 #boot-screen {
   position: fixed;
   inset: 0;
-  background: #000;
-  color: #7cffc3;
+  background: #0b0f16;
+  color: #9fffd2;
   font-family: monospace;
-  font-size: 16px;
-  padding: 40px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
   z-index: 9999;
   opacity: 1;
   transition: opacity 400ms ease;
@@ -144,6 +147,30 @@ body {
   opacity: 0.85;
   max-width: 100%;
   overflow: hidden;
+}
+
+#boot-text {
+  display: none;
+  margin: 0;
+  max-width: min(720px, 92vw);
+  white-space: pre-line;
+  text-align: left;
+  line-height: 1.5;
+  opacity: 0.95;
+}
+
+#boot-screen.boot-custom #boot-text {
+  display: block;
+}
+
+#boot-screen.boot-custom #boot-console {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  #boot-text {
+    font-size: 12px;
+  }
 }
 
 .boot-cursor {

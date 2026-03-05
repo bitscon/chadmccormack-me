@@ -6,9 +6,16 @@
   <meta name="description" content="Bootable terminal portfolio for Chad McCormack.">
   <title>Chad McCormack | Information Systems Engineer</title>
   <link rel="stylesheet" href="css/style.css">
+  <noscript>
+    <style>
+      #boot-screen { display: none !important; }
+      #desktop { opacity: 1 !important; pointer-events: auto !important; }
+    </style>
+  </noscript>
 </head>
 <body data-theme="dark">
   <div id="boot-screen" aria-live="polite">
+    <pre id="boot-text"></pre>
     <div id="boot-console"></div>
   </div>
 

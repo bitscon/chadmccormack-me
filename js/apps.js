@@ -12,6 +12,9 @@
   var hireChadOutput = document.getElementById("hire-chad-output");
   var pipVideo = document.getElementById("pip-video");
   var meetChadButton = document.getElementById("meet-chad");
+  var bootScreen = document.getElementById("boot-screen");
+  var bootText = document.getElementById("boot-text");
+  var desktop = document.getElementById("desktop");
   var recruiterActivityMessage = document.getElementById("recruiter-activity-message");
   var engineerHint = document.getElementById("engineer-hint") || document.querySelector(".engineer-hint");
   var onboardingOverlay = document.getElementById("onboarding-overlay");
@@ -22,10 +25,21 @@
   var welcomeHintTimer = null;
   var terminalHintRotateTimer = null;
   var terminalHintIndex = 0;
+  var workstationBootTimer = null;
+  var workstationBootFailsafeTimer = null;
+  var workstationBootRan = false;
   var welcomeHintHasRun = false;
   var WELCOME_HINT_INITIAL_DELAY_MS = 1500;
   var WELCOME_HINT_LINE_DELAY_MS = 600;
+  var WORKSTATION_BOOT_STEP_MS = 320;
+  var WORKSTATION_BOOT_FAILSAFE_MS = 1450;
   var TERMINAL_HINT_ROTATE_MS = 6000;
+  var WORKSTATION_BOOT_MESSAGES = [
+    "Initializing workstation...",
+    "Loading engineering workspace...",
+    "Mounting CMDB architecture modules...",
+    "System ready."
+  ];
   var TERMINAL_HINTS = [
     "Try typing: demo",
     "Try typing: architecture",
@@ -260,6 +274,58 @@
       attributes: true,
       attributeFilter: ["class"]
     });
+  }
+
+  function revealDesktopFromWorkstationBoot() {
+    if (!bootScreen || bootScreen.classList.contains("is-fading")) {
+      return;
+    }
+
+    bootScreen.classList.add("is-fading");
+
+    if (desktop) {
+      desktop.classList.add("active");
+      desktop.setAttribute("aria-hidden", "false");
+    }
+  }
+
+  function runWorkstationBootSequence() {
+    var messageIndex = 0;
+
+    if (
+      workstationBootRan ||
+      !bootScreen ||
+      !bootText ||
+      !WORKSTATION_BOOT_MESSAGES.length
+    ) {
+      return;
+    }
+
+    workstationBootRan = true;
+    bootScreen.classList.add("boot-custom");
+    bootText.textContent = "";
+
+    function printNextBootMessage() {
+      if (messageIndex >= WORKSTATION_BOOT_MESSAGES.length) {
+        revealDesktopFromWorkstationBoot();
+        return;
+      }
+
+      if (bootText.textContent) {
+        bootText.textContent += "\n";
+      }
+
+      bootText.textContent += WORKSTATION_BOOT_MESSAGES[messageIndex];
+      messageIndex += 1;
+
+      workstationBootTimer = window.setTimeout(printNextBootMessage, WORKSTATION_BOOT_STEP_MS);
+    }
+
+    printNextBootMessage();
+
+    workstationBootFailsafeTimer = window.setTimeout(function () {
+      revealDesktopFromWorkstationBoot();
+    }, WORKSTATION_BOOT_FAILSAFE_MS);
   }
 
   function setEngineerHintText(textValue) {
@@ -721,6 +787,7 @@
   }
 
   buildProofOfWorkArchitectureSection();
+  runWorkstationBootSequence();
   bindHireChadScheduleSection();
   bindRotatingTerminalHints();
   bindWelcomeHint();
