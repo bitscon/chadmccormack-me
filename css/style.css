@@ -257,6 +257,25 @@ body {
   margin-top: 10px;
 }
 
+.hero-tagline {
+  margin-top: 14px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 520px;
+  color: rgba(200, 255, 230, 0.75);
+  font-family: "Cascadia Mono", "Fira Code", "IBM Plex Mono", "Source Code Pro", monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: 0.4px;
+}
+
+@media (max-width: 768px) {
+  .hero-tagline {
+    font-size: 13px;
+    max-width: 90%;
+  }
+}
+
 .crt-overlay {
   pointer-events: none;
   position: absolute;
