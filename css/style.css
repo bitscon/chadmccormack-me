@@ -505,31 +505,20 @@ body {
   margin-top: 0.58rem;
   border: 1px solid rgba(166, 206, 228, 0.25);
   border-radius: 10px;
-  background: rgba(1, 10, 15, 0.58);
-  padding: 0.52rem 0.62rem;
+  background: rgba(1, 10, 15, 0.65);
+  box-shadow: inset 0 0 0 1px rgba(145, 204, 232, 0.12);
+  padding: 0.56rem 0.64rem;
 }
 
-.onboarding-recruiter-message p {
+.onboarding-console {
   margin: 0;
-  color: rgba(221, 241, 255, 0.9);
-  font-size: 0.73rem;
-  line-height: 1.38;
-  text-wrap: balance;
-}
-
-.onboarding-recruiter-message p + p {
-  margin-top: 0.24rem;
-}
-
-.onboarding-recruiter-label {
-  color: rgba(205, 236, 252, 0.9);
-  font-weight: 600;
-}
-
-.onboarding-recruiter-focus {
-  color: rgba(193, 248, 222, 0.96);
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  color: rgba(214, 237, 250, 0.92);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.72rem;
+  line-height: 1.42;
+  letter-spacing: 0.01em;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 #welcome-hint {
@@ -3077,7 +3066,7 @@ body[data-theme="matrix"] #terminal::before {
   }
 
   #onboarding-description,
-  .onboarding-recruiter-message p {
+  .onboarding-console {
     font-size: 0.64rem;
   }
 
@@ -3914,7 +3903,7 @@ body[data-theme="matrix"] #terminal::before {
   }
 
   #onboarding-description,
-  .onboarding-recruiter-message p {
+  .onboarding-console {
     font-size: 0.56rem;
     line-height: 1.32;
   }
