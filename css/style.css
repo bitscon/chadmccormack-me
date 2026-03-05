@@ -1501,6 +1501,11 @@ body[data-theme="matrix"] #terminal::before {
 }
 
 @media (max-width: 768px) {
+  .output-line a {
+    min-height: 34px;
+    padding: 0.16rem 0;
+  }
+
   .hire-actions {
     flex-direction: column;
   }
@@ -2683,11 +2688,32 @@ body[data-theme="matrix"] #terminal::before {
   animation: line-in 120ms ease-out both;
 }
 
+.output-line.terminal-greeting-line {
+  color: rgba(215, 236, 248, 0.9);
+  text-shadow: none;
+}
+
+.output-line.terminal-greeting-identity {
+  color: rgba(233, 250, 255, 0.97);
+  text-shadow: none;
+  font-weight: 600;
+}
+
+.output-line.terminal-greeting-command {
+  color: rgba(170, 247, 217, 0.96);
+  text-shadow: none;
+  font-weight: 700;
+}
+
 .output-line.command-echo {
   color: var(--terminal-muted);
 }
 
 .output-line a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0.08rem 0;
   color: var(--terminal-link);
   text-decoration: underline;
   text-underline-offset: 2px;

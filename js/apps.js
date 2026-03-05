@@ -42,11 +42,11 @@
   var WELCOME_HINT_LINE_DELAY_MS = 600;
   var TERMINAL_HINT_ROTATE_MS = 6000;
   var TERMINAL_HINTS = [
-    "Try typing: demo",
-    "Try typing: architecture",
     "Try typing: proof",
-    "Try typing: resume",
-    "Try typing: hire-chad"
+    "Try typing: architecture",
+    "Try typing: impact",
+    "Try typing: career",
+    "Try typing: hire"
   ];
   var MARKDOWN_BASE_PATH = "assets/data/role/servicenow/";
   var MARKDOWN_FILE_BY_KEY = {
@@ -100,10 +100,11 @@
     var lines = [
       { text: "Try these commands:" },
       { text: "" },
-      { text: "demo", cmd: "demo" },
-      { text: "architecture", cmd: "architecture" },
       { text: "proof", cmd: "proof" },
-      { text: "hire-chad", cmd: "hire-chad" }
+      { text: "architecture", cmd: "architecture" },
+      { text: "impact", cmd: "impact" },
+      { text: "career", cmd: "career" },
+      { text: "hire", cmd: "hire" }
     ];
     var hint = ensureWelcomeHintContainer();
     var lineIndex = 0;
@@ -534,6 +535,7 @@
     var titleLineTwo = "ServiceNow CMDB • Discovery • CSDM";
     var setTerminalMarkdownCommand = null;
     var getTerminalMarkdownResult = null;
+    var recruiterActionsHtml = "";
 
     if (!commands || typeof commands !== "object") {
       return;
@@ -544,9 +546,19 @@
       var sourceFile = MARKDOWN_FILE_BY_KEY[key] || (key + ".md");
 
       if (cached) {
+        recruiterActionsHtml = "";
+
+        if (key === "hireChad") {
+          recruiterActionsHtml =
+            "<strong>Recruiter Actions</strong><br>" +
+            "<a href=\"/assets/chad-mccormack-resume.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">Download Resume (PDF)</a><br>" +
+            "<a href=\"https://www.linkedin.com/in/chadmccormack/\" target=\"_blank\" rel=\"noopener noreferrer\">LinkedIn Profile</a><br>" +
+            "<a href=\"mailto:chad@bitscon.net\">Email Contact</a><br><br>";
+        }
+
         return {
           type: "html",
-          payload: cached
+          payload: recruiterActionsHtml + cached
         };
       }
 
@@ -604,19 +616,62 @@
     setTerminalMarkdownCommand("experience", "career");
     setTerminalMarkdownCommand("map", "architecture");
 
+    if (commands.resume) {
+      commands.resume.run = function () {
+        window.open("/assets/chad-mccormack-resume.pdf", "_blank", "noopener,noreferrer");
+        return {
+          type: "html",
+          payload:
+            "Opening Resume (PDF)...<br>" +
+            "<a href=\"/assets/chad-mccormack-resume.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">" +
+            "/assets/chad-mccormack-resume.pdf" +
+            "</a>"
+        };
+      };
+    }
+
+    if (commands.linkedin) {
+      commands.linkedin.run = function () {
+        window.open("https://www.linkedin.com/in/chadmccormack/", "_blank", "noopener,noreferrer");
+        return {
+          type: "html",
+          payload:
+            "Opening LinkedIn Profile...<br>" +
+            "<a href=\"https://www.linkedin.com/in/chadmccormack/\" target=\"_blank\" rel=\"noopener noreferrer\">" +
+            "https://www.linkedin.com/in/chadmccormack/" +
+            "</a>"
+        };
+      };
+    }
+
+    if (commands.contact) {
+      commands.contact.run = function () {
+        return {
+          type: "text",
+          payload:
+            "Contact\n\n" +
+            "Email: chad@bitscon.net\n" +
+            "mailto: chad@bitscon.net"
+        };
+      };
+    }
+
     if (commands.help) {
       commands.help.run = function () {
         return {
           type: "text",
           payload:
             "Available commands:\n\n" +
-            "help         show command list\n" +
-            "hire         view resume and contact info\n" +
-            "proof        architecture case studies\n" +
-            "architecture CMDB and Discovery expertise\n" +
-            "impact       enterprise outcomes\n" +
-            "career       experience timeline\n" +
-            "interview    discussion topics"
+            "proof        -> view flagship CMDB transformation case study\n" +
+            "architecture -> CMDB and Discovery architecture expertise\n" +
+            "impact       -> enterprise results and operational outcomes\n" +
+            "career       -> professional experience timeline\n" +
+            "hire         -> resume and recruiter contact options\n" +
+            "resume       -> open resume PDF\n" +
+            "linkedin     -> open LinkedIn profile\n" +
+            "contact      -> email Chad McCormack\n\n" +
+            "Start with:\n\n" +
+            "proof"
         };
       };
     }
@@ -777,6 +832,155 @@
     });
   }
 
+  function bindTerminalGreetingPolish() {
+    var output = document.getElementById("output");
+    var observer = null;
+    var removedLegacyGreeting = false;
+    var greetingLines = [
+      { text: "Welcome.", className: "terminal-greeting-anchor terminal-greeting-line" },
+      { text: "" },
+      { text: "You are viewing the engineering portfolio of", className: "terminal-greeting-line" },
+      { text: "" },
+      { text: "Chad McCormack", className: "terminal-greeting-identity" },
+      { text: "Information Systems Engineer", className: "terminal-greeting-identity" },
+      { text: "ServiceNow CMDB • Discovery • CSDM", className: "terminal-greeting-identity" },
+      { text: "" },
+      {
+        text: "Type \"help\" to explore architecture work, enterprise outcomes, and resume information.",
+        className: "terminal-greeting-line"
+      },
+      { text: "" },
+      { text: "Recruiters typically start with:", className: "terminal-greeting-line" },
+      { text: "proof", className: "terminal-greeting-command" }
+    ];
+
+    if (!output) {
+      return;
+    }
+
+    function removeLegacyGreetingLines() {
+      var lines = output.querySelectorAll(".output-line");
+      var legacyTexts = [
+        "Workshop ready.",
+        "Type 'help' to explore.",
+        "Engineer tip: type 'help' to explore the workspace."
+      ];
+      var removed = false;
+
+      for (var i = 0; i < lines.length; i += 1) {
+        var lineText = (lines[i].textContent || "").trim();
+
+        if (legacyTexts.indexOf(lineText) === -1) {
+          continue;
+        }
+
+        lines[i].remove();
+        removed = true;
+      }
+
+      return removed;
+    }
+
+    function injectRecruiterGreeting() {
+      var fragment = null;
+
+      if (output.querySelector(".terminal-greeting-anchor")) {
+        return;
+      }
+
+      fragment = document.createDocumentFragment();
+
+      for (var i = 0; i < greetingLines.length; i += 1) {
+        var entry = greetingLines[i];
+        var line = document.createElement("div");
+
+        line.className = "output-line";
+
+        if (entry.className) {
+          line.className += " " + entry.className;
+        }
+
+        line.textContent = entry.text;
+        fragment.appendChild(line);
+      }
+
+      output.insertBefore(fragment, output.firstChild);
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function applyGreetingPolish() {
+      var lines = output.querySelectorAll(".output-line");
+      var hasLegacy = false;
+
+      if (!lines.length || removedLegacyGreeting) {
+        return;
+      }
+
+      for (var i = 0; i < lines.length; i += 1) {
+        var lineText = (lines[i].textContent || "").trim();
+
+        if (
+          lineText === "Workshop ready." ||
+          lineText === "Type 'help' to explore." ||
+          lineText === "Engineer tip: type 'help' to explore the workspace."
+        ) {
+          hasLegacy = true;
+          break;
+        }
+      }
+
+      if (!hasLegacy) {
+        return;
+      }
+
+      removeLegacyGreetingLines();
+      injectRecruiterGreeting();
+      removedLegacyGreeting = true;
+
+      if (observer) {
+        observer.disconnect();
+      }
+    }
+
+    applyGreetingPolish();
+
+    if (removedLegacyGreeting || !window.MutationObserver) {
+      return;
+    }
+
+    observer = new MutationObserver(function () {
+      applyGreetingPolish();
+    });
+
+    observer.observe(output, {
+      childList: true
+    });
+  }
+
+  function bindResumePdfShortcut() {
+    var commandForm = document.getElementById("command-form");
+    var commandInput = document.getElementById("command-input");
+
+    if (!commandForm || !commandInput) {
+      return;
+    }
+
+    commandForm.addEventListener(
+      "submit",
+      function () {
+        var commandText = (commandInput.value || "").trim();
+        var firstToken = commandText.split(/\s+/)[0].toLowerCase();
+
+        if (firstToken !== "resume") {
+          return;
+        }
+
+        window.open("/assets/chad-mccormack-resume.pdf", "_blank", "noopener,noreferrer");
+      },
+      true
+    );
+  }
+
   function bindMeetChadButton() {
     var openIntroVideo = null;
 
@@ -817,6 +1021,8 @@
   bindWelcomeHint();
   ensureGlobalTerminalRunner();
   normalizeTerminalTitles();
+  bindTerminalGreetingPolish();
+  bindResumePdfShortcut();
   bindRecruiterActivityTextNormalizer();
   bindRecruiterCtaTextPolish();
   bindMeetChadButton();

@@ -1,12 +1,12 @@
 (function () {
   var FILES = {
-    "about.txt": "Profile content is markdown-driven.\nRun `hire`, `career`, or `architecture`.",
+    "about.txt": "Profile content is markdown-driven.\nStart with `proof`.",
     "experience.txt": "Run `career` for timeline content from career-timeline.md.",
     "projects.txt": "Run `proof` for architecture-projects.md.",
     "thinking.txt": "Run `architecture` for cmdb-discovery-expertise.md.",
     "contact.txt": "email: chad@bitscon.net\nlinkedin: https://www.linkedin.com/in/chadmccormack/",
     "motto.txt": "\"I do what I cannot, to learn what I cannot do!\"",
-    "resume.pdf": "Binary file detected.\nUse `resume` to open the PDF window.",
+    "resume.pdf": "Binary file detected.\nUse `resume` to download the PDF.",
     "projects/billy-ai-runtime": "Automation runtime notes available in project docs.",
     "projects/automation-lab": "Use `automation` to open the Automation Lab window.",
     "projects/infrastructure-architectures": "Use `architecture` to load expertise content.",
@@ -117,13 +117,22 @@
   function runMarkdownCommand(commandName, key) {
     var provider = getMarkdownProvider();
     var cachedHtml = null;
+    var recruiterActionsHtml = "";
 
     if (provider && typeof provider.getRenderedMarkdown === "function") {
       cachedHtml = provider.getRenderedMarkdown(key);
     }
 
     if (cachedHtml) {
-      return html(cachedHtml);
+      if (key === "hireChad") {
+        recruiterActionsHtml =
+          "<strong>Recruiter Actions</strong><br>" +
+          "<a href=\"/assets/chad-mccormack-resume.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">Download Resume (PDF)</a><br>" +
+          "<a href=\"https://www.linkedin.com/in/chadmccormack/\" target=\"_blank\" rel=\"noopener noreferrer\">LinkedIn Profile</a><br>" +
+          "<a href=\"mailto:chad@bitscon.net\">Email Contact</a><br><br>";
+      }
+
+      return html(recruiterActionsHtml + cachedHtml);
     }
 
     if (provider && typeof provider.prefetchMarkdown === "function") {
@@ -141,15 +150,16 @@
       run: function () {
         return text(
           "Available commands:\n\n" +
-          "help         show command list\n" +
-          "hire         view resume and contact info\n" +
-          "proof        architecture case studies\n" +
-          "architecture CMDB and Discovery expertise\n" +
-          "impact       enterprise outcomes\n" +
-          "career       experience timeline\n" +
-          "interview    discussion topics\n\n" +
-          "Aliases: demo, hire-chad, mindmap, projects, experience\n" +
-          "Utilities: ls, cat <file>, open <linkedin|resume|email>, clear, theme, pwd, date"
+          "proof        -> view flagship CMDB transformation case study\n" +
+          "architecture -> CMDB and Discovery architecture expertise\n" +
+          "impact       -> enterprise results and operational outcomes\n" +
+          "career       -> professional experience timeline\n" +
+          "hire         -> resume and recruiter contact options\n" +
+          "resume       -> open resume PDF\n" +
+          "linkedin     -> open LinkedIn profile\n" +
+          "contact      -> email Chad McCormack\n\n" +
+          "Start with:\n\n" +
+          "proof"
         );
       }
     },
@@ -259,6 +269,30 @@
       }
     },
 
+    resume: {
+      run: function () {
+        window.open("/assets/chad-mccormack-resume.pdf", "_blank", "noopener,noreferrer");
+        return html(
+          "Opening Resume (PDF)...<br>" +
+          "<a href=\"/assets/chad-mccormack-resume.pdf\" target=\"_blank\" rel=\"noopener noreferrer\">" +
+          "/assets/chad-mccormack-resume.pdf" +
+          "</a>"
+        );
+      }
+    },
+
+    linkedin: {
+      run: function () {
+        window.open("https://www.linkedin.com/in/chadmccormack/", "_blank", "noopener,noreferrer");
+        return html(
+          "Opening LinkedIn Profile...<br>" +
+          "<a href=\"https://www.linkedin.com/in/chadmccormack/\" target=\"_blank\" rel=\"noopener noreferrer\">" +
+          "https://www.linkedin.com/in/chadmccormack/" +
+          "</a>"
+        );
+      }
+    },
+
     architecture: {
       run: function () {
         return runMarkdownCommand("architecture", "architecture");
@@ -348,8 +382,7 @@
         return text(
           "Contact\n\n" +
           "Email: chad@bitscon.net\n" +
-          "LinkedIn: https://www.linkedin.com/in/chadmccormack/\n" +
-          "Website: chadmccormack.me"
+          "mailto: chad@bitscon.net"
         );
       }
     }
