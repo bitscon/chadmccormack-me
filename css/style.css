@@ -284,6 +284,16 @@ body {
   margin-top: 10px;
 }
 
+.hero-achievement {
+  margin: 16px auto 0;
+  max-width: 600px;
+  color: rgba(200, 220, 230, 0.85);
+  text-align: center;
+  font-size: 16px;
+  line-height: 1.45;
+  letter-spacing: 0.15px;
+}
+
 .hero-tagline {
   margin-top: 14px;
   margin-left: auto;
@@ -297,6 +307,14 @@ body {
 }
 
 @media (max-width: 768px) {
+  .hero-achievement {
+    margin-top: 12px;
+    max-width: 92vw;
+    padding: 0 0.4rem;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
   .hero-tagline {
     font-size: 13px;
     max-width: 90%;
@@ -2870,6 +2888,13 @@ body[data-theme="matrix"] #terminal::before {
     font-size: 10px;
   }
 
+  .hero-achievement {
+    margin-top: 10px;
+    max-width: min(420px, 78vw);
+    font-size: 12px;
+    line-height: 1.36;
+  }
+
   #desktop-launcher {
     left: 10px;
     top: 50%;
@@ -3402,6 +3427,14 @@ body[data-theme="matrix"] #terminal::before {
   .logo-skills {
     margin-top: 3px;
     font-size: 9px;
+  }
+
+  .hero-achievement {
+    margin-top: 9px;
+    max-width: min(360px, 74vw);
+    padding: 0 0.2rem;
+    font-size: 11px;
+    line-height: 1.34;
   }
 
   #desktop-launcher {
