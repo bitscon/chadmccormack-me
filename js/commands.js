@@ -116,6 +116,7 @@
             "career\n" +
             "mindmap\n" +
             "proof\n" +
+            "demo  - guided overview of Chad's architecture expertise\n" +
             "automation\n" +
             "contact\n" +
             "hire-chad\n" +
@@ -244,6 +245,36 @@
             "proof       open Proof of Work\n" +
             "automation  open Automation Lab\n" +
             "contact     view Contact"
+        );
+      }
+    },
+
+    demo: {
+      run: function () {
+        return text(
+          "Initializing architecture overview...\n\n" +
+            "Chad McCormack\n" +
+            "Information Systems Engineer\n" +
+            "ServiceNow CMDB • Discovery • CSDM\n\n" +
+            "Problem Chad Solves\n" +
+            "-------------------\n" +
+            "Enterprise CMDB data often becomes unreliable due to discovery failures,\n" +
+            "credential issues, and inconsistent CI classification.\n\n" +
+            "Approach\n" +
+            "--------\n" +
+            "• Design scalable ServiceNow Discovery architectures\n" +
+            "• Align infrastructure models to CSDM\n" +
+            "• Improve CMDB data trust and service visibility\n\n" +
+            "Results\n" +
+            "-------\n" +
+            "• More reliable CMDB population\n" +
+            "• Better service mapping accuracy\n" +
+            "• Improved operational visibility\n\n" +
+            "Next Commands\n" +
+            "-------------\n" +
+            "architecture   - view architecture example\n" +
+            "hire-chad      - open hiring info\n" +
+            "resume         - download resume"
         );
       }
     },
