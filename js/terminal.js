@@ -107,8 +107,12 @@
   var TERMINAL_CLOSE_MS = 200;
   var NOTIFICATION_LIFE_MS = 6000;
   var NOTIFICATION_EXIT_MS = 220;
+  var RECRUITER_ACTIVITY_INITIAL_MIN_DELAY_MS = 2500;
+  var RECRUITER_ACTIVITY_INITIAL_MAX_DELAY_MS = 7000;
   var RECRUITER_ACTIVITY_MIN_DELAY_MS = 20000;
   var RECRUITER_ACTIVITY_MAX_DELAY_MS = 40000;
+  var RECRUITER_ACTIVITY_VISIBLE_MIN_MS = 4200;
+  var RECRUITER_ACTIVITY_VISIBLE_MAX_MS = 7600;
   var RECRUITER_ACTIVITY_TITLE = "Recruiter Activity";
   var HIRE_CHAD_STEP_DELAY_MS = 190;
   var HIRE_CHAD_DOT_DELAY_MS = 75;
@@ -513,6 +517,7 @@
     },
     notificationsScheduled: false,
     recruiterActivityStarted: false,
+    recruiterActivityHasShown: false,
     lastRecruiterActivityKey: "",
     recruiterCtaShownThisVisit: false,
     pendingRecruiterEngagementLine: false,
@@ -523,6 +528,7 @@
   var notificationSequence = 0;
   var notificationScheduleTimers = [];
   var recruiterActivityTimer = null;
+  var recruiterActivityHideTimer = null;
   var recruiterActivityFadeTimer = null;
   var terminalActivityHintTimer = null;
   var recruiterCtaBanner = null;
@@ -2294,7 +2300,58 @@
   }
 
   function getNextRecruiterActivityDelay() {
+    if (!state.recruiterActivityHasShown) {
+      return randomInt(
+        RECRUITER_ACTIVITY_INITIAL_MIN_DELAY_MS,
+        RECRUITER_ACTIVITY_INITIAL_MAX_DELAY_MS
+      );
+    }
+
     return randomInt(RECRUITER_ACTIVITY_MIN_DELAY_MS, RECRUITER_ACTIVITY_MAX_DELAY_MS);
+  }
+
+  function getRecruiterActivityVisibleDuration() {
+    return randomInt(RECRUITER_ACTIVITY_VISIBLE_MIN_MS, RECRUITER_ACTIVITY_VISIBLE_MAX_MS);
+  }
+
+  function setRecruiterActivityVisibility(isVisible) {
+    if (isVisible) {
+      recruiterActivityPanel.classList.add("is-visible");
+      recruiterActivityPanel.setAttribute("aria-hidden", "false");
+      return;
+    }
+
+    recruiterActivityPanel.classList.remove("is-visible");
+    recruiterActivityPanel.setAttribute("aria-hidden", "true");
+  }
+
+  function clearRecruiterActivityHideTimer() {
+    if (!recruiterActivityHideTimer) {
+      return;
+    }
+
+    window.clearTimeout(recruiterActivityHideTimer);
+    recruiterActivityHideTimer = null;
+  }
+
+  function showRecruiterActivityPopup() {
+    setRecruiterActivityMessage(
+      chooseRecruiterActivityMessage(),
+      state.recruiterActivityHasShown
+    );
+    state.recruiterActivityHasShown = true;
+    setRecruiterActivityVisibility(true);
+    clearRecruiterActivityHideTimer();
+    recruiterActivityHideTimer = window.setTimeout(function () {
+      recruiterActivityHideTimer = null;
+
+      if (!state.recruiterActivityStarted) {
+        return;
+      }
+
+      setRecruiterActivityVisibility(false);
+      scheduleNextRecruiterActivityNotification();
+    }, getRecruiterActivityVisibleDuration());
   }
 
   function scheduleNextRecruiterActivityNotification() {
@@ -2313,8 +2370,7 @@
         return;
       }
 
-      setRecruiterActivityMessage(chooseRecruiterActivityMessage(), true);
-      scheduleNextRecruiterActivityNotification();
+      showRecruiterActivityPopup();
     }, getNextRecruiterActivityDelay());
   }
 
@@ -2325,8 +2381,10 @@
 
     recruiterActivityPanel.setAttribute("aria-label", RECRUITER_ACTIVITY_TITLE);
     state.recruiterActivityStarted = true;
+    state.recruiterActivityHasShown = false;
     state.lastRecruiterActivityKey = RECRUITER_ACTIVITY_MESSAGES[0];
     setRecruiterActivityMessage(RECRUITER_ACTIVITY_MESSAGES[0], false);
+    setRecruiterActivityVisibility(false);
     scheduleNextRecruiterActivityNotification();
   }
 

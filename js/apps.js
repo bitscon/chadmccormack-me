@@ -60,7 +60,6 @@
   var markdownHtmlCache = {};
   var markdownLoadCache = {};
   var RECRUITER_ACTIVITY_TITLE_TEXT = "Recruiter Activity";
-  var RECRUITER_ACTIVITY_STABLE_TEXT = "• A recruiter opened Hire Chad";
   var RECRUITER_CTA_TITLE_TEXT = "Interested in working together?";
   var RECRUITER_CTA_DETAILS_HTML =
     "Open <strong>Hire Chad</strong> to view resume, LinkedIn, and contact options.";
@@ -615,11 +614,18 @@
   }
 
   function normalizeRecruiterActivityText(value) {
-    if (typeof value !== "string" || !value.trim()) {
-      return RECRUITER_ACTIVITY_STABLE_TEXT;
+    var legacyBrand = "Chad" + "OS";
+    var normalized = value;
+
+    if (typeof value !== "string") {
+      return value;
     }
 
-    return RECRUITER_ACTIVITY_STABLE_TEXT;
+    normalized = normalized.split(legacyBrand).join("Chad McCormack");
+    normalized = normalized.replace(/ServiceNow architect/gi, "Information Systems Engineer");
+    normalized = normalized.replace(/Enterprise Architect/gi, "Information Systems Engineer");
+    normalized = normalized.replace(/Architecture Architect/gi, "Information Systems Engineer");
+    return normalized;
   }
 
   function bindRecruiterActivityTextNormalizer() {
@@ -641,8 +647,6 @@
       if (normalizedText !== currentText) {
         recruiterActivityMessage.textContent = normalizedText;
       }
-
-      recruiterActivityMessage.classList.remove("is-updating");
     };
 
     applyNormalizedText();

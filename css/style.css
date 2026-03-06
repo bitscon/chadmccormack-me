@@ -741,9 +741,16 @@ body {
   border-radius: 6px;
   background: rgba(0, 0, 0, 0.45);
   color: rgba(227, 241, 252, 0.9);
-  opacity: 0.85;
+  opacity: 0;
+  transform: translateY(8px);
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.32);
   pointer-events: none;
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.recruiter-activity.is-visible {
+  opacity: 0.85;
+  transform: translateY(0);
 }
 
 .recruiter-activity-title {
