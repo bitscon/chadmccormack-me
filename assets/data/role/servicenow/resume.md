@@ -33,8 +33,9 @@ Chad has led initiatives that establish automated discovery of global IT asset i
 
 ## Certifications
 
-- Microsoft Technical Associate (Cloud Fundamentals)
+- AI for Work and Life (University of North Florida)
 - Microsoft Certified Professional
+- Microsoft Technical Associate (Cloud Fundamentals)
 - Human Centered Design (PwC)
 
 ---
