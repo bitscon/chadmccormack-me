@@ -629,41 +629,23 @@
   }
 
   function bindRecruiterActivityTextNormalizer() {
-    var observer = null;
-    var applyNormalizedText = null;
+    var currentText = "";
+    var normalizedText = "";
 
     if (!recruiterActivityMessage) {
       return;
     }
 
-    applyNormalizedText = function () {
-      var currentText = recruiterActivityMessage.textContent;
-      var normalizedText = normalizeRecruiterActivityText(currentText);
-
-      if (recruiterActivityTitle && recruiterActivityTitle.textContent !== RECRUITER_ACTIVITY_TITLE_TEXT) {
-        recruiterActivityTitle.textContent = RECRUITER_ACTIVITY_TITLE_TEXT;
-      }
-
-      if (normalizedText !== currentText) {
-        recruiterActivityMessage.textContent = normalizedText;
-      }
-    };
-
-    applyNormalizedText();
-
-    if (!window.MutationObserver) {
-      return;
+    if (recruiterActivityTitle && recruiterActivityTitle.textContent !== RECRUITER_ACTIVITY_TITLE_TEXT) {
+      recruiterActivityTitle.textContent = RECRUITER_ACTIVITY_TITLE_TEXT;
     }
 
-    observer = new MutationObserver(function () {
-      applyNormalizedText();
-    });
+    currentText = recruiterActivityMessage.textContent;
+    normalizedText = normalizeRecruiterActivityText(currentText);
 
-    observer.observe(recruiterActivityMessage, {
-      childList: true,
-      characterData: true,
-      subtree: true
-    });
+    if (normalizedText !== currentText) {
+      recruiterActivityMessage.textContent = normalizedText;
+    }
   }
 
   function applyRecruiterCtaText(banner) {
